@@ -187,11 +187,12 @@ public class Driver
         Iterator<Nominee> iter;
         Nominee inList;
         Nominee searchResult[];
+        Object sorted[];
 
         iter = nomineeList.iterator();
 
         boolean filterOptions[] = {false, false, false};
-        boolean orderOptions[] = {false, false, false};
+        boolean orderOptions[] = {false, false, false, false};
 
         String userInput;
         String[] split;
@@ -200,13 +201,16 @@ public class Driver
         String stateFilter = "";
         String partyFilter = "";
         String divisionFilter = "";
+        String sortLine = "";
 
         int numMatches = 0;
         int numNominee = 0;
         int i = 0;
 
+        DSAHeap heap;
+
         filterMenu = new Menu(4);
-        orderMenu = new Menu(4);
+        orderMenu = new Menu(5);
 
         filterMenu.addOption("Select filter type (eg: 1 2 3):");
         filterMenu.addOption("    1. State");
@@ -217,6 +221,7 @@ public class Driver
         orderMenu.addOption("    1. Surname");
         orderMenu.addOption("    2. State");
         orderMenu.addOption("    3. Party");
+        orderMenu.addOption("    4. Divisions");
 
         filterMenu.printMenu();
         userInput = Input.string();
@@ -229,7 +234,8 @@ public class Driver
                 try
                 {
                     optionSwitch = Integer.parseInt(option);
-                    if (optionSwitch > 0 && optionSwitch < 4)
+                    if (optionSwitch > 0 &&
+                        optionSwitch <= filterOptions.length)
                     {
                         filterOptions[optionSwitch - 1] = true;
                     }
@@ -296,15 +302,11 @@ public class Driver
                 try
                 {
                     optionSwitch = Integer.parseInt(option);
-                    if (optionSwitch > 0 && optionSwitch < 4)
-                    {
-                        orderOptions[optionSwitch - 1] = true;
-                    }
                 }
                 catch (NumberFormatException e)
                 {
-                    System.out.println(
-                        "Invalid option: " + option + ". Ignoring"
+                    throw new IllegalArgumentException(
+                        "Invalid option: " + option + "."
                     );
                 }
             }
@@ -323,6 +325,8 @@ public class Driver
         }
 
         searchResult = new Nominee[numMatches];
+        sorted = new Nominee[numMatches];
+        heap = new DSAHeap(numMatches);
         iter = null;
         inList = null;
         iter = nomineeList.iterator();
@@ -338,6 +342,62 @@ public class Driver
                 i++;
             }
         }
+
+        if (! userInput.isEmpty())
+        {
+            for (Nominee inResult : searchResult)
+            {
+                sortLine = "";
+
+                for (String option : split)
+                {
+                    switch (Integer.parseInt(option))
+                    {
+                        case 1:
+                            sortLine += inResult.getSurname() + "|";
+                            break;
+                        case 2:
+                            sortLine += inResult.getState() + "|";
+                            break;
+                        case 3:
+                            sortLine += inResult.getNameParty() + "|";
+                            break;
+                        case 4:
+                            sortLine += inResult.getNameDivision() + "|";
+                            break;
+                    }
+                }
+
+                heap.add(sortLine, inResult);
+            }
+
+            heap.heapSort();
+            sorted = heap.toObjArray();
+
+            for (int j = 0; j < numMatches; j++)
+            {
+                searchResult[j] = (Nominee)sorted[j];
+            }
+        }
+
+        /*
+        if (orderOptions[2])
+        {
+            for (Nominee inResult : searchResult)
+            {
+                heap.add(inResult.getNameParty(), inResult);
+            }
+
+            heap.heapSort();
+
+            sorted = heap.toObjArray();
+
+            for (int j = 0; j < numMatches; j++)
+            {
+                searchResult[j] = (Nominee)sorted[j];
+            }
+        }
+        */
 
         printNomineesTable(searchResult);
         System.out.println("\n" + numMatches + "/" + numNominee + " matches");

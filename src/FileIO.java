@@ -63,6 +63,64 @@ public class FileIO
         return fileContents;
     }
 
+    public static String[] readTextToArray(String inFilename)
+    {
+        FileInputStream inFileStream = null;
+        InputStreamReader rdr;
+        BufferedReader buffRdr;
+
+        String line;
+        String[] fileContents;
+        int numLines = 0;
+
+        if (! validateString(inFilename))
+        {
+            throw new IllegalArgumentException(
+                err("Invalid filename")
+            );
+        }
+        else
+        {
+            numLines = calcFileLines(inFilename);
+            fileContents = new String[numLines];
+
+            try
+            {
+                inFileStream = new FileInputStream(inFilename);
+                rdr = new InputStreamReader(inFileStream);
+                buffRdr = new BufferedReader(rdr);
+
+                for (int i = 0; i < numLines; i++)
+                {
+                    fileContents[i] = buffRdr.readLine();
+                }
+                inFileStream.close();
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new IllegalArgumentException(
+                    err("File does not exist")
+                );
+            }
+            catch (IOException e)
+            {
+                if (inFileStream != null)
+                {
+                    try
+                    {
+                        inFileStream.close();
+                    }
+                    catch (IOException ex)
+                    {
+
+                    }
+                }
+            }
+        }
+
+        return fileContents;
+    }
+
     public static Object readObject(String inFilename)
     {
         FileInputStream inFileStream = null;

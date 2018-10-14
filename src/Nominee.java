@@ -6,7 +6,7 @@ public class Nominee
                    nameParty,
                    surname,
                    firstname;
-    private int idDivision, idCandidate;
+    private int idDivision, idCandidate, numVotes;
     private boolean elected, historicElected;
 
     public static final String DEFAULT = "TBD";
@@ -23,6 +23,7 @@ public class Nominee
         firstname = DEFAULT;
         elected = false;
         historicElected = false;
+        numVotes = 0;
     }
 
     public Nominee(String inEntry)
@@ -41,8 +42,8 @@ public class Nominee
             //   StateAb, DivisionID, DivisionNm, PartyAb, PartyNm
             //   CandidateID, Surname, GivenNm, Elected, HistoricElected
 
-            //splitString = inEntry.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-            splitString = inEntry.split(",");
+            splitString = inEntry.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            //splitString = inEntry.split(",");
 
             if (splitString.length != 10)
             {
@@ -62,6 +63,7 @@ public class Nominee
                 this.setFirstName(splitString[7]);
                 this.setElected(splitString[8]);
                 this.setHistoricElected(splitString[9]);
+                this.setNumVotes("0");
             }
         }
     }
@@ -70,9 +72,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "State is invalid"
-            );
+            state = DEFAULT;
         }
         else
         {
@@ -84,9 +84,7 @@ public class Nominee
     {
         if (! validateInt(input))
         {
-            throw new IllegalArgumentException(
-                "Division ID is invalid"
-            );
+            idDivision = 0;
         }
         else
         {
@@ -98,9 +96,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Division Name is invalid"
-            );
+            nameDivision = DEFAULT;
         }
         else
         {
@@ -112,9 +108,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Party Abbreviation is invalid"
-            );
+            abvParty = DEFAULT;
         }
         else
         {
@@ -126,9 +120,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Party Name is invalid"
-            );
+            nameParty = DEFAULT;
         }
         else
         {
@@ -140,9 +132,7 @@ public class Nominee
     {
         if (! validateInt(input))
         {
-            throw new IllegalArgumentException(
-                "Candidate ID is invalid"
-            );
+            idCandidate = 0;
         }
         else
         {
@@ -154,9 +144,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Surname is invalid"
-            );
+            surname = DEFAULT;
         }
         else
         {
@@ -168,9 +156,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Given Name is invalid"
-            );
+            firstname = DEFAULT;
         }
         else
         {
@@ -182,9 +168,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Elected is invalid"
-            );
+            elected = false;
         }
         else
         {
@@ -209,9 +193,7 @@ public class Nominee
     {
         if (! validateString(input))
         {
-            throw new IllegalArgumentException(
-                "Historic Elected is invalid"
-            );
+            historicElected = false;
         }
         else
         {
@@ -232,6 +214,20 @@ public class Nominee
         }
     }
 
+    public void setNumVotes(String input)
+    {
+        if (! validateString(input))
+        {
+            throw new IllegalArgumentException(
+                "Number of Votes is invalid"
+            );
+        }
+        else
+        {
+            numVotes = Integer.parseInt(input);
+        }
+    }
+
     public String  getState()           { return state; }
     public int     getIdDivision()      { return idDivision; }
     public String  getNameDivision()    { return nameDivision; }
@@ -242,6 +238,7 @@ public class Nominee
     public String  getFirstName()       { return firstname; }
     public boolean getElected()         { return elected; }
     public boolean getHistoricElected() { return historicElected; }
+    public int     getNumVotes()        { return numVotes; }
 
     public String toString()
     {

@@ -29,7 +29,7 @@ public class Driver
         Menu menu;
         boolean exit;
         DSALinkedList<Nominee> nomineesList;
-        DSALinkedList<HousePreference> prefList;
+        DSALinkedList<HousePreference> preferenceList;
 
         menu = new Menu(6);
         menu.addOption("Please select an option:");
@@ -41,7 +41,7 @@ public class Driver
         exit = false;
 
         nomineesList = processNominees(files[0]);
-        prefList = processHousePreference(files[1]);
+        preferenceList = processPreference(files[1], nomineesList);
 
         while (! exit)
         {
@@ -127,57 +127,144 @@ public class Driver
         return nomineeList;
     }
 
-    public static DSALinkedList<HousePreference> processHousePreference(
-            String file)
+    public static DSALinkedList<HousePreference> processPreference(
+        String file, DSALinkedList<Nominee>nomineeList)
     {
         DSALinkedList<String> list;
-        DSALinkedList<HousePreference> prefList;
+        DSALinkedList<String> inList;
+        DSALinkedList<HousePreference> preferenceList;
+        DSALinkedList<Nominee> tempNomineeList;
         Iterator<String> iter;
-        DSALinkedList<String> invalidEntries;
-        String line;
+
+        Nominee tempNominee;
+        HousePreference tempHousePref;
+        String divisionId, divisionName;
+
+        DSALinkedList<String> divisionIdList;
+        DSALinkedList<String> uniqueDivisionId;
+        String[] split;
 
         list = FileIO.readText(file);
-        iter = list.iterator();
+        divisionIdList = new DSALinkedList<String>();
+        uniqueDivisionId = new DSALinkedList<String>();
 
-        prefList = new DSALinkedList<HousePreference>();
-        invalidEntries = new DSALinkedList<String>();
-        line = "";
-
-        if (iter.hasNext())
+        for (String i : list)
         {
-            iter.next();
-
-            while (iter.hasNext())
+            split = i.split(",");
+            if (! split[1].isEmpty())
             {
-                try
-                {
-                    line = iter.next();
-                    prefList.insertLast(new HousePreference(line));
-                }
-                catch (IllegalArgumentException e)
-                {
-                    invalidEntries.insertLast(line);
-                }
+                divisionIdList.insertLast(split[1]);
             }
         }
-        else
+
+        for (String i : divisionIdList)
         {
-            throw new IllegalArgumentException(
-                "House preference file is invalid"
-            );
+            if (! i.equals("DivisionID") && isUnique(uniqueDivisionId, i))
+            {
+                uniqueDivisionId.insertLast(i);
+            }
         }
 
-        iter = invalidEntries.iterator();
+        preferenceList = new DSALinkedList<HousePreference>();
 
-        while (iter.hasNext())
+        for (String i : uniqueDivisionId)
         {
-            System.out.println(
-                "Invalid entry in " + file +
-                ": " + iter.next()
-            );
+            tempNomineeList = getNomineeFromDivisionId(nomineeList, i);
+            inList = getPreferenceFromDivisionId(list, i);
+
+            split = inList.peekFirst().split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            divisionName = split[2];
+            divisionId = split[1];
+
+            tempHousePref = new HousePreference(divisionName, divisionId);
+
+            for (String inInList : inList)
+            {
+                if (! inInList.contains("Informal"))
+                {
+                    split = inInList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+
+                    tempNominee = getNomineeFromCandidateId(
+                        tempNomineeList, split[5]
+                    );
+
+                    tempNominee.setNumVotes(
+                        Integer.toString(
+                            tempNominee.getNumVotes() + Integer.parseInt(
+                                split[13]
+                            )
+                        )
+                    );
+                }
+            }
+
+            for (Nominee inNomineeList : tempNomineeList)
+            {
+                tempHousePref.addNomineeToList(inNomineeList);
+            }
+
+            preferenceList.insertLast(tempHousePref);
+            break;
         }
 
-        return prefList;
+        return preferenceList;
+    }
+
+    public static DSALinkedList<Nominee> getNomineeFromDivisionId(
+        DSALinkedList<Nominee> nomineeList, String inDivisionId)
+    {
+        DSALinkedList<Nominee> returnList;
+        returnList = new DSALinkedList<Nominee>();
+
+        for (Nominee inList : nomineeList)
+        {
+            if (Integer.toString(inList.getIdDivision()).equals(inDivisionId))
+            {
+                returnList.insertLast(inList);
+            }
+        }
+
+        return returnList;
+    }
+
+    public static Nominee getNomineeFromCandidateId(
+        DSALinkedList<Nominee> nomineeList, String inCandidateId)
+    {
+        Nominee inList = null;
+        Nominee result = null;
+        Iterator<Nominee> iter = nomineeList.iterator();
+        boolean isFound = false;
+
+        while (! isFound && iter.hasNext())
+        {
+            inList = iter.next();
+            if (Integer.toString(inList.getIdCandidate()).equals(inCandidateId))
+            {
+                result = inList;
+                isFound = true;
+            }
+        }
+
+        return result;
+    }
+
+    public static DSALinkedList<String> getPreferenceFromDivisionId(
+        DSALinkedList<String> list, String inDivisionId)
+    {
+        DSALinkedList<String> returnList;
+        String[] split;
+        returnList = new DSALinkedList<String>();
+
+        for (String inList : list)
+        {
+            split = inList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            if (! split[1].isEmpty() && split[1].equals(inDivisionId))
+            {
+                returnList.insertLast(inList);
+            }
+        }
+
+        return returnList;
     }
 
     public static void listNominees(DSALinkedList<Nominee> nomineeList)
@@ -192,7 +279,6 @@ public class Driver
         iter = nomineeList.iterator();
 
         boolean filterOptions[] = {false, false, false};
-        boolean orderOptions[] = {false, false, false, false};
 
         String userInput;
         String[] split;
@@ -379,25 +465,6 @@ public class Driver
                 searchResult[j] = (Nominee)sorted[j];
             }
         }
-
-        /*
-        if (orderOptions[2])
-        {
-            for (Nominee inResult : searchResult)
-            {
-                heap.add(inResult.getNameParty(), inResult);
-            }
-
-            heap.heapSort();
-
-            sorted = heap.toObjArray();
-
-            for (int j = 0; j < numMatches; j++)
-            {
-                searchResult[j] = (Nominee)sorted[j];
-            }
-        }
-        */
 
         printNomineesTable(searchResult);
         System.out.println("\n" + numMatches + "/" + numNominee + " matches");
@@ -621,6 +688,23 @@ public class Driver
     public static String formatPadding(String padding, char line)
     {
         return String.format(padding, " ").replace(' ', line);
+    }
+
+    public static boolean isUnique(DSALinkedList<String> list, String search)
+    {
+        Iterator<String> iter;
+        String inList;
+        boolean isUnique = true;
+
+        iter = list.iterator();
+
+        while (isUnique && iter.hasNext())
+        {
+            inList = iter.next();
+            isUnique = ! search.equals(inList);
+        }
+
+        return isUnique;
     }
 
     public static void printHelp()

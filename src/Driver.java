@@ -150,7 +150,7 @@ public class Driver
 
         for (String i : list)
         {
-            split = i.split(",");
+            split = i.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
             if (! split[1].isEmpty())
             {
                 divisionIdList.insertLast(split[1]);
@@ -608,7 +608,9 @@ public class Driver
 
         for (int i = 0; i < nomineeArr.length; i++)
         {
-            fields[i] = nomineeArr[i].toString().split(",");
+            fields[i] = nomineeArr[i].toString().split(
+                    ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+            );
         }
 
         for (int i = 0; i < paddingArr.length; i++)

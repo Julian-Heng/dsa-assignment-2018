@@ -4,6 +4,7 @@ public class testHarness
     {
         testNominee.run();
         testHousePreference.run();
+        testDSAHeap.run();
     }
 
     public static void header(String msg)

@@ -56,7 +56,8 @@ public class Driver
                         searchNominees(nomineesList);
                         break;
                     case 3:
-                        System.out.println("Selected List by Margin");
+                        //System.out.println("Selected List by Margin");
+                        listPartyMargin(preferenceList);
                         break;
                     case 4:
                         System.out.println("Selected Itinerary by Margin");
@@ -83,13 +84,13 @@ public class Driver
         DSALinkedList<String> invalidEntries;
         String line;
 
-        String spinner[] = {"\\", "|", "/", "-"};
+        String spinner[] = {"\\", "\\", "|", "|", "/", "/", "-", "-"};
         int count = 0;
-
-        System.out.print("Reading " + file + "... ");
 
         list = FileIO.readText(file);
         iter = list.iterator();
+
+        System.out.print("Reading " + file + "... ");
 
         nomineeList = new DSALinkedList<Nominee>();
         invalidEntries = new DSALinkedList<String>();
@@ -152,14 +153,14 @@ public class Driver
         DSALinkedList<String> uniqueDivisionId;
         String[] split;
 
-        String spinner[] = {"\\", "|", "/", "-"};
+        String spinner[] = {"\\", "\\", "|", "|", "/", "/", "-", "-"};
         int count = 0;
-
-        System.out.print("Reading " + file + "... ");
 
         list = FileIO.readText(file);
         divisionIdList = new DSALinkedList<String>();
         uniqueDivisionId = new DSALinkedList<String>();
+
+        System.out.print("Reading " + file + "... ");
 
         for (String i : list)
         {
@@ -195,9 +196,10 @@ public class Driver
             {
                 printSpinner(spinner, count++);
 
-                if (! inInList.contains("Informal"))
+                split = inInList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (! split[6].equals("Informal") &&
+                    ! split[7].equals("Informal"))
                 {
-                    split = inInList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 
                     tempNominee = getNomineeFromCandidateId(
                         tempNomineeList, split[5]
@@ -220,12 +222,32 @@ public class Driver
                         );
                     }
                 }
+                else
+                {
+                    try
+                    {
+                        tempHousePref.setNumInformalVotes(
+                            Integer.toString(
+                                tempHousePref.getNumInformalVotes() +
+                                    Integer.parseInt(split[13])
+                                )
+                        );
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        throw new IllegalArgumentException(
+                            "Invalid Number of Votes: " + split[13]
+                        );
+                    }
+                }
             }
 
             for (Nominee inNomineeList : tempNomineeList)
             {
                 tempHousePref.addNomineeToList(inNomineeList);
             }
+
+            tempHousePref.updateTotalVotes();
 
             preferenceList.insertLast(tempHousePref);
         }
@@ -324,6 +346,8 @@ public class Driver
 
         DSAHeap heap;
 
+        String[] fileContents;
+
         filterMenu = new Menu(4);
         orderMenu = new Menu(5);
 
@@ -403,6 +427,23 @@ public class Driver
 
         printNomineesTable(searchResult);
         System.out.println("\n" + numMatches + "/" + numNominee + " matches");
+
+        userInput = Input.string("Save report to file? [Y/n]: ");
+
+        if ((userInput.equals("Y")) ||
+            (userInput.equals("y")) ||
+            (userInput.isEmpty()))
+        {
+            fileContents = new String[numMatches];
+
+            for (i = 0; i < numMatches; i++)
+            {
+                fileContents[i] = searchResult[i].toString();
+            }
+
+            userInput = Input.string("Enter filename: ");
+            FileIO.writeText(userInput, fileContents);
+        }
     }
 
     public static void searchNominees(DSALinkedList<Nominee> nomineeList)
@@ -430,6 +471,8 @@ public class Driver
         int numMatches = 0;
         int numNominee = 0;
         int i = 0;
+
+        String fileContents[];
 
         filterMenu = new Menu(3);
 
@@ -481,6 +524,23 @@ public class Driver
 
         printNomineesTable(searchResult);
         System.out.println("\n" + numMatches + "/" + numNominee + " matches");
+
+        userInput = Input.string("Save report to file? [Y/n]: ");
+
+        if ((userInput.equals("Y")) ||
+            (userInput.equals("y")) ||
+            (userInput.isEmpty()))
+        {
+            fileContents = new String[numMatches];
+
+            for (i = 0; i < numMatches; i++)
+            {
+                fileContents[i] = searchResult[i].toString();
+            }
+
+            userInput = Input.string("Enter filename: ");
+            FileIO.writeText(userInput, fileContents);
+        }
     }
 
     public static void processFilterOptions(boolean[] options, String[] input)
@@ -579,6 +639,137 @@ public class Driver
         }
 
         return sortLine;
+    }
+
+    public static void listPartyMargin(
+        DSALinkedList<HousePreference> prefList)
+    {
+        HousePreference tempPref;
+        Nominee tempNominee;
+        Iterator<HousePreference> iterPref;
+        Iterator<Nominee> iterNominee;
+        HousePreference prefDivision;
+
+        String header, line;
+
+        String userInput;
+        String partyFilter = "";
+        double marginLimit;
+
+        int count, numMatches;
+        int votesFor, votesAgainst, votesTotal;
+        double percent, margin;
+
+        tempPref = null;
+        tempNominee = null;
+        iterPref = null;
+        iterNominee = null;
+        prefDivision = null;
+
+        count = 0;
+        numMatches = 0;
+
+        votesFor = 0;
+        votesAgainst = 0;
+        votesTotal = 0;
+
+        percent = 0.0;
+        margin = 0.0;
+
+        userInput = Input.string("Input party: ");
+
+        if (userInput.isEmpty())
+        {
+            System.out.println(
+                "No party found: Empty search field"
+            );
+        }
+        else
+        {
+            partyFilter = userInput;
+
+            userInput = Input.string("Input margin [6.0]: ");
+
+            if (userInput.isEmpty())
+            {
+                marginLimit = 6.0;
+            }
+            else
+            {
+                try
+                {
+                    marginLimit = Double.parseDouble(userInput);
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println(
+                        "Margin is invalid. Using 6.0 instead"
+                    );
+                    marginLimit = 6.0;
+                }
+            }
+
+            iterPref = prefList.iterator();
+
+            while (iterPref.hasNext())
+            {
+                votesFor = 0;
+                votesAgainst = 0;
+                votesTotal = 0;
+                count++;
+
+                tempPref = iterPref.next();
+                iterNominee = tempPref.getListNominee().iterator();
+
+                while (iterNominee.hasNext())
+                {
+                    tempNominee = iterNominee.next();
+
+                    if ((tempNominee.getAbvParty().matches(partyFilter)) ||
+                        (tempNominee.getNameParty().matches(partyFilter)))
+                    {
+                        numMatches++;
+                        votesFor += tempNominee.getNumVotes();
+                    }
+                    else
+                    {
+                        votesAgainst += tempNominee.getNumVotes();
+                    }
+                }
+
+                votesTotal += tempPref.getNumTotalVotes();
+
+                percent = ((double)votesFor / (double)votesTotal) * 100;
+                margin = percent - 50.0;
+
+                if (Math.abs(margin) < marginLimit)
+                {
+                    header = " " + count + " | " +
+                             "Division: " + tempPref.getPrefNameDivision() +
+                             " | ID: " + tempPref.getPrefIdDivision();
+                    line = generateLine(header.length());
+
+                    System.out.println(line);
+                    System.out.println(header);
+                    System.out.println(line);
+                    System.out.println("For:         " + votesFor);
+                    System.out.println("Against:     " + votesAgainst);
+                    System.out.println("Total votes: " + votesTotal);
+                    System.out.println(line);
+                    System.out.printf("%s %.2f%s\n", "Percent For:", percent, "%");
+                    System.out.printf("%s      %.2f\n", "Margin:", margin);
+                    System.out.println(line);
+                    System.out.print("\n");
+                }
+            }
+
+            if (numMatches == 0)
+            {
+                System.out.println(
+                    "No party found: " + partyFilter
+                );
+            }
+        }
     }
 
     public static void printNomineesTable(Nominee[] nomineeArr)
@@ -684,6 +875,11 @@ public class Driver
     public static String formatPadding(String padding, char line)
     {
         return String.format(padding, " ").replace(' ', line);
+    }
+
+    public static String generateLine(int size)
+    {
+        return String.format("%" + size + "s", " ").replace(' ', '=');
     }
 
     public static boolean isUnique(DSALinkedList<String> list, String search)

@@ -67,6 +67,16 @@ public class HousePreference
         }
     }
 
+    public void updateTotalVotes()
+    {
+        numTotalVotes = numInformalVotes;
+
+        for (Nominee i : listNominee)
+        {
+            numTotalVotes += i.getNumVotes();
+        }
+    }
+
     public void setNumInformalVotes(String inNumInformalVotes)
     {
         if (! validateInt(inNumInformalVotes))
@@ -94,6 +104,12 @@ public class HousePreference
             numTotalVotes = Integer.parseInt(inNumTotalVotes);
         }
     }
+
+    public String getPrefNameDivision() { return prefNameDivision; }
+    public int getPrefIdDivision() { return prefIdDivision; }
+    public DSALinkedList<Nominee> getListNominee() { return listNominee; }
+    public int getNumInformalVotes() { return numInformalVotes; }
+    public int getNumTotalVotes() { return numTotalVotes; }
 
     private boolean validateString(String str)
     {

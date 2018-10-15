@@ -3,6 +3,7 @@ public class HousePreference
     private String prefNameDivision;
     private int prefIdDivision;
     private DSALinkedList<Nominee> listNominee;
+    private int numInformalVotes, numTotalVotes;
 
     public static final String DEFAULT = "TBD";
 
@@ -11,6 +12,8 @@ public class HousePreference
         prefNameDivision = DEFAULT;
         prefIdDivision = 0;
         listNominee = new DSALinkedList<Nominee>();
+        numInformalVotes = 0;
+        numTotalVotes = 0;
     }
 
     public HousePreference(String inNameDivision, String inIdDivision)
@@ -18,6 +21,8 @@ public class HousePreference
         setPrefNameDivision(inNameDivision);
         setPrefIdDivision(inIdDivision);
         listNominee = new DSALinkedList<Nominee>();
+        numInformalVotes = 0;
+        numTotalVotes = 0;
     }
 
     public void setPrefNameDivision(String inNameDivision)
@@ -59,6 +64,34 @@ public class HousePreference
         else
         {
             listNominee.insertLast(inNominee);
+        }
+    }
+
+    public void setNumInformalVotes(String inNumInformalVotes)
+    {
+        if (! validateInt(inNumInformalVotes))
+        {
+            throw new IllegalArgumentException(
+                "Number of Informal Votes invalid"
+            );
+        }
+        else
+        {
+            numInformalVotes = Integer.parseInt(inNumInformalVotes);
+        }
+    }
+
+    public void setNumTotalVotes(String inNumTotalVotes)
+    {
+        if (! validateInt(inNumTotalVotes))
+        {
+            throw new IllegalArgumentException(
+                "Number of Total Votes invalid"
+            );
+        }
+        else
+        {
+            numTotalVotes = Integer.parseInt(inNumTotalVotes);
         }
     }
 

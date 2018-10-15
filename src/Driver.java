@@ -83,6 +83,11 @@ public class Driver
         DSALinkedList<String> invalidEntries;
         String line;
 
+        String spinner[] = {"\\", "|", "/", "-"};
+        int count = 0;
+
+        System.out.print("Reading " + file + "... ");
+
         list = FileIO.readText(file);
         iter = list.iterator();
 
@@ -96,6 +101,7 @@ public class Driver
 
             while (iter.hasNext())
             {
+                printSpinner(spinner, count++);
                 try
                 {
                     line = iter.next();
@@ -124,6 +130,8 @@ public class Driver
             );
         }
 
+        System.out.print("\n");
+
         return nomineeList;
     }
 
@@ -143,6 +151,11 @@ public class Driver
         DSALinkedList<String> divisionIdList;
         DSALinkedList<String> uniqueDivisionId;
         String[] split;
+
+        String spinner[] = {"\\", "|", "/", "-"};
+        int count = 0;
+
+        System.out.print("Reading " + file + "... ");
 
         list = FileIO.readText(file);
         divisionIdList = new DSALinkedList<String>();
@@ -180,6 +193,8 @@ public class Driver
 
             for (String inInList : inList)
             {
+                printSpinner(spinner, count++);
+
                 if (! inInList.contains("Informal"))
                 {
                     split = inInList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -188,13 +203,22 @@ public class Driver
                         tempNomineeList, split[5]
                     );
 
-                    tempNominee.setNumVotes(
-                        Integer.toString(
-                            tempNominee.getNumVotes() + Integer.parseInt(
-                                split[13]
+                    try
+                    {
+                        tempNominee.setNumVotes(
+                            Integer.toString(
+                                tempNominee.getNumVotes() + Integer.parseInt(
+                                    split[13]
+                                )
                             )
-                        )
-                    );
+                        );
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        throw new IllegalArgumentException(
+                            "Invalid Number of Votes: " + split[13]
+                        );
+                    }
                 }
             }
 
@@ -204,8 +228,9 @@ public class Driver
             }
 
             preferenceList.insertLast(tempHousePref);
-            break;
         }
+
+        System.out.print("\n");
 
         return preferenceList;
     }
@@ -218,7 +243,7 @@ public class Driver
 
         for (Nominee inList : nomineeList)
         {
-            if (Integer.toString(inList.getIdDivision()).equals(inDivisionId))
+            if (compareIntString(inList.getIdDivision(), inDivisionId))
             {
                 returnList.insertLast(inList);
             }
@@ -238,7 +263,7 @@ public class Driver
         while (! isFound && iter.hasNext())
         {
             inList = iter.next();
-            if (Integer.toString(inList.getIdCandidate()).equals(inCandidateId))
+            if (compareIntString(inList.getIdCandidate(), inCandidateId))
             {
                 result = inList;
                 isFound = true;
@@ -279,14 +304,18 @@ public class Driver
         iter = nomineeList.iterator();
 
         boolean filterOptions[] = {false, false, false};
+        String filterMsg[] = {
+            "Input state filter: ",
+            "Input party filter: ",
+            "Input division filter: "
+        };
+
+        String filters[] = new String[3];
 
         String userInput;
         String[] split;
         int optionSwitch;
 
-        String stateFilter = "";
-        String partyFilter = "";
-        String divisionFilter = "";
         String sortLine = "";
 
         int numMatches = 0;
@@ -315,96 +344,22 @@ public class Driver
 
         if (! userInput.isEmpty())
         {
-            for (String option : split)
-            {
-                try
-                {
-                    optionSwitch = Integer.parseInt(option);
-                    if (optionSwitch > 0 &&
-                        optionSwitch <= filterOptions.length)
-                    {
-                        filterOptions[optionSwitch - 1] = true;
-                    }
-                }
-                catch (NumberFormatException e)
-                {
-                    System.out.println(
-                        "Invalid option: " + option + ". Ignoring"
-                    );
-                }
-            }
+            processFilterOptions(filterOptions, split);
         }
 
-        if (filterOptions[0])
+        for (i = 0; i < filters.length; i++)
         {
-            stateFilter = Input.string("Input state filter: ");
-
-            if (stateFilter.isEmpty())
-            {
-                stateFilter = ".*";
-            }
-        }
-        else
-        {
-            stateFilter = ".*";
-        }
-
-        if (filterOptions[1])
-        {
-            partyFilter = Input.string("Input party filter: ");
-
-            if (partyFilter.isEmpty())
-            {
-                partyFilter = ".*";
-            }
-        }
-        else
-        {
-            partyFilter = ".*";
-        }
-
-        if (filterOptions[2])
-        {
-            divisionFilter = Input.string("Input division filter: ");
-
-            if (divisionFilter.isEmpty())
-            {
-                divisionFilter = ".*";
-            }
-        }
-        else
-        {
-            divisionFilter = ".*";
+            filters[i] = filterOptions[i] ? getFilter(filterMsg[i]) : ".*";
         }
 
         orderMenu.printMenu();
         userInput = Input.string();
         split = userInput.split(" ");
 
-        if (! userInput.isEmpty())
-        {
-            for (String option : split)
-            {
-                try
-                {
-                    optionSwitch = Integer.parseInt(option);
-                }
-                catch (NumberFormatException e)
-                {
-                    throw new IllegalArgumentException(
-                        "Invalid option: " + option + "."
-                    );
-                }
-            }
-        }
-
         while (iter.hasNext())
         {
             numNominee++;
-            inList = iter.next();
-            if (inList.getState().matches(stateFilter) &&
-                inList.getNameParty().matches(partyFilter) &&
-                inList.getNameDivision().matches(divisionFilter))
+            if (searchNominee1(iter.next(), filters))
             {
                 numMatches++;
             }
@@ -416,13 +371,13 @@ public class Driver
         iter = null;
         inList = null;
         iter = nomineeList.iterator();
+        i = 0;
 
         while (iter.hasNext())
         {
             inList = iter.next();
-            if (inList.getState().matches(stateFilter) &&
-                inList.getNameParty().matches(partyFilter) &&
-                inList.getNameDivision().matches(divisionFilter))
+
+            if (searchNominee1(inList, filters))
             {
                 searchResult[i] = inList;
                 i++;
@@ -433,27 +388,7 @@ public class Driver
         {
             for (Nominee inResult : searchResult)
             {
-                sortLine = "";
-
-                for (String option : split)
-                {
-                    switch (Integer.parseInt(option))
-                    {
-                        case 1:
-                            sortLine += inResult.getSurname() + "|";
-                            break;
-                        case 2:
-                            sortLine += inResult.getState() + "|";
-                            break;
-                        case 3:
-                            sortLine += inResult.getNameParty() + "|";
-                            break;
-                        case 4:
-                            sortLine += inResult.getNameDivision() + "|";
-                            break;
-                    }
-                }
-
+                sortLine = generateSortLine(inResult, split);
                 heap.add(sortLine, inResult);
             }
 
@@ -480,14 +415,17 @@ public class Driver
         iter = nomineeList.iterator();
 
         boolean filterOptions[] = {false, false};
+        String filterMsg[] = {
+            "Input state filter: ",
+            "Input party filter: "
+        };
+
+        String filters[] = new String[2];
 
         String userInput;
         String[] split;
-        int optionSwitch;
 
-        String surnameFilter = "";
-        String stateFilter = "";
-        String partyFilter = "";
+        String nameFilter = "";
 
         int numMatches = 0;
         int numNominee = 0;
@@ -499,7 +437,7 @@ public class Driver
         filterMenu.addOption("    1. State");
         filterMenu.addOption("    2. Party");
 
-        surnameFilter = Input.string("Input surname search term: ");
+        nameFilter = Input.string("Input surname search term: ");
 
         filterMenu.printMenu();
         userInput = Input.string();
@@ -507,59 +445,17 @@ public class Driver
 
         if (! userInput.isEmpty())
         {
-            for (String option : split)
-            {
-                try
-                {
-                    optionSwitch = Integer.parseInt(option);
-                    if (optionSwitch > 0 && optionSwitch < 4)
-                    {
-                        filterOptions[optionSwitch - 1] = true;
-                    }
-                }
-                catch (NumberFormatException e)
-                {
-                    System.out.println(
-                        "Invalid option: " + option + ". Ignoring"
-                    );
-                }
-            }
+            processFilterOptions(filterOptions, split);
         }
 
-        if (filterOptions[0])
+        for (i = 0; i < filters.length; i++)
         {
-            stateFilter = Input.string("Input state filter: ");
-
-            if (stateFilter.isEmpty())
-            {
-                stateFilter = ".*";
-            }
-        }
-        else
-        {
-            stateFilter = ".*";
-        }
-
-        if (filterOptions[1])
-        {
-            partyFilter = Input.string("Input party filter: ");
-
-            if (partyFilter.isEmpty())
-            {
-                partyFilter = ".*";
-            }
-        }
-        else
-        {
-            partyFilter = ".*";
+            filters[i] = filterOptions[i] ? getFilter(filterMsg[i]) : ".*";
         }
 
         while (iter.hasNext())
         {
-            inList = iter.next();
-            if (inList.getSurname().startsWith(surnameFilter) &&
-                inList.getState().matches(stateFilter) &&
-                inList.getNameParty().matches(partyFilter))
+            if (searchNominee2(iter.next(), nameFilter, filters))
             {
                 numMatches++;
             }
@@ -569,14 +465,14 @@ public class Driver
         iter = null;
         inList = null;
         iter = nomineeList.iterator();
+        i = 0;
 
         while (iter.hasNext())
         {
             numNominee++;
             inList = iter.next();
-            if (inList.getSurname().startsWith(surnameFilter) &&
-                inList.getState().matches(stateFilter) &&
-                inList.getNameParty().matches(partyFilter))
+
+            if (searchNominee2(inList, nameFilter, filters))
             {
                 searchResult[i] = inList;
                 i++;
@@ -585,6 +481,104 @@ public class Driver
 
         printNomineesTable(searchResult);
         System.out.println("\n" + numMatches + "/" + numNominee + " matches");
+    }
+
+    public static void processFilterOptions(boolean[] options, String[] input)
+    {
+        int optionSwitch;
+
+        for (String option : input)
+        {
+            try
+            {
+                optionSwitch = Integer.parseInt(option);
+                if (optionSwitch > 0 && optionSwitch <= options.length)
+                {
+                    options[optionSwitch - 1] = true;
+                }
+                else
+                {
+                    System.out.println(
+                        "Invalid option: " + option + ". Ignoring"
+                    );
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(
+                    "Invalid option: " + option + ". Ignoring"
+                );
+            }
+        }
+    }
+
+    public static String getFilter(String msg)
+    {
+        String userInput;
+        userInput = Input.string(msg);
+        return ! userInput.isEmpty() ? userInput : ".*";
+    }
+
+    public static boolean searchNominee1(Nominee inNominee, String[] filters)
+    {
+        return (inNominee.getState().matches(filters[0])) &&
+               ((inNominee.getNameParty().matches(filters[1])) ||
+                (inNominee.getAbvParty().matches(filters[1]))) &&
+               ((inNominee.getNameDivision().matches(filters[2])) ||
+                (Integer.toString(inNominee.getIdDivision()).matches(
+                    filters[2]
+                )));
+    }
+
+    public static boolean searchNominee2(
+        Nominee inNominee,
+        String name,
+        String[] filters)
+    {
+        return (inNominee.getSurname().startsWith(name)) &&
+               (inNominee.getState().matches(filters[0])) &&
+               ((inNominee.getNameParty().matches(filters[1])) ||
+                (inNominee.getAbvParty().matches(filters[1])));
+    }
+
+    public static String generateSortLine(Nominee inNominee, String[] order)
+    {
+        String sortLine = "";
+
+        for (String choice : order)
+        {
+            try
+            {
+                switch (Integer.parseInt(choice))
+                {
+                    case 1:
+                        sortLine += inNominee.getSurname() + "|";
+                        break;
+                    case 2:
+                        sortLine += inNominee.getState() + "|";
+                        break;
+                    case 3:
+                        sortLine += inNominee.getNameParty() + "|";
+                        break;
+                    case 4:
+                        sortLine += inNominee.getNameDivision() + "|";
+                        break;
+                    default:
+                        System.out.println(
+                            "Invalid order option: " + choice + ". Ignoring"
+                        );
+                        break;
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(
+                    "Invalid order option: " + choice + ". Ignoring"
+                );
+            }
+        }
+
+        return sortLine;
     }
 
     public static void printNomineesTable(Nominee[] nomineeArr)
@@ -707,6 +701,16 @@ public class Driver
         }
 
         return isUnique;
+    }
+
+    public static boolean compareIntString(int num, String str)
+    {
+        return Integer.toString(num).equals(str);
+    }
+
+    public static void printSpinner(String[] pool, int step)
+    {
+        System.out.print(pool[step % pool.length] + "\u0008");
     }
 
     public static void printHelp()

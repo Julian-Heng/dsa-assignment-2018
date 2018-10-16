@@ -75,7 +75,6 @@ public class Driver
                         searchNominees(nomineesList);
                         break;
                     case 3:
-                        //System.out.println("Selected List by Margin");
                         listPartyMargin(preferenceList);
                         break;
                     case 4:

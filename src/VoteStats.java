@@ -155,7 +155,16 @@ public class VoteStats
     public double getMargin() { return margin; }
     public double getPercent()
     {
-        return ((double)votesFor / (double)votesTotal) * 100;
+        double percent;
+
+        percent = 0.0;
+
+        if (votesTotal != 0)
+        {
+            percent = ((double)votesFor / (double)votesTotal) * 100;
+        }
+
+        return percent;
     }
 
     public String toString()

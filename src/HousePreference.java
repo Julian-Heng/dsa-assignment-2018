@@ -53,30 +53,6 @@ public class HousePreference
         }
     }
 
-    public void addNomineeToList(Nominee inNominee)
-    {
-        if (! validateObject(inNominee))
-        {
-            throw new IllegalArgumentException(
-                "Nominee is invalid"
-            );
-        }
-        else
-        {
-            listNominee.insertLast(inNominee);
-        }
-    }
-
-    public void updateTotalVotes()
-    {
-        numTotalVotes = numInformalVotes;
-
-        for (Nominee i : listNominee)
-        {
-            numTotalVotes += i.getNumVotes();
-        }
-    }
-
     public void setNumInformalVotes(String inNumInformalVotes)
     {
         if (! validateInt(inNumInformalVotes))
@@ -102,6 +78,30 @@ public class HousePreference
         else
         {
             numTotalVotes = Integer.parseInt(inNumTotalVotes);
+        }
+    }
+
+    public void addNomineeToList(Nominee inNominee)
+    {
+        if (! validateObject(inNominee))
+        {
+            throw new IllegalArgumentException(
+                "Nominee is invalid"
+            );
+        }
+        else
+        {
+            listNominee.insertLast(inNominee);
+        }
+    }
+
+    public void updateTotalVotes()
+    {
+        numTotalVotes = numInformalVotes;
+
+        for (Nominee i : listNominee)
+        {
+            numTotalVotes += i.getNumVotes();
         }
     }
 

@@ -4,7 +4,7 @@ public class Driver
 {
     public static void main(String[] args)
     {
-        if (args.length < 2 ||
+        if (args.length < 3 ||
             args[0].equals("--help") ||
             args[0].equals("-h"))
         {
@@ -29,6 +29,7 @@ public class Driver
         Menu menu;
         boolean exit;
         long timeStart, timeEnd, duration;
+        DSAGraph<Location> locations;
         DSALinkedList<Nominee> nomineesList;
         DSALinkedList<HousePreference> preferenceList;
         DSALinkedList<HousePreference> tempPrefList;
@@ -42,12 +43,13 @@ public class Driver
         menu.addOption("    5. Exit");
         exit = false;
 
-        nomineesList = processNominees(files[0]);
+        locations = processDistances(files[0]);
+        nomineesList = processNominees(files[1]);
         preferenceList = new DSALinkedList<HousePreference>();
 
         timeStart = System.nanoTime();
 
-        for (int i = 1; i < files.length; i++)
+        for (int i = 2; i < files.length; i++)
         {
             tempPrefList = processPreference(files[i], nomineesList);
             for (HousePreference inTemp : tempPrefList)
@@ -62,6 +64,7 @@ public class Driver
                            toMiliseconds(duration) + "ms"
         );
 
+        /*
         while (! exit)
         {
             try
@@ -92,6 +95,94 @@ public class Driver
                 System.out.println(e.getMessage());
             }
         }
+        */
+    }
+
+    public static DSAGraph<Location> processDistances(String file)
+    {
+        DSALinkedList<String> list;
+        DSAGraph<Location> locationGraph;
+        Iterator<String> iter;
+        Location startLocation, endLocation;
+
+        long timeStart, timeEnd, funcDuration;
+        timeStart = System.nanoTime();
+
+        String spinner[] = {"\\", "|", "/", "-"};
+        int count = 0;
+
+        double distance;
+        int tempTimeInt;
+        String tempTimeStr;
+        Time duration;
+        String transportType;
+
+        String[] split;
+
+        list = FileIO.readText(file);
+        System.out.print("Reading " + file + "... ");
+
+        for (String line : list)
+        {
+            printSpinner(spinner, count++);
+
+            split = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+
+            startLocation = new Location(split[0], split[1],
+                                         split[2], split[3]);
+            endLocation = new Location(split[4], split[5],
+                                       split[6], split[7]);
+
+            try
+            {
+                if (split[8].equals("NONE"))
+                {
+                    distance = 0.0;
+                }
+                else
+                {
+                    distance = Double.parseDouble(split[8]);
+                }
+
+                if (split[9].contains(":"))
+                {
+                    duration = new Time(split[9]);
+                }
+                else if (split[9].equals("NONE"))
+                {
+                    duration = new Time("00:00:00");
+                }
+                else
+                {
+                    tempTimeInt = Integer.parseInt(split[9]);
+                    tempTimeStr = String.format(
+                            "%02d", tempTimeInt / 60 % 24
+                        ) + ":" + String.format(
+                            "%02d", tempTimeInt % 60
+                        ) + ":" + String.format(
+                            "%02d", ((tempTimeInt * 60) % 60) % 60
+                        );
+                    duration = new Time(tempTimeStr);
+                }
+
+                transportType = split[10];
+            }
+            catch (NumberFormatException e)
+            {
+                throw new IllegalArgumentException(
+                    "Invalid Distance File: " + e.getMessage()
+                );
+            }
+        }
+
+        locationGraph = new DSAGraph<Location>();
+
+        timeEnd = System.nanoTime();
+        funcDuration = timeEnd - timeStart;
+
+        System.out.println(toMiliseconds(funcDuration) + "ms");
+
+        return locationGraph;
     }
 
     public static DSALinkedList<Nominee> processNominees(String file)
@@ -181,7 +272,6 @@ public class Driver
         DSALinkedList<String> uniqueStateList;
 
         long timeStart, timeEnd, duration;
-
         timeStart = System.nanoTime();
 
         String[] split;
@@ -1059,7 +1149,15 @@ public class Driver
     public static void printHelp()
     {
         String msg[] = {
-            "Usage: java Driver [House candidates file] [House preference file]",
+            "Usage: java Driver [Distance file] [House candidates file]" +
+            "[House preference file]",
+            "",
+            "Example distance file:",
+            "    from_State,from_Division,from_Latitude,from_Longitude," +
+            "to_State,to_Division,to_Latitude,to_Longitude,distance_metres," +
+            "time_hours_minutes,trans_type",
+            "    WA,Perth Airport,-31.936,115.964,NT,Darwin Airport," +
+            "-12.4088317,130.8726632,4016000,44:00:00,car",
             "",
             "Example house candidate file:",
             "    StateAb,DivisionID,DivisionNm,PartyAb,PartyNm," +

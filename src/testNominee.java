@@ -158,11 +158,19 @@ public class testNominee
             candidate = new Nominee(
                 ",151,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+
+            if (! candidate.getState().equals("TBD"))
+            {
+                testHarness.failed("State is set incorrectly");
+            }
+            else
+            {
+                testHarness.passed();
+            }
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print(
@@ -174,21 +182,32 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,asdf,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
-        }
-        catch (Exception e)
-        {
-            try
+
+            if (candidate.getIdDivision() != 0)
             {
-                candidate = new Nominee(
-                    "NSW,,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,Y"
+                throw new IllegalArgumentException(
+                    "Division ID is set incorrectly"
                 );
-                testHarness.failed("Created a valid Nominee");
             }
-            catch (Exception ex)
+
+            candidate = new Nominee(
+                "NSW,,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,Y"
+            );
+
+            if (candidate.getIdDivision() != 0)
+            {
+                throw new IllegalArgumentException(
+                    "Division ID is set incorrectly"
+                );
+            }
+            else
             {
                 testHarness.passed();
             }
+        }
+        catch (Exception e)
+        {
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print(
@@ -200,11 +219,19 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,,LP,Liberal,28624,ABBOTT,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+
+            if (! candidate.getNameDivision().equals("TBD"))
+            {
+                testHarness.failed("Division Name is set incorrectly");
+            }
+            else
+            {
+                testHarness.passed();
+            }
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print(
@@ -216,11 +243,19 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,,Liberal,28624,ABBOTT,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+
+            if (! candidate.getAbvParty().equals("TBD"))
+            {
+                testHarness.failed("Party Abbreviation is set incorrectly");
+            }
+            else
+            {
+                testHarness.passed();
+            }
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print(
@@ -232,11 +267,19 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,,28624,ABBOTT,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+
+            if (! candidate.getNameParty().equals("TBD"))
+            {
+                testHarness.failed("Party Name is set incorrectly");
+            }
+            else
+            {
+                testHarness.passed();
+            }
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print(
@@ -248,21 +291,30 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,Liberal,asdf,ABBOTT,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
-        }
-        catch (Exception e)
-        {
-            try
+
+            if (candidate.getIdCandidate() != 0)
             {
-                candidate = new Nominee(
-                    "NSW,151,Warringah,LP,Liberal,,ABBOTT,Tony,Y,Y"
+                throw new IllegalArgumentException(
+                    "Candidate ID is set incorrectly"
                 );
-                testHarness.failed("Created a valid Nominee");
             }
-            catch (Exception ex)
+
+            candidate = new Nominee(
+                "NSW,151,Warringah,LP,Liberal,,ABBOTT,Tony,Y,Y"
+            );
+
+            if (candidate.getIdCandidate() != 0)
+            {
+                testHarness.failed("Candidate ID is set incorrectly");
+            }
+            else
             {
                 testHarness.passed();
             }
+        }
+        catch (Exception e)
+        {
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor [surname invalid]: ");
@@ -272,11 +324,19 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,Liberal,28624,,Tony,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+
+            if (! candidate.getSurname().equals("TBD"))
+            {
+                testHarness.failed("Surname is set incorrectly");
+            }
+            else
+            {
+                testHarness.passed();
+            }
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print(
@@ -288,11 +348,19 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,,Y,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+
+            if (! candidate.getFirstName().equals("TBD"))
+            {
+                testHarness.failed("First Name is set incorrectly");
+            }
+            else
+            {
+                testHarness.passed();
+            }
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarness.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor [elected invalid]: ");
@@ -302,21 +370,23 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,,Y"
             );
+
+            if (candidate.getElected())
+            {
+                throw new IllegalArgumentException(
+                    "Elected is set incorrectly"
+                );
+            }
+
+            candidate = new Nominee(
+                "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,asdf,Y"
+            );
+
             testHarness.failed("Created a valid Nominee");
         }
         catch (Exception e)
         {
-            try
-            {
-                candidate = new Nominee(
-                    "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,asdf,Y"
-                );
-                testHarness.failed("Created a valid Nominee");
-            }
-            catch (Exception ex)
-            {
-                testHarness.passed();
-            }
+            testHarness.passed();
         }
 
         System.out.print(
@@ -328,21 +398,23 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,"
             );
+
+            if (candidate.getElected())
+            {
+                throw new IllegalArgumentException(
+                    "Historic Elected is set incorrectly"
+                );
+            }
+
+            candidate = new Nominee(
+                "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,asdf"
+            );
+
             testHarness.failed("Created a valid Nominee");
         }
         catch (Exception e)
         {
-            try
-            {
-                candidate = new Nominee(
-                    "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,asdf"
-                );
-                testHarness.failed("Created a valid Nominee");
-            }
-            catch (Exception ex)
-            {
-                testHarness.passed();
-            }
+            testHarness.passed();
         }
     }
 }

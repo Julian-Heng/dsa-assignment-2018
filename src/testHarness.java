@@ -3,6 +3,8 @@ public class testHarness
     public static void main(String[] args)
     {
         testNominee.run();
+        testHousePreference.run();
+        testVoteStats.run();
         testDSAHeap.run();
     }
 

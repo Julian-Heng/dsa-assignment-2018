@@ -29,7 +29,7 @@ public class Driver
         Menu menu;
         boolean exit;
         long timeStart, timeEnd, duration;
-        DSAGraph<Location> locations;
+        DSAGraph<Location,Trip> locations;
         DSALinkedList<Nominee> nomineesList;
         DSALinkedList<HousePreference> preferenceList;
         DSALinkedList<HousePreference> tempPrefList;
@@ -60,11 +60,11 @@ public class Driver
 
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
-        System.out.println("Reading preference file took " +
-                           toMiliseconds(duration) + "ms"
+        System.out.println(
+            "Reading preference file took " +
+            toMiliseconds(duration) + "ms"
         );
 
-        /*
         while (! exit)
         {
             try
@@ -81,10 +81,9 @@ public class Driver
                         listPartyMargin(preferenceList);
                         break;
                     case 4:
-                        System.out.println("Selected Itinerary by Margin");
+                        createItinerary(preferenceList, locations);
                         break;
                     case 5:
-                        System.out.println("Selected Exit");
                         System.out.println("Exiting...");
                         exit = true;
                         break;
@@ -95,13 +94,13 @@ public class Driver
                 System.out.println(e.getMessage());
             }
         }
-        */
     }
 
-    public static DSAGraph<Location> processDistances(String file)
+    public static DSAGraph<Location,Trip> processDistances(
+        String file)
     {
         DSALinkedList<String> list;
-        DSAGraph<Location> locationGraph;
+        DSAGraph<Location,Trip> locationGraph;
         Iterator<String> iter;
         Location startLocation, endLocation;
 
@@ -110,6 +109,8 @@ public class Driver
 
         String spinner[] = {"\\", "|", "/", "-"};
         int count = 0;
+
+        Trip tripInfo;
 
         double distance;
         int tempTimeInt;
@@ -121,6 +122,8 @@ public class Driver
 
         list = FileIO.readText(file);
         System.out.print("Reading " + file + "... ");
+
+        locationGraph = new DSAGraph<Location,Trip>();
 
         for (String line : list)
         {
@@ -166,6 +169,23 @@ public class Driver
                 }
 
                 transportType = split[10];
+                tripInfo = new Trip(transportType, duration);
+
+                locationGraph.addVertex(
+                    startLocation.getDivision(),
+                    startLocation
+                );
+
+                locationGraph.addVertex(
+                    endLocation.getDivision(),
+                    endLocation
+                );
+
+                locationGraph.addEdge(
+                    startLocation.getDivision(),
+                    endLocation.getDivision(),
+                    tripInfo
+                );
             }
             catch (NumberFormatException e)
             {
@@ -174,8 +194,6 @@ public class Driver
                 );
             }
         }
-
-        locationGraph = new DSAGraph<Location>();
 
         timeEnd = System.nanoTime();
         funcDuration = timeEnd - timeStart;
@@ -843,75 +861,229 @@ public class Driver
         csvLine = "";
         partyFilter = "";
 
-        userInput = Input.string("Input party: ");
-
-        if (userInput.isEmpty())
+        if ((partyFilter = getPartyFilter()) == null)
         {
-            System.out.println(
+            throw new IllegalArgumentException(
                 "No party found: Empty search field"
             );
         }
+
+        marginLimit = getMarginLimit();
+
+        timeStart = System.nanoTime();
+        voteResults = calcVotes(prefList, partyFilter);
+        fileList = new DSALinkedList<String>();
+
+        for (VoteStats stats : voteResults)
+        {
+            if (Math.abs(stats.getMargin()) < marginLimit)
+            {
+                count++;
+                csvLine = count + "," + stats.toString();
+                fileList.insertLast(csvLine);
+            }
+        }
+
+        if (count == 0)
+        {
+            System.out.println("No party found.");
+        }
         else
         {
-            partyFilter = userInput;
+            fileContents = new String[count];
+            count = 0;
 
-            userInput = Input.string("Input margin [6.0]: ");
+            for (String i : fileList)
+            {
+                fileContents[count] = i;
+                count++;
+            }
+
+            printCsvTable(fileContents, headerFile);
+
+            timeEnd = System.nanoTime();
+            duration = timeEnd - timeStart;
+
+            System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+
+            saveCsvToFile(fileContents);
+        }
+    }
+
+    public static void createItinerary(
+        DSALinkedList<HousePreference> prefList,
+        DSAGraph<Location,Trip> map)
+    {
+        String headerFile[] = {
+            "Num", "DivisionID", "DivisionNm", "StateAb", "PartyAb",
+            "PartyNm", "VotesFor", "VotesAgainst", "VotesTotal",
+            "Percent", "Margin"
+        };
+
+        DSALinkedList<VoteStats> voteResults;
+        String header, line;
+        DSALinkedList<String> fileList;
+        String fileContents[];
+        String csvLine;
+
+        int count;
+
+        String userInput;
+        String partyFilter;
+        double marginLimit;
+
+        String[] visitDivision;
+        DSAGraph<Location,Trip> smallMap;
+
+        Location tempLocation1, tempLocation2;
+        Trip tripInfo;
+
+        long timeStart, timeEnd, duration;
+
+        count = 0;
+
+        csvLine = "";
+        partyFilter = "";
+
+        if ((partyFilter = getPartyFilter()) == null)
+        {
+            throw new IllegalArgumentException(
+                "No party found: Empty search field"
+            );
+        }
+
+        marginLimit = getMarginLimit();
+
+        timeStart = System.nanoTime();
+        voteResults = calcVotes(prefList, partyFilter);
+        fileList = new DSALinkedList<String>();
+
+        for (VoteStats stats : voteResults)
+        {
+            if (Math.abs(stats.getMargin()) < marginLimit)
+            {
+                count++;
+                csvLine = count + "," + stats.toString();
+                fileList.insertLast(csvLine);
+            }
+        }
+
+        if (count == 0)
+        {
+            System.out.println("No party found.");
+        }
+        else
+        {
+            fileContents = new String[count];
+            count = 0;
+
+            for (String i : fileList)
+            {
+                fileContents[count] = i;
+                count++;
+            }
+
+            printCsvTable(fileContents, headerFile);
+
+            timeEnd = System.nanoTime();
+            duration = timeEnd - timeStart;
+
+            System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+        }
+
+        if (count != 0)
+        {
+            userInput = Input.string(
+                "Input Divisions to visit [comma seperated]: "
+            );
 
             if (userInput.isEmpty())
             {
+                System.out.println(
+                    "No locations selected, using all locations"
+                );
+
+                for (VoteStats stats : voteResults)
+                {
+                    if (Math.abs(stats.getMargin()) < marginLimit)
+                    {
+                        userInput += stats.getNameDivision() + ",";
+                    }
+                }
+            }
+
+            visitDivision = userInput.split(
+                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+            );
+
+            smallMap = new DSAGraph<Location,Trip>();
+
+            for (String i : visitDivision)
+            {
+                if (! i.isEmpty())
+                {
+                    tempLocation1 = map.getVertexValue(i);
+                    smallMap.addVertex(i, tempLocation1);
+
+                    for (String j : visitDivision)
+                    {
+                        if (! i.equals(j))
+                        {
+                            tempLocation2 = map.getVertexValue(j);
+                            tripInfo = map.getEdgeValue(
+                                tempLocation1.getDivision(),
+                                tempLocation2.getDivision()
+                            );
+
+                            smallMap.addVertex(j, tempLocation2);
+                            smallMap.addEdge(i, j, tripInfo);
+                        }
+                    }
+                }
+            }
+
+            System.out.println(smallMap.depthFirstSearch().replace(", ", "\n"));
+        }
+    }
+
+    public static String getPartyFilter()
+    {
+        String userInput;
+        userInput = Input.string("Input party: ");
+        if (userInput.isEmpty())
+        {
+            userInput = null;
+        }
+        return userInput;
+    }
+
+    public static double getMarginLimit()
+    {
+        String userInput;
+        double marginLimit;
+
+        userInput = Input.string("Input margin [6.0]: ");
+
+        if (userInput.isEmpty())
+        {
+            marginLimit = 6.0;
+        }
+        else
+        {
+            try
+            {
+                marginLimit = Double.parseDouble(userInput);
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(
+                    "Margin is invalid. Using 6.0 instead"
+                );
                 marginLimit = 6.0;
             }
-            else
-            {
-                try
-                {
-                    marginLimit = Double.parseDouble(userInput);
-                }
-                catch (NumberFormatException e)
-                {
-                    System.out.println(
-                        "Margin is invalid. Using 6.0 instead"
-                    );
-                    marginLimit = 6.0;
-                }
-            }
-
-            timeStart = System.nanoTime();
-
-            voteResults = calcVotes(prefList, partyFilter);
-            fileList = new DSALinkedList<String>();
-
-            for (VoteStats stats : voteResults)
-            {
-                if (Math.abs(stats.getMargin()) < marginLimit)
-                {
-                    count++;
-                    csvLine = count + "," + stats.toString();
-                    fileList.insertLast(csvLine);
-                }
-            }
-
-            if (count != 0)
-            {
-                fileContents = new String[count];
-                count = 0;
-
-                for (String i : fileList)
-                {
-                    fileContents[count] = i;
-                    count++;
-                }
-
-                printCsvTable(fileContents, headerFile);
-
-                timeEnd = System.nanoTime();
-                duration = timeEnd - timeStart;
-
-                System.out.println("Took " + toMiliseconds(duration) + "ms\n");
-
-                saveCsvToFile(fileContents);
-            }
         }
+
+        return marginLimit;
     }
 
     public static DSALinkedList<VoteStats> calcVotes(
@@ -988,7 +1160,9 @@ public class Driver
         return voteResultList;
     }
 
-    public static void printCsvTable(String[] csvArr, String[] header)
+    public static void printCsvTable(
+        String[] csvArr,
+        String[] header)
     {
         String padding, headerStr, sep, out;
 
@@ -1011,7 +1185,7 @@ public class Driver
         for (int i = 0; i < csvArr.length; i++)
         {
             fields[i] = csvArr[i].split(
-                    ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
             );
         }
 

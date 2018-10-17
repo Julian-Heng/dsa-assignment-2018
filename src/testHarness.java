@@ -5,6 +5,7 @@ public class testHarness
         testNominee.run();
         testHousePreference.run();
         testVoteStats.run();
+        testDSAGraph.run();
         testDSAHeap.run();
     }
 

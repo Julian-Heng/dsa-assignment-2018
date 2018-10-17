@@ -1,36 +1,79 @@
 import java.util.*;
 import java.io.*;
 
-public class DSAGraph<E> implements Serializable
+public class DSAGraph<E,F> implements Serializable
 {
-    private class DSAGraphVertex<E> implements Serializable
+    private class DSAGraphVertex<E,F> implements Serializable
     {
         private String label;
         private E value;
-        private DSALinkedList<DSAGraphVertex<E>> links;
+        private DSALinkedList<DSAGraphVertex<E,F>> links;
+        private DSALinkedList<DSAGraphEdge<E,F>> edgeList;
         private boolean visited;
 
         public DSAGraphVertex(String newLabel, E newValue)
         {
             label = newLabel;
             value = newValue;
-            links = new DSALinkedList<DSAGraphVertex<E>>();
+            links = new DSALinkedList<DSAGraphVertex<E,F>>();
+            edgeList = new DSALinkedList<DSAGraphEdge<E,F>>();
             visited = false;
         }
 
         public String getLabel() { return label; }
         public E getValue() { return value; }
 
-        public DSALinkedList<DSAGraphVertex<E>> getAdjacent()
+        public F getEdgeValue(DSAGraphVertex<E,F> toVertex)
+        {
+            Iterator<DSAGraphEdge<E,F>> iter;
+            DSAGraphEdge<E,F> inEdgeList;
+            F edgeValue;
+            boolean match;
+
+            iter = edgeList.iterator();
+            edgeValue = null;
+            match = false;
+
+            while (iter.hasNext() && ! match)
+            {
+                inEdgeList = iter.next();
+
+                if (inEdgeList.getTo() == toVertex)
+                {
+                    match = true;
+                    edgeValue = inEdgeList.getEdgeValue();
+                }
+            }
+
+            return edgeValue;
+        }
+
+        public DSALinkedList<DSAGraphVertex<E,F>> getAdjacent()
         {
             return links;
         }
 
-        public void addEdge(DSAGraphVertex<E> newVertex)
+        public DSALinkedList<DSAGraphEdge<E,F>> getEdges()
         {
+            return edgeList;
+        }
+
+        public void addEdge(
+            DSAGraphVertex<E,F> newVertex,
+            F edgeValue)
+        {
+            String edgeLabel;
+            DSAGraphEdge<E,F> edge;
+
             if (validateVertex(newVertex))
             {
+                edgeLabel = label + " <-> " + newVertex.getLabel();
+                edge = new DSAGraphEdge<E,F>(edgeLabel, edgeValue);
+                edge.setFrom(this);
+                edge.setTo(newVertex);
+
                 links.insertLast(newVertex);
+                edgeList.insertLast(edge);
             }
         }
 
@@ -41,8 +84,8 @@ public class DSAGraph<E> implements Serializable
         public String toString()
         {
             String out;
-            DSAGraphVertex<E> linkNode = null;
-            Iterator<DSAGraphVertex<E>> iter = links.iterator();
+            DSAGraphVertex<E,F> linkNode = null;
+            Iterator<DSAGraphVertex<E,F>> iter = links.iterator();
 
             out = "Label: " + label + "\n"
                 + "Value: " + value + "\n"
@@ -57,10 +100,10 @@ public class DSAGraph<E> implements Serializable
         }
 
         private boolean validateVertex(
-            DSAGraphVertex<E> newVertex)
+            DSAGraphVertex<E,F> newVertex)
         {
-            DSAGraphVertex<E> linkNode = null;
-            Iterator<DSAGraphVertex<E>> iter = links.iterator();
+            DSAGraphVertex<E,F> linkNode = null;
+            Iterator<DSAGraphVertex<E,F>> iter = links.iterator();
             boolean isUnique = true;
 
             while ((iter.hasNext()) && (isUnique))
@@ -76,44 +119,116 @@ public class DSAGraph<E> implements Serializable
         }
     }
 
-    private DSALinkedList<DSAGraphVertex<E>> vertices;
+    private class DSAGraphEdge<E,F> implements Serializable
+    {
+        String label;
+        F edgeValue;
+        DSAGraphVertex<E,F> fromVertex, toVertex;
+        boolean visited;
+
+        public DSAGraphEdge(String inLabel, F inValue)
+        {
+            label = inLabel;
+            edgeValue = inValue;
+            visited = false;
+        }
+
+        public void setVisited() { visited = true; }
+        public void clearVisited() { visited = false; }
+
+        public void setFrom(DSAGraphVertex<E,F> inFrom)
+        {
+            fromVertex = inFrom;
+        }
+
+        public void setTo(DSAGraphVertex<E,F> inTo)
+        {
+            toVertex = inTo;
+        }
+
+        public String getLabel() { return label; }
+        public F getEdgeValue() { return edgeValue; }
+        public boolean getVisited() { return visited; }
+
+        public DSAGraphVertex<E,F> getFrom() { return fromVertex; }
+        public DSAGraphVertex<E,F> getTo() { return toVertex; }
+    }
+
+    private DSALinkedList<DSAGraphVertex<E,F>> vertices;
     private int vertexCount;
     private int edgeCount;
 
     public DSAGraph()
     {
-        vertices = new DSALinkedList<DSAGraphVertex<E>>();
+        vertices = new DSALinkedList<DSAGraphVertex<E,F>>();
         vertexCount = 0;
         edgeCount = 0;
     }
 
     public void addVertex(String newLabel, E newValue)
     {
-        DSAGraphVertex<E> newVertex = null;
+        DSAGraphVertex<E,F> newVertex = null;
         if (validateLabel(newLabel))
         {
-            newVertex = new DSAGraphVertex<E>(newLabel, newValue);
-            vertices.insertLast(newVertex);
-            vertexCount++;
+            newVertex = new DSAGraphVertex<E,F>(newLabel, newValue);
+            this.addVertex(newVertex);
         }
     }
 
-    public void addEdge(
-        DSAGraphVertex<E> vertex1,
-        DSAGraphVertex<E> vertex2)
+    public void addVertex(DSAGraphVertex<E,F> inVertex)
     {
-        vertex1.addEdge(vertex2);
+        vertices.insertLast(inVertex);
+        vertexCount++;
+    }
+
+    public void addEdge(
+        DSAGraphVertex<E,F> vertex1,
+        DSAGraphVertex<E,F> vertex2,
+        F edgeValue)
+    {
+        vertex1.addEdge(vertex2, edgeValue);
+        vertex2.addEdge(vertex1, edgeValue);
         edgeCount++;
     }
 
-    public void addEdge(String label1, String label2)
+    public void addEdge(String label1, String label2, F edgeValue)
     {
-        DSAGraphVertex<E> vertex1 = null;
-        DSAGraphVertex<E> vertex2 = null;
+        DSAGraphVertex<E,F> vertex1 = null;
+        DSAGraphVertex<E,F> vertex2 = null;
         vertex1 = getVertex(label1);
         vertex2 = getVertex(label2);
 
-        this.addEdge(vertex1, vertex2);
+        this.addEdge(vertex1, vertex2, edgeValue);
+    }
+
+    public E getVertexValue(String label)
+    {
+        return this.getVertexValue(getVertex(label));
+    }
+
+    public E getVertexValue(DSAGraphVertex<E,F> vertex1)
+    {
+        return vertex1.getValue();
+    }
+
+    public F getEdgeValue(
+        DSAGraphVertex<E,F> vertex1,
+        DSAGraphVertex<E,F> vertex2)
+    {
+        return vertex1.getEdgeValue(vertex2);
+    }
+
+    public F getEdgeValue(String label1, String label2)
+    {
+        DSAGraphVertex<E,F> vertex1 = null;
+        DSAGraphVertex<E,F> vertex2 = null;
+
+        E edgeValue;
+
+        vertex1 = getVertex(label1);
+        vertex2 = getVertex(label2);
+
+        return this.getEdgeValue(vertex1, vertex2);
     }
 
     public int getVertexCount()
@@ -126,11 +241,11 @@ public class DSAGraph<E> implements Serializable
         return edgeCount;
     }
 
-    public DSAGraphVertex<E> getVertex(String searchLabel)
+    public DSAGraphVertex<E,F> getVertex(String searchLabel)
     {
-        DSAGraphVertex<E> findVertex = null;
-        DSAGraphVertex<E> inVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertices.iterator();
+        DSAGraphVertex<E,F> findVertex = null;
+        DSAGraphVertex<E,F> inVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
         boolean isFound = false;
 
         while ((iter.hasNext()) && (! isFound))
@@ -151,19 +266,19 @@ public class DSAGraph<E> implements Serializable
         return findVertex;
     }
 
-    public DSALinkedList<DSAGraphVertex<E>> getAdjacent(
-        DSAGraphVertex<E> vertex)
+    public DSALinkedList<DSAGraphVertex<E,F>> getAdjacent(
+        DSAGraphVertex<E,F> vertex)
     {
         return vertex.getAdjacent();
     }
 
     public boolean isAdjacent(
-        DSAGraphVertex<E> vertex1,
-        DSAGraphVertex<E> vertex2)
+        DSAGraphVertex<E,F> vertex1,
+        DSAGraphVertex<E,F> vertex2)
     {
         boolean isAdjacent = false;
-        DSAGraphVertex<E> inVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertex2.getAdjacent().iterator();
+        DSAGraphVertex<E,F> inVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertex2.getAdjacent().iterator();
 
         while ((iter.hasNext()) && (isAdjacent != true))
         {
@@ -184,10 +299,10 @@ public class DSAGraph<E> implements Serializable
 
     public String getStructure()
     {
-        DSAGraphVertex<E> inVertex = null;
-        DSAGraph<E>.DSAGraphVertex<E> inNodeVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertices.iterator();
-        Iterator<DSAGraphVertex<E>> nodeIter = null;
+        DSAGraphVertex<E,F> inVertex = null;
+        DSAGraph<E,F>.DSAGraphVertex<E,F> inNodeVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
+        Iterator<DSAGraphVertex<E,F>> nodeIter = null;
         String raw = "";
 
         while (iter.hasNext())
@@ -217,10 +332,10 @@ public class DSAGraph<E> implements Serializable
 
     public String getList()
     {
-        DSAGraphVertex<E> inVertex = null;
-        DSAGraph<E>.DSAGraphVertex<E> inNodeVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertices.iterator();
-        Iterator<DSAGraphVertex<E>> nodeIter = null;
+        DSAGraphVertex<E,F> inVertex = null;
+        DSAGraph<E,F>.DSAGraphVertex<E,F> inNodeVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
+        Iterator<DSAGraphVertex<E,F>> nodeIter = null;
         String temp, out = "";
 
         while (iter.hasNext())
@@ -246,10 +361,10 @@ public class DSAGraph<E> implements Serializable
 
     public String getMatrix()
     {
-        DSAGraphVertex<E> inVertex1 = null;
-        DSAGraphVertex<E> inVertex2 = null;
-        Iterator<DSAGraphVertex<E>> iter1 = vertices.iterator();
-        Iterator<DSAGraphVertex<E>> iter2 = null;
+        DSAGraphVertex<E,F> inVertex1 = null;
+        DSAGraphVertex<E,F> inVertex2 = null;
+        Iterator<DSAGraphVertex<E,F>> iter1 = vertices.iterator();
+        Iterator<DSAGraphVertex<E,F>> iter2 = null;
 
         int vertexLoop = 0;
         int nodeLoop = 0;
@@ -302,16 +417,16 @@ public class DSAGraph<E> implements Serializable
 
     public String depthFirstSearch()
     {
-        DSAStack<DSAGraphVertex<E>> stack;
-        DSAGraphVertex<E> inVertex = null;
-        DSAGraphVertex<E> tempVertex = null;
+        DSAStack<DSAGraphVertex<E,F>> stack;
+        DSAGraphVertex<E,F> inVertex = null;
+        DSAGraphVertex<E,F> tempVertex = null;
 
         String path = "";
         String smallestKey = "";
         String startLabel = "";
         String endLabel = "";
 
-        stack = new DSAStack<DSAGraphVertex<E>>();
+        stack = new DSAStack<DSAGraphVertex<E,F>>();
 
         markAllNew();
         smallestKey = getSmallestKey();
@@ -349,17 +464,17 @@ public class DSAGraph<E> implements Serializable
 
     public String breadthFirstSearch()
     {
-        DSAQueue<DSAGraphVertex<E>> queue;
-        DSAGraphVertex<E> inVertex = null;
-        DSAGraphVertex<E> tempVertex = null;
-        Iterator <DSAGraphVertex<E>> iter = null;
+        DSAQueue<DSAGraphVertex<E,F>> queue;
+        DSAGraphVertex<E,F> inVertex = null;
+        DSAGraphVertex<E,F> tempVertex = null;
+        Iterator <DSAGraphVertex<E,F>> iter = null;
 
         String path = "";
         String smallestKey = "";
         String startLabel = "";
         String endLabel = "";
 
-        queue = new DSAQueue<DSAGraphVertex<E>>();
+        queue = new DSAQueue<DSAGraphVertex<E,F>>();
 
         markAllNew();
         smallestKey = getSmallestKey();
@@ -398,8 +513,8 @@ public class DSAGraph<E> implements Serializable
 
     private void markAllNew()
     {
-        DSAGraphVertex<E> inVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertices.iterator();
+        DSAGraphVertex<E,F> inVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
 
         while (iter.hasNext())
         {
@@ -410,8 +525,8 @@ public class DSAGraph<E> implements Serializable
 
     private String getSmallestKey()
     {
-        DSAGraphVertex<E> inVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertices.iterator();
+        DSAGraphVertex<E,F> inVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
         String currentKey, smallestKey;
 
         currentKey = "";
@@ -435,12 +550,12 @@ public class DSAGraph<E> implements Serializable
         return smallestKey;
     }
 
-    private DSAGraphVertex<E> getNextNewAdjacent(
-        DSAGraphVertex<E> vertex)
+    private DSAGraphVertex<E,F> getNextNewAdjacent(
+        DSAGraphVertex<E,F> vertex)
     {
-        Iterator<DSAGraphVertex<E>> iter = vertex.getAdjacent().iterator();
-        DSAGraphVertex<E> inVertex = null;
-        DSAGraphVertex<E> unvisitedVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertex.getAdjacent().iterator();
+        DSAGraphVertex<E,F> inVertex = null;
+        DSAGraphVertex<E,F> unvisitedVertex = null;
 
         while (iter.hasNext() && unvisitedVertex == null)
         {
@@ -554,8 +669,8 @@ public class DSAGraph<E> implements Serializable
     private boolean validateLabel(String inLabel)
     {
         boolean isUnique = true;
-        DSAGraphVertex<E> inVertex = null;
-        Iterator<DSAGraphVertex<E>> iter = vertices.iterator();
+        DSAGraphVertex<E,F> inVertex = null;
+        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
 
         if (vertexCount != 0)
         {

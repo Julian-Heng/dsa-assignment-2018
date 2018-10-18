@@ -284,10 +284,6 @@ public class Driver
         String divisionId, divisionName;
 
         DSALinkedList<String> divisionIdList;
-        DSALinkedList<String> uniqueDivisionId;
-
-        DSALinkedList<String> stateList;
-        DSALinkedList<String> uniqueStateList;
 
         long timeStart, timeEnd, duration;
         timeStart = System.nanoTime();
@@ -300,30 +296,23 @@ public class Driver
         list = FileIO.readText(file);
 
         divisionIdList = new DSALinkedList<String>();
-        uniqueDivisionId = new DSALinkedList<String>();
 
         System.out.print("Reading " + file + "... ");
 
         for (String i : list)
         {
             split = i.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-            if (! split[1].isEmpty())
+            if (! split[1].isEmpty() &&
+                ! split[1].equals("DivisionID") &&
+                isUnique(divisionIdList, split[1]))
             {
                 divisionIdList.insertLast(split[1]);
             }
         }
 
-        for (String i : divisionIdList)
-        {
-            if (! i.equals("DivisionID") && isUnique(uniqueDivisionId, i))
-            {
-                uniqueDivisionId.insertLast(i);
-            }
-        }
-
         preferenceList = new DSALinkedList<HousePreference>();
 
-        for (String i : uniqueDivisionId)
+        for (String i : divisionIdList)
         {
             printSpinner(spinner, count++);
 
@@ -524,7 +513,7 @@ public class Driver
         int numNominee = 0;
         int i = 0;
 
-        DSAHeap heap;
+        DSAMaxHeap heap;
 
         String[] fileContents;
 
@@ -573,7 +562,7 @@ public class Driver
 
         searchResult = new Nominee[numMatches];
         sorted = new Nominee[numMatches];
-        heap = new DSAHeap(numMatches);
+        heap = new DSAMaxHeap(numMatches);
         iter = null;
         inList = null;
         iter = nomineeList.iterator();
@@ -929,10 +918,11 @@ public class Driver
         int count;
 
         String userInput;
+        String[] split;
         String partyFilter;
         double marginLimit;
 
-        String[] visitDivision;
+        int[] visitDivision;
         DSAGraph<Location,Trip> smallMap;
 
         Location tempLocation1, tempLocation2;
@@ -945,35 +935,40 @@ public class Driver
         csvLine = "";
         partyFilter = "";
 
-        if ((partyFilter = getPartyFilter()) == null)
+        try
         {
-            throw new IllegalArgumentException(
-                "No party found: Empty search field"
-            );
-        }
-
-        marginLimit = getMarginLimit();
-
-        timeStart = System.nanoTime();
-        voteResults = calcVotes(prefList, partyFilter);
-        fileList = new DSALinkedList<String>();
-
-        for (VoteStats stats : voteResults)
-        {
-            if (Math.abs(stats.getMargin()) < marginLimit)
+            if ((partyFilter = getPartyFilter()) == null)
             {
-                count++;
-                csvLine = count + "," + stats.toString();
-                fileList.insertLast(csvLine);
+                throw new IllegalArgumentException(
+                    "No party found: Empty search field"
+                );
             }
-        }
 
-        if (count == 0)
-        {
-            System.out.println("No party found.");
-        }
-        else
-        {
+            marginLimit = getMarginLimit();
+
+            timeStart = System.nanoTime();
+            voteResults = calcVotes(prefList, partyFilter);
+            fileList = new DSALinkedList<String>();
+
+            for (VoteStats stats : voteResults)
+            {
+                if (Math.abs(stats.getMargin()) < marginLimit)
+                {
+                    count++;
+                    csvLine = count + "," + stats.toString();
+                    fileList.insertLast(csvLine);
+                }
+            }
+
+            fileContents = new String[count];
+
+            if (count == 0)
+            {
+                throw new IllegalArgumentException(
+                    "No party found."
+                );
+            }
+
             fileContents = new String[count];
             count = 0;
 
@@ -989,13 +984,18 @@ public class Driver
             duration = timeEnd - timeStart;
 
             System.out.println("Took " + toMiliseconds(duration) + "ms\n");
-        }
 
-        if (count != 0)
-        {
+            if (count == 0)
+            {
+                throw new IllegalArgumentException(
+                    "No matches"
+                );
+            }
+
             userInput = Input.string(
-                "Input Divisions to visit [comma seperated]: "
+                "Input Division indexes to visit (eg: 1 2 3): "
             );
+
 
             if (userInput.isEmpty())
             {
@@ -1003,46 +1003,80 @@ public class Driver
                     "No locations selected, using all locations"
                 );
 
-                for (VoteStats stats : voteResults)
+                visitDivision = new int[count];
+
+                for (int i = 1; i <= count; i++)
                 {
-                    if (Math.abs(stats.getMargin()) < marginLimit)
+                    visitDivision[i - 1] = i;
+                }
+            }
+            else
+            {
+                split = userInput.split(" ");
+                visitDivision = new int[split.length];
+
+                try
+                {
+                    for (int i = 0; i < split.length; i++)
                     {
-                        userInput += stats.getNameDivision() + ",";
+                        visitDivision[i] = Integer.parseInt(split[i]);
                     }
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new IllegalArgumentException(
+                        "Inputed Division index is invalid"
+                    );
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    throw new IllegalArgumentException(
+                        "Inputed Division index is invalid"
+                    );
                 }
             }
 
-            visitDivision = userInput.split(
-                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
-            );
-
             smallMap = new DSAGraph<Location,Trip>();
 
-            for (String i : visitDivision)
+            for (int i : visitDivision)
             {
-                if (! i.isEmpty())
+                split = fileContents[i - 1].split(
+                    ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+                );
+
+                tempLocation1 = map.getVertexValue(split[2]);
+                smallMap.addVertex(split[2], tempLocation1);
+
+                for (int j : visitDivision)
                 {
-                    tempLocation1 = map.getVertexValue(i);
-                    smallMap.addVertex(i, tempLocation1);
-
-                    for (String j : visitDivision)
+                    if (i != j)
                     {
-                        if (! i.equals(j))
-                        {
-                            tempLocation2 = map.getVertexValue(j);
-                            tripInfo = map.getEdgeValue(
-                                tempLocation1.getDivision(),
-                                tempLocation2.getDivision()
-                            );
+                        split = fileContents[j - 1].split(
+                            ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+                        );
 
-                            smallMap.addVertex(j, tempLocation2);
-                            smallMap.addEdge(i, j, tripInfo);
-                        }
+                        tempLocation2 = map.getVertexValue(split[2]);
+                        tripInfo = map.getEdgeValue(
+                            tempLocation1.getDivision(),
+                            tempLocation2.getDivision()
+                        );
+
+                        smallMap.addVertex(split[2], tempLocation2);
+                        smallMap.addEdge(
+                            tempLocation1.getDivision(),
+                            tempLocation2.getDivision(),
+                            tripInfo
+                        );
                     }
                 }
             }
 
             System.out.println(smallMap.depthFirstSearch().replace(", ", "\n"));
+            //System.out.println(smallMap.getStructure());
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -1114,6 +1148,8 @@ public class Driver
 
         while (iterPref.hasNext())
         {
+            state = "";
+
             votesFor = 0;
             votesAgainst = 0;
             votesTotal = 0;
@@ -1134,11 +1170,14 @@ public class Driver
                     votesFor += tempNominee.getNumVotes();
 
                     if (abvParty.isEmpty() &&
-                        nameParty.isEmpty() &&
-                        state.isEmpty())
+                        nameParty.isEmpty())
                     {
                         abvParty = tempNominee.getAbvParty();
                         nameParty = tempNominee.getNameParty();
+                    }
+
+                    if (state.isEmpty())
+                    {
                         state = tempNominee.getState();
                     }
                 }

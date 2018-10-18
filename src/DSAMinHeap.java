@@ -1,13 +1,13 @@
 import java.util.*;
 
-public class DSAHeap
+public class DSAMinHeap
 {
-    private class DSAHeapEntry
+    private class DSAMinHeapEntry
     {
         private String priority;
         private Object value;
 
-        public DSAHeapEntry(String inPriority, Object inValue)
+        public DSAMinHeapEntry(String inPriority, Object inValue)
         {
             priority = inPriority;
             value = inValue;
@@ -17,18 +17,18 @@ public class DSAHeap
         public Object getValue() { return value; }
     }
 
-    private DSAHeapEntry[] m_heap;
+    private DSAMinHeapEntry[] m_heap;
     private int m_count;
 
-    public DSAHeap()
+    public DSAMinHeap()
     {
-        m_heap = new DSAHeap.DSAHeapEntry[100];
+        m_heap = new DSAMinHeap.DSAMinHeapEntry[100];
         m_count = 0;
     }
 
-    public DSAHeap(int maxSize)
+    public DSAMinHeap(int maxSize)
     {
-        m_heap = new DSAHeap.DSAHeapEntry[maxSize];
+        m_heap = new DSAMinHeap.DSAMinHeapEntry[maxSize];
         m_count = 0;
     }
 
@@ -40,7 +40,7 @@ public class DSAHeap
         }
         else
         {
-            DSAHeapEntry toAdd = new DSAHeapEntry(priority, value);
+            DSAMinHeapEntry toAdd = new DSAMinHeapEntry(priority, value);
             m_heap[m_count] = toAdd;
             trickleUp(m_count);
             m_count++;
@@ -109,7 +109,7 @@ public class DSAHeap
 
     private void recurseTrickleUp(int index)
     {
-        DSAHeapEntry temp;
+        DSAMinHeapEntry temp;
         int parentIndex;
 
         parentIndex = (index - 1) / 2;
@@ -119,9 +119,14 @@ public class DSAHeap
             (m_heap[index].getPriority() >
                 m_heap[parentIndex].getPriority()))
                 */
+        /*
         if ((index > 0) &&
             (m_heap[index].getPriority().compareTo(
                 m_heap[parentIndex].getPriority()) > 0))
+                */
+        if ((index > 0) &&
+            (m_heap[index].getPriority().compareTo(
+                m_heap[parentIndex].getPriority()) < 0))
         {
             temp = m_heap[parentIndex];
             m_heap[parentIndex] = m_heap[index];
@@ -151,9 +156,14 @@ public class DSAHeap
                 (m_heap[leftChild].getPriority() <
                     m_heap[rightChild].getPriority()))
                     */
+            /*
             if ((rightChild < numItems) &&
                 (m_heap[leftChild].getPriority().compareTo(
                     m_heap[rightChild].getPriority()) < 0))
+                    */
+            if ((rightChild < numItems) &&
+                (m_heap[leftChild].getPriority().compareTo(
+                    m_heap[rightChild].getPriority()) > 0))
             {
                 largeIndex = rightChild;
             }
@@ -162,8 +172,12 @@ public class DSAHeap
             if (m_heap[largeIndex].getPriority() >
                     m_heap[index].getPriority())
                     */
+            /*
             if (m_heap[largeIndex].getPriority().compareTo(
                     m_heap[index].getPriority()) > 0)
+                    */
+            if (m_heap[largeIndex].getPriority().compareTo(
+                    m_heap[index].getPriority()) < 0)
             {
                 swap(largeIndex, index);
                 recurseTrickleDown(largeIndex, numItems);
@@ -173,7 +187,7 @@ public class DSAHeap
 
     private void swap(int index1, int index2)
     {
-        DSAHeapEntry temp;
+        DSAMinHeapEntry temp;
 
         temp = m_heap[index1];
         m_heap[index1] = m_heap[index2];

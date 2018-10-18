@@ -1,10 +1,10 @@
 import java.util.*;
 
-public class testDSAHeap
+public class testDSAMaxHeap
 {
     public static void run()
     {
-        testHarness.header("Testing DSAHeap Class");
+        testHarness.header("Testing DSAMaxHeap Class");
         testConstructor();
         testAdd();
         testRemove();
@@ -13,13 +13,13 @@ public class testDSAHeap
 
     public static void testConstructor()
     {
-        DSAHeap heap;
+        DSAMaxHeap heap;
 
         System.out.print("Testing default constructor: ");
 
         try
         {
-            heap = new DSAHeap();
+            heap = new DSAMaxHeap();
 
             if (heap.getSize() != 100)
             {
@@ -43,7 +43,7 @@ public class testDSAHeap
 
         try
         {
-            heap = new DSAHeap(1024);
+            heap = new DSAMaxHeap(1024);
 
             if (heap.getSize() != 1024)
             {
@@ -66,14 +66,14 @@ public class testDSAHeap
 
     public static void testAdd()
     {
-        DSAHeap heap;
+        DSAMaxHeap heap;
         String toAdd;
 
         System.out.print("Testing add() with an empty heap: ");
 
         try
         {
-            heap = new DSAHeap(1024);
+            heap = new DSAMaxHeap(1024);
             toAdd = "A";
             heap.add(toAdd, toAdd);
 
@@ -99,7 +99,7 @@ public class testDSAHeap
 
         try
         {
-            heap = new DSAHeap(1);
+            heap = new DSAMaxHeap(1);
 
             heap.add("A", "A");
             heap.add("B", "B");
@@ -114,7 +114,7 @@ public class testDSAHeap
 
         try
         {
-            heap = new DSAHeap(1024);
+            heap = new DSAMaxHeap(1024);
 
             for (int i = 0; i < 1024; i++)
             {
@@ -142,7 +142,7 @@ public class testDSAHeap
 
     public static void testRemove()
     {
-        DSAHeap heap;
+        DSAMaxHeap heap;
         String[] pool;
         Object removedObj;
         boolean isValid;
@@ -151,7 +151,7 @@ public class testDSAHeap
 
         try
         {
-            heap = new DSAHeap();
+            heap = new DSAMaxHeap();
 
             removedObj = heap.remove();
             testHarness.failed("Successfully removed an object");
@@ -165,7 +165,7 @@ public class testDSAHeap
 
         try
         {
-            heap = new DSAHeap();
+            heap = new DSAMaxHeap();
 
             heap.add("This is the key", "This is the object");
             removedObj = heap.remove();
@@ -193,7 +193,7 @@ public class testDSAHeap
 
             isValid = true;
 
-            heap = new DSAHeap(26);
+            heap = new DSAMaxHeap(26);
             pool = new String[26];
 
             for (char c = 'a'; c <= 'z'; c++)
@@ -238,7 +238,7 @@ public class testDSAHeap
 
             isValid = true;
 
-            heap = new DSAHeap(26);
+            heap = new DSAMaxHeap(26);
             pool = new String[26];
 
             for (char c = 'z'; c >= 'a'; c--)
@@ -277,7 +277,7 @@ public class testDSAHeap
 
     public static void testHeapSort()
     {
-        DSAHeap heap;
+        DSAMaxHeap heap;
         String pool[];
         int[] sizes = {
             2, 8, 32, 128, 512, 2048,
@@ -294,7 +294,7 @@ public class testDSAHeap
             int index;
             index = 0;
 
-            heap = new DSAHeap(26);
+            heap = new DSAMaxHeap(26);
             pool = new String[26];
 
             for (char c = 'a'; c <= 'z'; c++)
@@ -334,7 +334,7 @@ public class testDSAHeap
             int index;
             index = 0;
 
-            heap = new DSAHeap(26);
+            heap = new DSAMaxHeap(26);
             pool = new String[26];
 
             for (char c = 'z'; c >= 'a'; c--)
@@ -375,7 +375,7 @@ public class testDSAHeap
             try
             {
                 pool = generateStrings(inSize);
-                heap = new DSAHeap(pool.length);
+                heap = new DSAMaxHeap(pool.length);
 
                 for (String inPool : pool)
                 {

@@ -6,7 +6,7 @@ public class testHarness
         testHousePreference.run();
         testVoteStats.run();
         testDSAGraph.run();
-        testDSAHeap.run();
+        testDSAMaxHeap.run();
     }
 
     public static void header(String msg)

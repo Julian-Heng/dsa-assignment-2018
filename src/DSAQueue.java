@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class DSAQueue<E> implements Iterable<E>, Serializable
+public class DSAQueue<E> implements Iterable<E>
 {
     public DSALinkedList<E> queue;
     public int count;

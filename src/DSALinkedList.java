@@ -1,9 +1,9 @@
 import java.util.*;
 import java.io.*;
 
-public class DSALinkedList<E> implements Iterable<E>, Serializable
+public class DSALinkedList<E> implements Iterable<E>
 {
-    private class DSAListNode<E> implements Serializable
+    private class DSAListNode<E>
     {
         private E m_object;
         private DSAListNode<E> m_next, m_prev;

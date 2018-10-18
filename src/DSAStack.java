@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class DSAStack<E> implements Iterable<E>, Serializable
+public class DSAStack<E> implements Iterable<E>
 {
     public DSALinkedList<E> stack;
     public int count;

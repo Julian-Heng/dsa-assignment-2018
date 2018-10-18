@@ -1,9 +1,9 @@
 import java.util.*;
 import java.io.*;
 
-public class DSAGraph<E,F> implements Serializable
+public class DSAGraph<E,F>
 {
-    private class DSAGraphVertex<E,F> implements Serializable
+    private class DSAGraphVertex<E,F>
     {
         private String label;
         private E value;
@@ -119,7 +119,7 @@ public class DSAGraph<E,F> implements Serializable
         }
     }
 
-    private class DSAGraphEdge<E,F> implements Serializable
+    private class DSAGraphEdge<E,F>
     {
         String label;
         F edgeValue;

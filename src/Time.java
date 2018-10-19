@@ -30,11 +30,11 @@ public class Time
         }
     }
 
-    public Time(int inMins)
+    public Time(int inSecs)
     {
-        hours = inMins / 60;
-        minutes = inMins % 60;
-        seconds = (inMins % 60) / 60;
+        hours = (inSecs / 60) / 60;
+        minutes = (inSecs / 60) % 60;
+        seconds = (inSecs % 60) % 60;
     }
 
     public void setHours(String inHours)
@@ -95,9 +95,9 @@ public class Time
     public int getMinutes() { return minutes; }
     public int getSeconds() { return seconds; }
 
-    public int getTotalMinutes()
+    public int getTotalSeconds()
     {
-        return (hours * 60) + minutes + (seconds / 60);
+        return (hours * 3600) + (minutes * 60) + seconds;
     }
 
     public String toString()

@@ -9,6 +9,8 @@ public class DSAGraph<E,F>
         private E value;
         private DSALinkedList<DSAGraphVertex<E,F>> links;
         private DSALinkedList<DSAGraphEdge<E,F>> edgeList;
+        private DSAGraphVertex<E,F> prevVertex;
+        private int distanceFromSource;
         private boolean visited;
 
         public DSAGraphVertex(String newLabel, E newValue)
@@ -17,6 +19,8 @@ public class DSAGraph<E,F>
             value = newValue;
             links = new DSALinkedList<DSAGraphVertex<E,F>>();
             edgeList = new DSALinkedList<DSAGraphEdge<E,F>>();
+            prevVertex = null;
+            distanceFromSource = Integer.MAX_VALUE;
             visited = false;
         }
 
@@ -48,6 +52,30 @@ public class DSAGraph<E,F>
             return edgeValue;
         }
 
+        public int getEdgeWeight(DSAGraphVertex<E,F> toVertex)
+        {
+            Iterator<DSAGraphEdge<E,F>> iter;
+            DSAGraphEdge<E,F> inEdgeList;
+            int edgeWeight = -1;
+            boolean match;
+
+            iter = edgeList.iterator();
+            match = false;
+
+            while (iter.hasNext() && ! match)
+            {
+                inEdgeList = iter.next();
+
+                if (inEdgeList.getTo() == toVertex)
+                {
+                    match = true;
+                    edgeWeight = inEdgeList.getEdgeWeight();
+                }
+            }
+
+            return edgeWeight;
+        }
+
         public DSALinkedList<DSAGraphVertex<E,F>> getAdjacent()
         {
             return links;
@@ -60,6 +88,7 @@ public class DSAGraph<E,F>
 
         public void addEdge(
             DSAGraphVertex<E,F> newVertex,
+            int edgeWeight,
             F edgeValue)
         {
             String edgeLabel;
@@ -68,7 +97,7 @@ public class DSAGraph<E,F>
             if (validateVertex(newVertex))
             {
                 edgeLabel = label + " <-> " + newVertex.getLabel();
-                edge = new DSAGraphEdge<E,F>(edgeLabel, edgeValue);
+                edge = new DSAGraphEdge<E,F>(edgeLabel, edgeWeight, edgeValue);
                 edge.setFrom(this);
                 edge.setTo(newVertex);
 
@@ -76,6 +105,19 @@ public class DSAGraph<E,F>
                 edgeList.insertLast(edge);
             }
         }
+
+        public void setPrevVertex(DSAGraphVertex<E,F> inPrev)
+        {
+            prevVertex = inPrev;
+        }
+
+        public void setDistanceFromSource(int inDist)
+        {
+            distanceFromSource = inDist;
+        }
+
+        public DSAGraphVertex<E,F> getPrevVertex() { return prevVertex; }
+        public int getDistanceFromSource() { return distanceFromSource; }
 
         public void setVisited() { visited = true; }
         public void clearVisited() { visited = false; }
@@ -122,13 +164,15 @@ public class DSAGraph<E,F>
     private class DSAGraphEdge<E,F>
     {
         String label;
+        int weight;
         F edgeValue;
         DSAGraphVertex<E,F> fromVertex, toVertex;
         boolean visited;
 
-        public DSAGraphEdge(String inLabel, F inValue)
+        public DSAGraphEdge(String inLabel, int inWeight, F inValue)
         {
             label = inLabel;
+            weight = inWeight;
             edgeValue = inValue;
             visited = false;
         }
@@ -147,6 +191,7 @@ public class DSAGraph<E,F>
         }
 
         public String getLabel() { return label; }
+        public int getEdgeWeight() { return weight; }
         public F getEdgeValue() { return edgeValue; }
         public boolean getVisited() { return visited; }
 
@@ -184,21 +229,26 @@ public class DSAGraph<E,F>
     public void addEdge(
         DSAGraphVertex<E,F> vertex1,
         DSAGraphVertex<E,F> vertex2,
+        int edgeWeight,
         F edgeValue)
     {
-        vertex1.addEdge(vertex2, edgeValue);
-        vertex2.addEdge(vertex1, edgeValue);
+        vertex1.addEdge(vertex2, edgeWeight, edgeValue);
+        vertex2.addEdge(vertex1, edgeWeight, edgeValue);
         edgeCount++;
     }
 
-    public void addEdge(String label1, String label2, F edgeValue)
+    public void addEdge(
+        String label1,
+        String label2,
+        int edgeWeight,
+        F edgeValue)
     {
         DSAGraphVertex<E,F> vertex1 = null;
         DSAGraphVertex<E,F> vertex2 = null;
         vertex1 = getVertex(label1);
         vertex2 = getVertex(label2);
 
-        this.addEdge(vertex1, vertex2, edgeValue);
+        this.addEdge(vertex1, vertex2, edgeWeight, edgeValue);
     }
 
     public E getVertexValue(String label)
@@ -229,6 +279,26 @@ public class DSAGraph<E,F>
         vertex2 = getVertex(label2);
 
         return this.getEdgeValue(vertex1, vertex2);
+    }
+
+    public int getEdgeWeight(
+        DSAGraphVertex<E,F> vertex1,
+        DSAGraphVertex<E,F> vertex2)
+    {
+        return vertex1.getEdgeWeight(vertex2);
+    }
+
+    public int getEdgeWeight(String label1, String label2)
+    {
+        DSAGraphVertex<E,F> vertex1 = null;
+        DSAGraphVertex<E,F> vertex2 = null;
+
+        E edgeValue;
+
+        vertex1 = getVertex(label1);
+        vertex2 = getVertex(label2);
+
+        return this.getEdgeWeight(vertex1, vertex2);
     }
 
     public int getVertexCount()
@@ -511,15 +581,124 @@ public class DSAGraph<E,F>
         return path;
     }
 
+    public DSAStack<E> dijkstra(String label1, String label2)
+    {
+        DSAGraphVertex<E,F> vertex1 = null;
+        DSAGraphVertex<E,F> vertex2 = null;
+
+        vertex1 = getVertex(label1);
+        vertex2 = getVertex(label2);
+
+        return this.dijkstra(vertex1, vertex2);
+    }
+
+    public DSAStack<E> dijkstra(
+        DSAGraphVertex<E,F> source,
+        DSAGraphVertex<E,F> target)
+    {
+        DSAGraphVertex<E,F> tempVertex = null;
+        DSAGraphVertex<E,F> vertexAdjacent = null;
+        Iterator<DSAGraphVertex<E,F>> iter = null;
+        Iterator<DSAGraphVertex<E,F>> iterInVertex = null;
+
+        DSAStack<E> path;
+        DSAMinHeap queue;
+        boolean reached = false;
+        int alt;
+
+        markAllNew();
+
+        iter = vertices.iterator();
+        queue = new DSAMinHeap((int)Math.pow(vertexCount, 2));
+        path = new DSAStack<E>();
+
+        while (iter.hasNext())
+        {
+            tempVertex = iter.next();
+
+            if (tempVertex == source)
+            {
+                tempVertex.setDistanceFromSource(0);
+            }
+            else
+            {
+                tempVertex.setDistanceFromSource(Integer.MAX_VALUE);
+            }
+
+            tempVertex.setPrevVertex(null);
+            queue.add(tempVertex.getDistanceFromSource(), tempVertex);
+        }
+
+        while (! queue.isEmpty() && ! reached)
+        {
+            tempVertex = (DSAGraph<E,F>.DSAGraphVertex<E,F>)queue.remove();
+            iter = tempVertex.getAdjacent().iterator();
+
+            while (iter.hasNext() && ! reached)
+            {
+                vertexAdjacent = iter.next();
+
+                if (vertexAdjacent == target)
+                {
+                    reached = true;
+                }
+
+                if (! vertexAdjacent.getVisited())
+                {
+                    vertexAdjacent.setVisited();
+                    alt = tempVertex.getDistanceFromSource()
+                        + this.getEdgeWeight(
+                            tempVertex,
+                            vertexAdjacent
+                    );
+
+                    if (alt < vertexAdjacent.getDistanceFromSource())
+                    {
+                        vertexAdjacent.setDistanceFromSource(alt);
+                        vertexAdjacent.setPrevVertex(tempVertex);
+                        queue.add(alt, vertexAdjacent);
+                    }
+                }
+            }
+        }
+
+        tempVertex = target;
+
+        while (tempVertex != source)
+        {
+            path.push(tempVertex.getValue());
+            tempVertex = tempVertex.getPrevVertex();
+        }
+
+        iter = vertices.iterator();
+
+        while (iter.hasNext())
+        {
+            tempVertex = iter.next();
+            tempVertex.setDistanceFromSource(Integer.MAX_VALUE);
+            tempVertex.setPrevVertex(null);
+        }
+
+        return path;
+    }
+
     private void markAllNew()
     {
         DSAGraphVertex<E,F> inVertex = null;
+        DSAGraphEdge<E,F> inEdge;
         Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
+        Iterator<DSAGraphEdge<E,F>> edgeIter;
 
         while (iter.hasNext())
         {
             inVertex = iter.next();
             inVertex.clearVisited();
+            edgeIter = inVertex.getEdges().iterator();
+            while (edgeIter.hasNext())
+            {
+                inEdge = edgeIter.next();
+                inEdge.clearVisited();
+            }
         }
     }
 

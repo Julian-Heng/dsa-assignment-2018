@@ -144,7 +144,7 @@ public class testDSAGraph
             edgeValue = Integer.valueOf(2);
             graph.addVertex("a", Integer.valueOf(1));
             graph.addVertex("b", Integer.valueOf(1));
-            graph.addEdge("a", "b", edgeValue);
+            graph.addEdge("a", "b", 1, edgeValue);
 
             vertex = graph.getVertexCount();
             edge = graph.getEdgeCount();
@@ -191,7 +191,7 @@ public class testDSAGraph
                     label2 = genString(j + 1);
                     graph.addVertex(label1, Integer.valueOf(j));
                     graph.addVertex(label2, Integer.valueOf(j + 1));
-                    graph.addEdge(label1, label2, edgeValue);
+                    graph.addEdge(label1, label2, 1, edgeValue);
                 }
 
                 vertex = graph.getVertexCount();
@@ -241,6 +241,7 @@ public class testDSAGraph
             graph.addEdge(
                 graph.getVertex("a"),
                 graph.getVertex("b"),
+                1,
                 edgeValue
             );
 
@@ -295,6 +296,7 @@ public class testDSAGraph
                     graph.addEdge(
                         graph.getVertex(label1),
                         graph.getVertex(label2),
+                        1,
                         edgeValue
                     );
                 }
@@ -351,8 +353,8 @@ public class testDSAGraph
             graph.addVertex("a", Integer.valueOf(3));
             graph.addVertex("b", Integer.valueOf(3));
             graph.addVertex("c", Integer.valueOf(3));
-            graph.addEdge("a", "b", edgeValueArr[0]);
-            graph.addEdge("a", "c", edgeValueArr[1]);
+            graph.addEdge("a", "b", 1, edgeValueArr[0]);
+            graph.addEdge("a", "c", 1, edgeValueArr[1]);
 
             vertex = graph.getVertexCount();
             edge = graph.getEdgeCount();

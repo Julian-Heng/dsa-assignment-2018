@@ -4,16 +4,16 @@ public class DSAMinHeap
 {
     private class DSAMinHeapEntry
     {
-        private String priority;
+        private int priority;
         private Object value;
 
-        public DSAMinHeapEntry(String inPriority, Object inValue)
+        public DSAMinHeapEntry(int inPriority, Object inValue)
         {
             priority = inPriority;
             value = inValue;
         }
 
-        public String getPriority() { return priority; }
+        public int getPriority() { return priority; }
         public Object getValue() { return value; }
     }
 
@@ -32,7 +32,14 @@ public class DSAMinHeap
         m_count = 0;
     }
 
-    public void add(String priority, Object value)
+    public DSAMinHeap(int[] arr)
+    {
+        m_heap = new DSAMinHeap.DSAMinHeapEntry[arr.length];
+        m_count = 0;
+        this.heapify(arr);
+    }
+
+    public void add(int priority, Object value)
     {
         if (m_count == m_heap.length)
         {
@@ -78,21 +85,22 @@ public class DSAMinHeap
         }
     }
 
-    public Object[] toObjArray()
+    private void heapify(int[] arr)
     {
-        Object[] newArr = new Object[m_count];
-
-        for (int i = 0; i < m_count; i++)
+        for (int inArr : arr)
         {
-            newArr[i] = m_heap[i].getValue();
+            this.add(inArr, Integer.valueOf(inArr));
         }
 
-        return newArr;
+        for (int i = ((m_count / 2) - 1); i >= 0; i--)
+        {
+            trickleDown(i);
+        }
     }
 
-    public String[] toStringArray()
+    public int[] toIntArray()
     {
-        String[] newArr = new String[m_count];
+        int[] newArr = new int[m_count];
 
         for (int i = 0; i < m_count; i++)
         {
@@ -114,19 +122,9 @@ public class DSAMinHeap
 
         parentIndex = (index - 1) / 2;
 
-        /*
         if ((index > 0) &&
-            (m_heap[index].getPriority() >
+            (m_heap[index].getPriority() <
                 m_heap[parentIndex].getPriority()))
-                */
-        /*
-        if ((index > 0) &&
-            (m_heap[index].getPriority().compareTo(
-                m_heap[parentIndex].getPriority()) > 0))
-                */
-        if ((index > 0) &&
-            (m_heap[index].getPriority().compareTo(
-                m_heap[parentIndex].getPriority()) < 0))
         {
             temp = m_heap[parentIndex];
             m_heap[parentIndex] = m_heap[index];
@@ -151,33 +149,15 @@ public class DSAMinHeap
         if (leftChild < numItems)
         {
             largeIndex = leftChild;
-            /*
             if ((rightChild < numItems) &&
-                (m_heap[leftChild].getPriority() <
+                (m_heap[leftChild].getPriority() >
                     m_heap[rightChild].getPriority()))
-                    */
-            /*
-            if ((rightChild < numItems) &&
-                (m_heap[leftChild].getPriority().compareTo(
-                    m_heap[rightChild].getPriority()) < 0))
-                    */
-            if ((rightChild < numItems) &&
-                (m_heap[leftChild].getPriority().compareTo(
-                    m_heap[rightChild].getPriority()) > 0))
             {
                 largeIndex = rightChild;
             }
 
-            /*
-            if (m_heap[largeIndex].getPriority() >
+            if (m_heap[largeIndex].getPriority() <
                     m_heap[index].getPriority())
-                    */
-            /*
-            if (m_heap[largeIndex].getPriority().compareTo(
-                    m_heap[index].getPriority()) > 0)
-                    */
-            if (m_heap[largeIndex].getPriority().compareTo(
-                    m_heap[index].getPriority()) < 0)
             {
                 swap(largeIndex, index);
                 recurseTrickleDown(largeIndex, numItems);
@@ -192,6 +172,11 @@ public class DSAMinHeap
         temp = m_heap[index1];
         m_heap[index1] = m_heap[index2];
         m_heap[index2] = temp;
+    }
+
+    public boolean isEmpty()
+    {
+        return m_count == 0;
     }
 
     public int getSize() { return m_heap.length; }

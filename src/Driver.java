@@ -61,7 +61,7 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
         System.out.println(
-            "Reading preference file took " +
+            "Processing preference file took " +
             toMiliseconds(duration) + "ms"
         );
 
@@ -112,7 +112,7 @@ public class Driver
 
         Trip tripInfo;
 
-        double distance;
+        int distance;
         int tempTimeInt;
         String tempTimeStr;
         Time duration;
@@ -121,7 +121,7 @@ public class Driver
         String[] split;
 
         list = FileIO.readText(file);
-        System.out.print("Reading " + file + "... ");
+        System.out.print("Processing " + file + "... ");
 
         locationGraph = new DSAGraph<Location,Trip>();
 
@@ -140,11 +140,11 @@ public class Driver
             {
                 if (split[8].equals("NONE"))
                 {
-                    distance = 0.0;
+                    distance = 0;
                 }
                 else
                 {
-                    distance = Double.parseDouble(split[8]);
+                    distance = Integer.parseInt(split[8]);
                 }
 
                 if (split[9].contains(":"))
@@ -153,23 +153,16 @@ public class Driver
                 }
                 else if (split[9].equals("NONE"))
                 {
-                    duration = new Time("00:00:00");
+                    duration = new Time(0);
                 }
                 else
                 {
                     tempTimeInt = Integer.parseInt(split[9]);
-                    tempTimeStr = String.format(
-                            "%02d", tempTimeInt / 60 % 24
-                        ) + ":" + String.format(
-                            "%02d", tempTimeInt % 60
-                        ) + ":" + String.format(
-                            "%02d", ((tempTimeInt * 60) % 60) % 60
-                        );
-                    duration = new Time(tempTimeStr);
+                    duration = new Time(tempTimeInt);
                 }
 
                 transportType = split[10];
-                tripInfo = new Trip(transportType, duration);
+                tripInfo = new Trip(transportType, distance, duration);
 
                 locationGraph.addVertex(
                     startLocation.getDivision(),
@@ -184,6 +177,7 @@ public class Driver
                 locationGraph.addEdge(
                     startLocation.getDivision(),
                     endLocation.getDivision(),
+                    tripInfo.getDistance(),
                     tripInfo
                 );
             }
@@ -221,7 +215,7 @@ public class Driver
         list = FileIO.readText(file);
         iter = list.iterator();
 
-        System.out.print("Reading " + file + "... ");
+        System.out.print("Processing " + file + "... ");
 
         nomineeList = new DSALinkedList<Nominee>();
         invalidEntries = new DSALinkedList<String>();
@@ -297,7 +291,7 @@ public class Driver
 
         divisionIdList = new DSALinkedList<String>();
 
-        System.out.print("Reading " + file + "... ");
+        System.out.print("Processing " + file + "... ");
 
         for (String i : list)
         {
@@ -391,7 +385,6 @@ public class Driver
             }
 
             tempHousePref.updateTotalVotes();
-
             preferenceList.insertLast(tempHousePref);
         }
 
@@ -922,11 +915,11 @@ public class Driver
         String partyFilter;
         double marginLimit;
 
-        int[] visitDivision;
-        DSAGraph<Location,Trip> smallMap;
+        int[] visitDivisionIndex;
+        String[] visitDivision;
 
-        Location tempLocation1, tempLocation2;
-        Trip tripInfo;
+        DSAStack<Location> path;
+        DSAStack<Location> tempStack;
 
         long timeStart, timeEnd, duration;
 
@@ -1003,23 +996,23 @@ public class Driver
                     "No locations selected, using all locations"
                 );
 
-                visitDivision = new int[count];
+                visitDivisionIndex = new int[count];
 
                 for (int i = 1; i <= count; i++)
                 {
-                    visitDivision[i - 1] = i;
+                    visitDivisionIndex[i - 1] = i;
                 }
             }
             else
             {
                 split = userInput.split(" ");
-                visitDivision = new int[split.length];
+                visitDivisionIndex = new int[split.length];
 
                 try
                 {
                     for (int i = 0; i < split.length; i++)
                     {
-                        visitDivision[i] = Integer.parseInt(split[i]);
+                        visitDivisionIndex[i] = Integer.parseInt(split[i]);
                     }
                 }
                 catch (NumberFormatException e)
@@ -1036,43 +1029,53 @@ public class Driver
                 }
             }
 
-            smallMap = new DSAGraph<Location,Trip>();
+            count = 0;
+            visitDivision = new String[visitDivisionIndex.length];
 
-            for (int i : visitDivision)
+            for (int i : visitDivisionIndex)
             {
                 split = fileContents[i - 1].split(
                     ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
                 );
 
-                tempLocation1 = map.getVertexValue(split[2]);
-                smallMap.addVertex(split[2], tempLocation1);
+                visitDivision[count] = split[2];
+                count++;
+            }
 
-                for (int j : visitDivision)
+            path = new DSAStack<Location>();
+
+            timeStart = System.nanoTime();
+            //System.out.println(map.getVertexValue(visitDivision[0]).getDivision());
+
+            path.push(map.getVertexValue(visitDivision[0]));
+
+            for (int i = 1; i < visitDivision.length; i++)
+            {
+                tempStack = map.dijkstra(
+                    visitDivision[i - 1],
+                    visitDivision[i]
+                );
+
+                while (! tempStack.isEmpty())
                 {
-                    if (i != j)
-                    {
-                        split = fileContents[j - 1].split(
-                            ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
-                        );
-
-                        tempLocation2 = map.getVertexValue(split[2]);
-                        tripInfo = map.getEdgeValue(
-                            tempLocation1.getDivision(),
-                            tempLocation2.getDivision()
-                        );
-
-                        smallMap.addVertex(split[2], tempLocation2);
-                        smallMap.addEdge(
-                            tempLocation1.getDivision(),
-                            tempLocation2.getDivision(),
-                            tripInfo
-                        );
-                    }
+                    path.push(tempStack.pop());
                 }
             }
 
-            System.out.println(smallMap.depthFirstSearch().replace(", ", "\n"));
-            //System.out.println(smallMap.getStructure());
+            tempStack = path;
+            path = new DSAStack<Location>();
+
+            while (! tempStack.isEmpty())
+            {
+                path.push(tempStack.pop());
+            }
+
+            printItinerary(path, map);
+
+            timeEnd = System.nanoTime();
+            duration = timeEnd - timeStart;
+
+            System.out.println("Took " + toMiliseconds(duration) + "ms\n");
         }
         catch (Exception e)
         {
@@ -1197,6 +1200,73 @@ public class Driver
         }
 
         return voteResultList;
+    }
+
+    public static void printItinerary(
+        DSAStack<Location> path,
+        DSAGraph<Location,Trip> map)
+    {
+        String[] fileContents;
+        String[] header = {
+            "from_State", "from_Division", "from_Latitude",
+            "from_Longitude", "to_State", "to_Division",
+            "to_Latitude", "to_Longitude",
+            "distance_metres", "time_hours_minutes",
+            "trans_type"
+        };
+
+        String fromState, fromDivision, toState, toDivision, time, trans;
+        double fromLat, fromLong, toLat, toLong;
+        int distance, count, totalTime;
+
+        Location from, to;
+        Trip tripInfo;
+
+        fileContents = new String[path.getCount() - 1];
+        totalTime = path.getCount() * 180;
+
+        from = path.pop();
+        count = 0;
+
+        fromState = from.getState();
+        fromDivision = from.getDivision();
+        fromLat = from.getLatitude();
+        fromLong = from.getLongitude();
+
+        while (! path.isEmpty() && count < fileContents.length)
+        {
+            to = path.pop();
+            tripInfo = map.getEdgeValue(
+                from.getDivision(),
+                to.getDivision()
+            );
+
+            toState = to.getState();
+            toDivision = to.getDivision();
+            toLat = to.getLatitude();
+            toLong = to.getLongitude();
+
+            distance = tripInfo.getDistance();
+            time = tripInfo.getDuration().toString();
+            trans = tripInfo.getTransportType();
+
+            fileContents[count] = fromState + "," + fromDivision + "," +
+                                  fromLat + "," + fromLong + "," +
+                                  toState + "," + toDivision + "," +
+                                  toLat + "," + toLong + "," + distance +
+                                  "," + time + "," + trans;
+            totalTime += tripInfo.getDuration().getTotalMinutes();
+            count++;
+
+            from = to;
+            fromState = toState;
+            fromDivision = toDivision;
+            fromLat = toLat;
+            fromLong = toLong;
+        }
+
+        printCsvTable(fileContents, header);
+        System.out.println("Total Time: " + new Time(totalTime).toString());
     }
 
     public static void printCsvTable(

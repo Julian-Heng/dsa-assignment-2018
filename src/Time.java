@@ -30,6 +30,13 @@ public class Time
         }
     }
 
+    public Time(int inMins)
+    {
+        hours = inMins / 60;
+        minutes = inMins % 60;
+        seconds = (inMins % 60) / 60;
+    }
+
     public void setHours(String inHours)
     {
         int val;
@@ -87,6 +94,18 @@ public class Time
     public int getHours()   { return hours; }
     public int getMinutes() { return minutes; }
     public int getSeconds() { return seconds; }
+
+    public int getTotalMinutes()
+    {
+        return (hours * 60) + minutes + (seconds / 60);
+    }
+
+    public String toString()
+    {
+        return String.format("%02d", hours) + ":" +
+               String.format("%02d", minutes) + ":" +
+               String.format("%02d", seconds);
+    }
 
     private boolean validateString(String str)
     {

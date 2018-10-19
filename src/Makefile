@@ -8,4 +8,4 @@ test: all
 	java testHarness
 
 clean:
-	@rm -fv *.class
+	@rm -fv *.class *.csv

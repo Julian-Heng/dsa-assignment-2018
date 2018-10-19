@@ -33,6 +33,7 @@ public class Driver
         DSALinkedList<Nominee> nomineesList;
         DSALinkedList<HousePreference> preferenceList;
         DSALinkedList<HousePreference> tempPrefList;
+        Iterator<HousePreference> iter;
 
         menu = new Menu(6);
         menu.addOption("Please select an option:");
@@ -52,9 +53,11 @@ public class Driver
         for (int i = 2; i < files.length; i++)
         {
             tempPrefList = processPreference(files[i], nomineesList);
-            for (HousePreference inTemp : tempPrefList)
+
+            iter = tempPrefList.iterator();
+            while (iter.hasNext())
             {
-                preferenceList.insertLast(inTemp);
+                preferenceList.insertLast(iter.next());
             }
         }
 
@@ -102,10 +105,10 @@ public class Driver
         DSALinkedList<String> list;
         DSAGraph<Location,Trip> locationGraph;
         Iterator<String> iter;
+        String line;
         Location startLocation, endLocation;
 
         long timeStart, timeEnd, funcDuration;
-        timeStart = System.nanoTime();
 
         String spinner[] = {"\\", "|", "/", "-"};
         int count = 0;
@@ -120,13 +123,17 @@ public class Driver
 
         String[] split;
 
+        timeStart = System.nanoTime();
         list = FileIO.readText(file);
+        iter = list.iterator();
+
         System.out.print("Processing " + file + "... ");
 
         locationGraph = new DSAGraph<Location,Trip>();
 
-        for (String line : list)
+        while (iter.hasNext())
         {
+            line = iter.next();
             printSpinner(spinner, count++);
 
             split = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -187,6 +194,12 @@ public class Driver
                     "Invalid Distance File: " + e.getMessage()
                 );
             }
+            catch (Exception e)
+            {
+                throw new IllegalArgumentException(
+                    "Error: " + e.getMessage()
+                );
+            }
         }
 
         timeEnd = System.nanoTime();
@@ -207,11 +220,10 @@ public class Driver
 
         long timeStart, timeEnd, duration;
 
-        timeStart = System.nanoTime();
-
         String spinner[] = {"\\", "|", "/", "-"};
         int count = 0;
 
+        timeStart = System.nanoTime();
         list = FileIO.readText(file);
         iter = list.iterator();
 
@@ -252,7 +264,7 @@ public class Driver
         {
             System.out.println(
                 "Invalid entry in " + file +
-                ": " + iter.next()
+                ": " + iter.next() + ", ignoring"
             );
         }
 
@@ -272,6 +284,9 @@ public class Driver
         DSALinkedList<HousePreference> preferenceList;
         DSALinkedList<Nominee> tempNomineeList;
         Iterator<String> iter;
+        Iterator<String> iter2;
+        Iterator<Nominee> iterNominee;
+        String line;
 
         Nominee tempNominee;
         HousePreference tempHousePref;
@@ -280,22 +295,24 @@ public class Driver
         DSALinkedList<String> divisionIdList;
 
         long timeStart, timeEnd, duration;
-        timeStart = System.nanoTime();
 
         String[] split;
 
         String spinner[] = {"\\", "|", "/", "-"};
         int count = 0;
 
+        timeStart = System.nanoTime();
         list = FileIO.readText(file);
+        iter = list.iterator();
 
         divisionIdList = new DSALinkedList<String>();
 
         System.out.print("Processing " + file + "... ");
 
-        for (String i : list)
+        while (iter.hasNext())
         {
-            split = i.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            line = iter.next();
+            split = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
             if (! split[1].isEmpty() &&
                 ! split[1].equals("DivisionID") &&
                 isUnique(divisionIdList, split[1]))
@@ -305,33 +322,42 @@ public class Driver
         }
 
         preferenceList = new DSALinkedList<HousePreference>();
+        iter = divisionIdList.iterator();
 
-        for (String i : divisionIdList)
+        while (iter.hasNext())
         {
+            line = iter.next();
             printSpinner(spinner, count++);
 
-            tempNomineeList = getNomineeFromDivisionId(nomineeList, i);
-            inList = getPreferenceFromDivisionId(list, i);
+            tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
+            inList = getPreferenceFromDivisionId(list, line);
 
-            split = inList.peekFirst().split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            split = inList.peekFirst().split(
+                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+            );
+
             divisionName = split[2];
             divisionId = split[1];
 
             tempHousePref = new HousePreference(divisionName, divisionId);
 
-            for (String inInList : inList)
+            iter2 = inList.iterator();
+            while (iter2.hasNext())
             {
-                split = inInList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (! split[6].equals("Informal") &&
-                    ! split[7].equals("Informal"))
+                split = iter2.next().split(
+                    ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+                );
+
+                try
                 {
-
-                    tempNominee = getNomineeFromCandidateId(
-                        tempNomineeList, split[5]
-                    );
-
-                    try
+                    if (! split[6].equals("Informal") &&
+                        ! split[7].equals("Informal"))
                     {
+
+                        tempNominee = getNomineeFromCandidateId(
+                            tempNomineeList, split[5]
+                        );
+
                         tempNominee.setNumVotes(
                             Integer.toString(
                                 tempNominee.getNumVotes() + Integer.parseInt(
@@ -340,22 +366,7 @@ public class Driver
                             )
                         );
                     }
-                    catch (NumberFormatException e)
-                    {
-                        throw new IllegalArgumentException(
-                            "Invalid Number of Votes: " + split[13]
-                        );
-                    }
-                    catch (ArrayIndexOutOfBoundsException e)
-                    {
-                        throw new IllegalArgumentException(
-                            "Invalid House Preference File"
-                        );
-                    }
-                }
-                else
-                {
-                    try
+                    else
                     {
                         tempHousePref.setNumInformalVotes(
                             Integer.toString(
@@ -364,24 +375,25 @@ public class Driver
                                 )
                         );
                     }
-                    catch (NumberFormatException e)
-                    {
-                        throw new IllegalArgumentException(
-                            "Invalid Number of Votes: " + split[13]
-                        );
-                    }
-                    catch (ArrayIndexOutOfBoundsException e)
-                    {
-                        throw new IllegalArgumentException(
-                            "Invalid House Preference File"
-                        );
-                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new IllegalArgumentException(
+                        "Invalid Number of Votes: " + split[13]
+                    );
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    throw new IllegalArgumentException(
+                        "Invalid House Preference File"
+                    );
                 }
             }
 
-            for (Nominee inNomineeList : tempNomineeList)
+            iterNominee = tempNomineeList.iterator();
+            while (iterNominee.hasNext())
             {
-                tempHousePref.addNomineeToList(inNomineeList);
+                tempHousePref.addNomineeToList(iterNominee.next());
             }
 
             tempHousePref.updateTotalVotes();
@@ -400,10 +412,15 @@ public class Driver
         DSALinkedList<Nominee> nomineeList, String inState)
     {
         DSALinkedList<Nominee> returnList;
-        returnList = new DSALinkedList<Nominee>();
+        Iterator<Nominee> iter;
+        Nominee inList;
 
-        for (Nominee inList : nomineeList)
+        returnList = new DSALinkedList<Nominee>();
+        iter = nomineeList.iterator();
+
+        while (iter.hasNext())
         {
+            inList = iter.next();
             if (inList.getState().equals(inState))
             {
                 returnList.insertLast(inList);
@@ -417,10 +434,15 @@ public class Driver
         DSALinkedList<Nominee> nomineeList, String inDivisionId)
     {
         DSALinkedList<Nominee> returnList;
+        Iterator<Nominee> iter;
+        Nominee inList;
         returnList = new DSALinkedList<Nominee>();
 
-        for (Nominee inList : nomineeList)
+        iter = nomineeList.iterator();
+
+        while (iter.hasNext())
         {
+            inList = iter.next();
             if (compareIntString(inList.getIdDivision(), inDivisionId))
             {
                 returnList.insertLast(inList);
@@ -455,11 +477,15 @@ public class Driver
         DSALinkedList<String> list, String inDivisionId)
     {
         DSALinkedList<String> returnList;
+        Iterator<String> iter;
+        String inList;
         String[] split;
         returnList = new DSALinkedList<String>();
 
-        for (String inList : list)
+        iter = list.iterator();
+        while (iter.hasNext())
         {
+            inList = iter.next();
             split = inList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
             if (! split[1].isEmpty() && split[1].equals(inDivisionId))
             {
@@ -481,6 +507,7 @@ public class Driver
         Menu orderMenu;
         Iterator<Nominee> iter;
         Nominee inList;
+        Nominee inResult;
         Nominee searchResult[];
         Object sorted[];
         long timeStart, timeEnd, duration;
@@ -574,8 +601,9 @@ public class Driver
 
         if (! userInput.isEmpty())
         {
-            for (Nominee inResult : searchResult)
+            for (int j = 0; j < searchResult.length; j++)
             {
+                inResult = searchResult[j];
                 sortLine = generateSortLine(inResult, split);
                 heap.add(sortLine, inResult);
             }
@@ -604,15 +632,7 @@ public class Driver
 
         System.out.println("Took " + toMiliseconds(duration) + "ms\n");
 
-        userInput = Input.string("Save report to file? [Y/n]: ");
-
-        if ((userInput.equals("Y")) ||
-            (userInput.equals("y")) ||
-            (userInput.isEmpty()))
-        {
-            userInput = Input.string("Enter filename: ");
-            FileIO.writeText(userInput, fileContents);
-        }
+        saveCsvToFile(fileContents, "nominees_list.csv");
     }
 
     public static void searchNominees(DSALinkedList<Nominee> nomineeList)
@@ -714,15 +734,17 @@ public class Driver
 
         System.out.println("Took " + toMiliseconds(duration) + "ms\n");
 
-        saveCsvToFile(fileContents);
+        saveCsvToFile(fileContents, "nominees_search.csv");
     }
 
     public static void processFilterOptions(boolean[] options, String[] input)
     {
+        String option;
         int optionSwitch;
 
-        for (String option : input)
+        for (int i = 0; i < input.length; i++)
         {
+            option = input[i];
             try
             {
                 optionSwitch = Integer.parseInt(option);
@@ -778,9 +800,11 @@ public class Driver
     public static String generateSortLine(Nominee inNominee, String[] order)
     {
         String sortLine = "";
+        String choice;
 
-        for (String choice : order)
+        for (int i = 0; i < order.length; i++)
         {
+            choice = order[i];
             try
             {
                 switch (Integer.parseInt(choice))
@@ -825,12 +849,15 @@ public class Driver
         };
 
         DSALinkedList<VoteStats> voteResults;
-        String header, line;
         DSALinkedList<String> fileList;
+        Iterator<VoteStats> iter;
+        Iterator<String> iter2;
+        VoteStats inStats;
+        String header, line;
         String fileContents[];
         String csvLine;
 
-        int count;
+        int count, total;
 
         String userInput;
         String partyFilter;
@@ -839,6 +866,7 @@ public class Driver
         long timeStart, timeEnd, duration;
 
         count = 0;
+        total = 0;
 
         csvLine = "";
         partyFilter = "";
@@ -856,12 +884,16 @@ public class Driver
         voteResults = calcVotes(prefList, partyFilter);
         fileList = new DSALinkedList<String>();
 
-        for (VoteStats stats : voteResults)
+        iter = voteResults.iterator();
+
+        while (iter.hasNext())
         {
-            if (Math.abs(stats.getMargin()) < marginLimit)
+            total++;
+            inStats = iter.next();
+            if (Math.abs(inStats.getMargin()) < marginLimit)
             {
                 count++;
-                csvLine = count + "," + stats.toString();
+                csvLine = count + "," + inStats.toString();
                 fileList.insertLast(csvLine);
             }
         }
@@ -875,20 +907,30 @@ public class Driver
             fileContents = new String[count];
             count = 0;
 
-            for (String i : fileList)
+            iter2 = fileList.iterator();
+            while (iter2.hasNext())
             {
-                fileContents[count] = i;
+                fileContents[count] = iter2.next();
                 count++;
             }
 
             printCsvTable(fileContents, headerFile);
+
+            System.out.println("\n" + count + "/" + total + " matches");
 
             timeEnd = System.nanoTime();
             duration = timeEnd - timeStart;
 
             System.out.println("Took " + toMiliseconds(duration) + "ms\n");
 
-            saveCsvToFile(fileContents);
+            saveCsvToFile(
+                fileContents,
+                String.format(
+                    "%s_%03.2f_margin.csv",
+                    partyFilter,
+                    marginLimit
+                )
+            );
         }
     }
 
@@ -903,12 +945,15 @@ public class Driver
         };
 
         DSALinkedList<VoteStats> voteResults;
-        String header, line;
         DSALinkedList<String> fileList;
+        Iterator<VoteStats> iter;
+        Iterator<String> iter2;
+        VoteStats inStats;
+        String header, line;
         String fileContents[];
         String csvLine;
 
-        int count;
+        int count, total;
 
         String userInput;
         String[] split;
@@ -924,163 +969,156 @@ public class Driver
         long timeStart, timeEnd, duration;
 
         count = 0;
+        total = 0;
 
         csvLine = "";
         partyFilter = "";
 
-        try
+        if ((partyFilter = getPartyFilter()) == null)
         {
-            if ((partyFilter = getPartyFilter()) == null)
+            throw new IllegalArgumentException(
+                "No party found: Empty search field"
+            );
+        }
+
+        marginLimit = getMarginLimit();
+
+        timeStart = System.nanoTime();
+        voteResults = calcVotes(prefList, partyFilter);
+        fileList = new DSALinkedList<String>();
+
+        iter = voteResults.iterator();
+
+        while (iter.hasNext())
+        {
+            total++;
+            inStats = iter.next();
+            if (Math.abs(inStats.getMargin()) < marginLimit)
             {
-                throw new IllegalArgumentException(
-                    "No party found: Empty search field"
-                );
-            }
-
-            marginLimit = getMarginLimit();
-
-            timeStart = System.nanoTime();
-            voteResults = calcVotes(prefList, partyFilter);
-            fileList = new DSALinkedList<String>();
-
-            for (VoteStats stats : voteResults)
-            {
-                if (Math.abs(stats.getMargin()) < marginLimit)
-                {
-                    count++;
-                    csvLine = count + "," + stats.toString();
-                    fileList.insertLast(csvLine);
-                }
-            }
-
-            fileContents = new String[count];
-
-            if (count == 0)
-            {
-                throw new IllegalArgumentException(
-                    "No party found."
-                );
-            }
-
-            fileContents = new String[count];
-            count = 0;
-
-            for (String i : fileList)
-            {
-                fileContents[count] = i;
                 count++;
+                csvLine = count + "," + inStats.toString();
+                fileList.insertLast(csvLine);
             }
+        }
 
-            printCsvTable(fileContents, headerFile);
+        fileContents = new String[count];
 
-            timeEnd = System.nanoTime();
-            duration = timeEnd - timeStart;
+        if (count == 0)
+        {
+            throw new IllegalArgumentException(
+                "No party found."
+            );
+        }
 
-            System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+        fileContents = new String[count];
+        count = 0;
 
-            if (count == 0)
-            {
-                throw new IllegalArgumentException(
-                    "No matches"
-                );
-            }
+        iter2 = fileList.iterator();
+        while (iter2.hasNext())
+        {
+            fileContents[count] = iter2.next();
+            count++;
+        }
 
-            userInput = Input.string(
-                "Input Division indexes to visit (eg: 1 2 3): "
+        printCsvTable(fileContents, headerFile);
+
+        System.out.println("\n" + count + "/" + total + " matches");
+
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
+        System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+
+        if (count == 0)
+        {
+            throw new IllegalArgumentException(
+                "No party found: Search field doesn't match anything"
+            );
+        }
+
+        userInput = Input.string(
+            "Input Division indexes to visit (eg: 1 2 3): "
+        );
+
+
+        if (userInput.isEmpty())
+        {
+            System.out.println(
+                "No locations selected, using all locations"
             );
 
+            visitDivisionIndex = new int[count];
 
-            if (userInput.isEmpty())
+            for (int i = 1; i <= count; i++)
             {
-                System.out.println(
-                    "No locations selected, using all locations"
+                visitDivisionIndex[i - 1] = i;
+            }
+        }
+        else
+        {
+            split = userInput.split(" ");
+            visitDivisionIndex = new int[split.length];
+
+            try
+            {
+                for (int i = 0; i < split.length; i++)
+                {
+                    visitDivisionIndex[i] = Integer.parseInt(split[i]);
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                throw new IllegalArgumentException(
+                    "Inputed Division index is invalid"
                 );
-
-                visitDivisionIndex = new int[count];
-
-                for (int i = 1; i <= count; i++)
-                {
-                    visitDivisionIndex[i - 1] = i;
-                }
             }
-            else
+            catch (ArrayIndexOutOfBoundsException e)
             {
-                split = userInput.split(" ");
-                visitDivisionIndex = new int[split.length];
-
-                try
-                {
-                    for (int i = 0; i < split.length; i++)
-                    {
-                        visitDivisionIndex[i] = Integer.parseInt(split[i]);
-                    }
-                }
-                catch (NumberFormatException e)
-                {
-                    throw new IllegalArgumentException(
-                        "Inputed Division index is invalid"
-                    );
-                }
-                catch (ArrayIndexOutOfBoundsException e)
-                {
-                    throw new IllegalArgumentException(
-                        "Inputed Division index is invalid"
-                    );
-                }
-            }
-
-            count = 0;
-            visitDivision = new String[visitDivisionIndex.length];
-
-            for (int i : visitDivisionIndex)
-            {
-                split = fileContents[i - 1].split(
-                    ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+                throw new IllegalArgumentException(
+                    "Inputed Division index is invalid"
                 );
-
-                visitDivision[count] = split[2];
-                count++;
             }
+        }
 
-            path = new DSAStack<Location>();
+        timeStart = System.nanoTime();
+        count = 0;
+        visitDivision = new String[visitDivisionIndex.length];
 
-            timeStart = System.nanoTime();
-            //System.out.println(map.getVertexValue(visitDivision[0]).getDivision());
+        for (int i = 0; i < visitDivisionIndex.length; i++)
+        {
+            split = fileContents[visitDivisionIndex[i] - 1].split(
+                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+            );
 
-            path.push(map.getVertexValue(visitDivision[0]));
+            visitDivision[count] = split[2];
+            count++;
+        }
 
-            for (int i = 1; i < visitDivision.length; i++)
-            {
-                tempStack = map.dijkstra(
-                    visitDivision[i - 1],
-                    visitDivision[i]
-                );
+        path = new DSAStack<Location>();
+        path.push(map.getVertexValue(visitDivision[0]));
 
-                while (! tempStack.isEmpty())
-                {
-                    path.push(tempStack.pop());
-                }
-            }
-
-            tempStack = path;
-            path = new DSAStack<Location>();
+        for (int i = 1; i < visitDivision.length; i++)
+        {
+            tempStack = map.dijkstra(
+                visitDivision[i - 1],
+                visitDivision[i]
+            );
 
             while (! tempStack.isEmpty())
             {
                 path.push(tempStack.pop());
             }
-
-            printItinerary(path, map);
-
-            timeEnd = System.nanoTime();
-            duration = timeEnd - timeStart;
-
-            System.out.println("Took " + toMiliseconds(duration) + "ms\n");
         }
-        catch (Exception e)
+
+        tempStack = path;
+        path = new DSAStack<Location>();
+
+        while (! tempStack.isEmpty())
         {
-            System.out.println(e.getMessage());
+            path.push(tempStack.pop());
         }
+
+        printItinerary(path, map, partyFilter, marginLimit, timeStart);
     }
 
     public static String getPartyFilter()
@@ -1204,7 +1242,10 @@ public class Driver
 
     public static void printItinerary(
         DSAStack<Location> path,
-        DSAGraph<Location,Trip> map)
+        DSAGraph<Location,Trip> map,
+        String partyFilter,
+        double marginLimit,
+        long timeStart)
     {
         String[] fileContents;
         String[] header = {
@@ -1218,6 +1259,7 @@ public class Driver
         String fromState, fromDivision, toState, toDivision, time, trans;
         double fromLat, fromLong, toLat, toLong;
         int distance, count, totalTime;
+        long timeEnd, duration;
 
         Location from, to;
         Trip tripInfo;
@@ -1255,7 +1297,7 @@ public class Driver
                                   toState + "," + toDivision + "," +
                                   toLat + "," + toLong + "," + distance +
                                   "," + time + "," + trans;
-            totalTime += tripInfo.getDuration().getTotalMinutes();
+            totalTime += tripInfo.getDuration().getTotalSeconds();
             count++;
 
             from = to;
@@ -1266,7 +1308,40 @@ public class Driver
         }
 
         printCsvTable(fileContents, header);
-        System.out.println("Total Time: " + new Time(totalTime).toString());
+
+        System.out.println(
+            String.format(
+                "Total Time: %s (%1.2f hours)",
+                convertTimeToString(totalTime),
+                (double)totalTime / 3600
+            )
+        );
+
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
+        System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+
+        saveCsvToFile(
+            fileContents,
+            String.format(
+                "%s_%03.2f_margin_itinerary.csv",
+                partyFilter,
+                marginLimit
+            )
+        );
+    }
+
+    public static String convertTimeToString(int totalSecs)
+    {
+        int days, hours, mins, secs;
+
+        days = (totalSecs / 3600) / 24;
+        hours = (totalSecs / 3600) % 24;
+        mins = (totalSecs / 60) % 60;
+        secs = (totalSecs % 60) % 60;
+
+        return String.format("%dd %dh %dm %ds", days, hours, mins, secs);
     }
 
     public static void printCsvTable(
@@ -1355,9 +1430,9 @@ public class Driver
         length = 0;
         maxLength = 0;
 
-        for (String i : arr)
+        for (int i = 0; i < arr.length; i++)
         {
-            length = i.length();
+            length = arr[i].length();
             if (length > maxLength)
             {
                 maxLength = length;
@@ -1367,17 +1442,26 @@ public class Driver
         return maxLength;
     }
 
-    public static void saveCsvToFile(String[] fileContents)
+    public static void saveCsvToFile(String[] fileContents, String defaultName)
     {
         String userInput;
 
         userInput = Input.string("Save report to file? [Y/n]: ");
 
-        if ((userInput.equals("Y")) ||
-            (userInput.equals("y")) ||
+        if ((userInput.matches("^[yY]$")) ||
             (userInput.isEmpty()))
         {
-            userInput = Input.string("Enter filename: ");
+            userInput = Input.string(
+                String.format(
+                    "%s [%s]: ", "Enter filename", defaultName
+                )
+            );
+
+            if (userInput.isEmpty())
+            {
+                userInput = defaultName;
+            }
+
             FileIO.writeText(userInput, fileContents);
         }
     }
@@ -1456,9 +1540,9 @@ public class Driver
             ""
         };
 
-        for (String inMsg : msg)
+        for (int i = 0; i < msg.length; i++)
         {
-            System.out.println(inMsg);
+            System.out.println(msg[i]);
         }
     }
 }

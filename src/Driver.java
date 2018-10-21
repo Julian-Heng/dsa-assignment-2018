@@ -1118,7 +1118,14 @@ public class Driver
             path.push(tempStack.pop());
         }
 
-        printItinerary(path, map, partyFilter, marginLimit, timeStart);
+        printItinerary(
+            path,
+            map,
+            partyFilter,
+            marginLimit,
+            visitDivision.length,
+            timeStart
+        );
     }
 
     public static String getPartyFilter()
@@ -1245,6 +1252,7 @@ public class Driver
         DSAGraph<Location,Trip> map,
         String partyFilter,
         double marginLimit,
+        int numLocations,
         long timeStart)
     {
         String[] fileContents;
@@ -1265,7 +1273,7 @@ public class Driver
         Trip tripInfo;
 
         fileContents = new String[path.getCount() - 1];
-        totalTime = path.getCount() * 180;
+        totalTime = numLocations * 10800;
 
         from = path.pop();
         count = 0;

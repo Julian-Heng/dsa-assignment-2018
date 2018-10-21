@@ -63,9 +63,9 @@ public class Driver
 
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
-        System.out.println(
-            "Processing preference file took " +
-            toMiliseconds(duration) + "ms"
+        System.out.printf(
+                "Processing preference file took %sms\n",
+                toMiliseconds(duration)
         );
 
         while (! exit)
@@ -127,7 +127,7 @@ public class Driver
         list = FileIO.readText(file);
         iter = list.iterator();
 
-        System.out.print("Processing " + file + "... ");
+        System.out.printf("Processing %s... ", file);
 
         locationGraph = new DSAGraph<Location,Trip>();
 
@@ -205,7 +205,7 @@ public class Driver
         timeEnd = System.nanoTime();
         funcDuration = timeEnd - timeStart;
 
-        System.out.println(toMiliseconds(funcDuration) + "ms");
+        System.out.printf("%sms\n", toMiliseconds(funcDuration));
 
         return locationGraph;
     }
@@ -227,7 +227,7 @@ public class Driver
         list = FileIO.readText(file);
         iter = list.iterator();
 
-        System.out.print("Processing " + file + "... ");
+        System.out.printf("Processing %s... ", file);
 
         nomineeList = new DSALinkedList<Nominee>();
         invalidEntries = new DSALinkedList<String>();
@@ -262,16 +262,16 @@ public class Driver
 
         while (iter.hasNext())
         {
-            System.out.println(
-                "Invalid entry in " + file +
-                ": " + iter.next() + ", ignoring"
+            System.out.printf(
+                "Invalid entry in %s: %s, ignoring\n",
+                file, iter.next()
             );
         }
 
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.println(toMiliseconds(duration) + "ms");
+        System.out.printf("%sms\n", toMiliseconds(duration));
 
         return nomineeList;
     }
@@ -307,7 +307,7 @@ public class Driver
 
         divisionIdList = new DSALinkedList<String>();
 
-        System.out.print("Processing " + file + "... ");
+        System.out.printf("Processing %s... ", file);
 
         while (iter.hasNext())
         {
@@ -403,7 +403,7 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.println(toMiliseconds(duration) + "ms");
+        System.out.printf("%sms\n", toMiliseconds(duration));
 
         return preferenceList;
     }
@@ -625,12 +625,12 @@ public class Driver
         }
 
         printCsvTable(fileContents, header);
-        System.out.println("\n" + numMatches + "/" + numNominee + " matches");
+        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
 
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+        System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
         saveCsvToFile(fileContents, "nominees_list.csv");
     }
@@ -727,12 +727,12 @@ public class Driver
         }
 
         printCsvTable(fileContents, header);
-        System.out.println("\n" + numMatches + "/" + numNominee + " matches");
+        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
 
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+        System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
         saveCsvToFile(fileContents, "nominees_search.csv");
     }
@@ -822,16 +822,18 @@ public class Driver
                         sortLine += inNominee.getNameDivision() + ",";
                         break;
                     default:
-                        System.out.println(
-                            "Invalid order option: " + choice + ". Ignoring"
+                        System.out.printf(
+                            "Invalid order option: %s. Ignoring\n",
+                            choice
                         );
                         break;
                 }
             }
             catch (NumberFormatException e)
             {
-                System.out.println(
-                    "Invalid order option: " + choice + ". Ignoring"
+                System.out.printf(
+                    "Invalid order option: %s. Ignoring\n",
+                    choice
                 );
             }
         }
@@ -916,12 +918,12 @@ public class Driver
 
             printCsvTable(fileContents, headerFile);
 
-            System.out.println("\n" + count + "/" + total + " matches");
+            System.out.printf("\n%d/%d matches\n", count, total);
 
             timeEnd = System.nanoTime();
             duration = timeEnd - timeStart;
 
-            System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+            System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
             saveCsvToFile(
                 fileContents,
@@ -1022,12 +1024,12 @@ public class Driver
 
         printCsvTable(fileContents, headerFile);
 
-        System.out.println("\n" + count + "/" + total + " matches");
+        System.out.printf("\n%d/%d matches\n", count, total);
 
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+        System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
         if (count == 0)
         {
@@ -1039,7 +1041,6 @@ public class Driver
         userInput = Input.string(
             "Input Division indexes to visit (eg: 1 2 3): "
         );
-
 
         if (userInput.isEmpty())
         {
@@ -1300,11 +1301,13 @@ public class Driver
             time = tripInfo.getDuration().toString();
             trans = tripInfo.getTransportType();
 
-            fileContents[count] = fromState + "," + fromDivision + "," +
-                                  fromLat + "," + fromLong + "," +
-                                  toState + "," + toDivision + "," +
-                                  toLat + "," + toLong + "," + distance +
-                                  "," + time + "," + trans;
+            fileContents[count] = String.format(
+                "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                fromState, fromDivision, fromLat, fromLong,
+                toState, toDivision, toLat, toLong, distance,
+                time, trans
+            );
+
             totalTime += tripInfo.getDuration().getTotalSeconds();
             count++;
 
@@ -1328,7 +1331,7 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.println("Took " + toMiliseconds(duration) + "ms\n");
+        System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
         saveCsvToFile(
             fileContents,
@@ -1393,7 +1396,6 @@ public class Driver
             paddingArr[i] = calcMaxStringArrLenght(tempArr);
         }
 
-
         for (int i = 0; i < paddingArr.length - 1; i++)
         {
             padding = "%-" + (paddingArr[i] + 2) + "s";
@@ -1424,8 +1426,9 @@ public class Driver
 
         if (csvArr.length != 0)
         {
-            table = sep + "\n" + headerStr + "\n" + sep + "\n" +
-                    out + sep;
+            table = String.format(
+                "%s\n%s\n%s\n%s%s", sep, headerStr, sep, out, sep
+            );
 
             System.out.println(table);
         }
@@ -1450,7 +1453,9 @@ public class Driver
         return maxLength;
     }
 
-    public static void saveCsvToFile(String[] fileContents, String defaultName)
+    public static void saveCsvToFile(
+        String[] fileContents,
+        String defaultName)
     {
         String userInput;
 
@@ -1513,7 +1518,7 @@ public class Driver
 
     public static void printSpinner(String[] pool, int step)
     {
-        System.out.print(pool[step % pool.length] + "\u0008");
+        System.out.printf("%s\u0008", pool[step % pool.length]);
     }
 
     public static String toMiliseconds(long nano)

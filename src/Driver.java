@@ -184,7 +184,7 @@ public class Driver
                 locationGraph.addEdge(
                     startLocation.getDivision(),
                     endLocation.getDivision(),
-                    tripInfo.getDistance(),
+                    tripInfo.getDuration().getTotalSeconds(),
                     tripInfo
                 );
             }

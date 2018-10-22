@@ -116,12 +116,11 @@ public class Driver
         Trip tripInfo;
 
         int distance;
-        int tempTimeInt;
-        String tempTimeStr;
-        Time duration;
+        int duration;
         String transportType;
 
         String[] split;
+        String[] timeSplit;
 
         timeStart = System.nanoTime();
         list = FileIO.readText(file);
@@ -156,16 +155,18 @@ public class Driver
 
                 if (split[9].contains(":"))
                 {
-                    duration = new Time(split[9]);
+                    timeSplit = split[9].split(":");
+                    duration = Integer.parseInt(timeSplit[0]) * 3600 +
+                               Integer.parseInt(timeSplit[1]) * 60 +
+                               Integer.parseInt(timeSplit[2]);
                 }
                 else if (split[9].equals("NONE"))
                 {
-                    duration = new Time(0);
+                    duration = 0;
                 }
                 else
                 {
-                    tempTimeInt = Integer.parseInt(split[9]);
-                    duration = new Time(tempTimeInt);
+                    duration = Integer.parseInt(split[9]);
                 }
 
                 transportType = split[10];
@@ -184,7 +185,7 @@ public class Driver
                 locationGraph.addEdge(
                     startLocation.getDivision(),
                     endLocation.getDivision(),
-                    tripInfo.getDuration().getTotalSeconds(),
+                    tripInfo.getDuration(),
                     tripInfo
                 );
             }
@@ -1265,9 +1266,9 @@ public class Driver
             "trans_type"
         };
 
-        String fromState, fromDivision, toState, toDivision, time, trans;
+        String fromState, fromDivision, toState, toDivision, trans;
         double fromLat, fromLong, toLat, toLong;
-        int distance, count, totalTime;
+        int distance, count, time, totalTime;
         long timeEnd, duration;
 
         Location from, to;
@@ -1298,7 +1299,7 @@ public class Driver
             toLong = to.getLongitude();
 
             distance = tripInfo.getDistance();
-            time = tripInfo.getDuration().toString();
+            time = tripInfo.getDuration();
             trans = tripInfo.getTransportType();
 
             fileContents[count] = String.format(
@@ -1308,7 +1309,7 @@ public class Driver
                 time, trans
             );
 
-            totalTime += tripInfo.getDuration().getTotalSeconds();
+            totalTime += time;
             count++;
 
             from = to;
@@ -1320,12 +1321,10 @@ public class Driver
 
         printCsvTable(fileContents, header);
 
-        System.out.println(
-            String.format(
-                "Total Time: %s (%1.2f hours)",
-                convertTimeToString(totalTime),
-                (double)totalTime / 3600
-            )
+        System.out.printf(
+            "Total Time: %s (%1.2f hours)\n",
+            convertTimeToString(totalTime),
+            (double)totalTime / 3600
         );
 
         timeEnd = System.nanoTime();
@@ -1432,7 +1431,6 @@ public class Driver
 
             System.out.println(table);
         }
-
     }
 
     public static int calcMaxStringArrLenght(String[] arr)
@@ -1444,10 +1442,7 @@ public class Driver
         for (int i = 0; i < arr.length; i++)
         {
             length = arr[i].length();
-            if (length > maxLength)
-            {
-                maxLength = length;
-            }
+            maxLength = (length > maxLength) ? length : maxLength;
         }
 
         return maxLength;
@@ -1466,7 +1461,7 @@ public class Driver
         {
             userInput = Input.string(
                 String.format(
-                    "%s [%s]: ", "Enter filename", defaultName
+                    "Enter filename [%s]: ", "Enter filename", defaultName
                 )
             );
 

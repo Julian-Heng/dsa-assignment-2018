@@ -94,7 +94,7 @@ public class Driver
             }
             catch (Exception e)
             {
-                System.out.println(e.getMessage());
+                System.out.printf("Exception caught: %s\n", e.getMessage());
             }
         }
     }

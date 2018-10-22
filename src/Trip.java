@@ -2,9 +2,9 @@ public class Trip
 {
     String transportType;
     int distance;
-    Time duration;
+    int duration;
 
-    public Trip(String inTransport, int inDistance, Time inDuration)
+    public Trip(String inTransport, int inDistance, int inDuration)
     {
         this.setTransportType(inTransport);
         this.setDistance(inDistance);
@@ -21,12 +21,12 @@ public class Trip
         distance = inDistance;
     }
 
-    public void setDuration(Time inDuration)
+    public void setDuration(int inDuration)
     {
         duration = inDuration;
     }
 
     public String getTransportType() { return transportType; }
     public int getDistance() { return distance; }
-    public Time getDuration() { return duration; }
+    public int getDuration() { return duration; }
 }

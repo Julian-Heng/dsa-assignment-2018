@@ -625,12 +625,11 @@ public class Driver
             fileContents[i] = searchResult[i].toString();
         }
 
-        printCsvTable(fileContents, header);
-        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
-
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
+        printCsvTable(fileContents, header);
+        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
         saveCsvToFile(fileContents, "nominees_list.csv");
@@ -727,11 +726,11 @@ public class Driver
             fileContents[i] = searchResult[i].toString();
         }
 
-        printCsvTable(fileContents, header);
-        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
-
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
+
+        printCsvTable(fileContents, header);
+        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
 
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
@@ -917,13 +916,12 @@ public class Driver
                 count++;
             }
 
-            printCsvTable(fileContents, headerFile);
-
-            System.out.printf("\n%d/%d matches\n", count, total);
-
             timeEnd = System.nanoTime();
             duration = timeEnd - timeStart;
 
+            printCsvTable(fileContents, headerFile);
+
+            System.out.printf("\n%d/%d matches\n", count, total);
             System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
             saveCsvToFile(
@@ -1319,6 +1317,9 @@ public class Driver
             fromLong = toLong;
         }
 
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
         printCsvTable(fileContents, header);
 
         System.out.printf(
@@ -1326,9 +1327,6 @@ public class Driver
             convertTimeToString(totalTime),
             (double)totalTime / 3600
         );
-
-        timeEnd = System.nanoTime();
-        duration = timeEnd - timeStart;
 
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 

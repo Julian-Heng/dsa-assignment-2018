@@ -359,22 +359,11 @@ public class Driver
                             tempNomineeList, split[5]
                         );
 
-                        tempNominee.setNumVotes(
-                            Integer.toString(
-                                tempNominee.getNumVotes() + Integer.parseInt(
-                                    split[13]
-                                )
-                            )
-                        );
+                        tempNominee.addNumVotes(split[13]);
                     }
                     else
                     {
-                        tempHousePref.setNumInformalVotes(
-                            Integer.toString(
-                                tempHousePref.getNumInformalVotes() +
-                                    Integer.parseInt(split[13])
-                                )
-                        );
+                        tempHousePref.addNumInformalVotes(split[13]);
                     }
                 }
                 catch (NumberFormatException e)

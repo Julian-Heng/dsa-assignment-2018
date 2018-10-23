@@ -228,6 +228,20 @@ public class Nominee
         }
     }
 
+    public void addNumVotes(String strVotes)
+    {
+        if (! validateInt(strVotes))
+        {
+            throw new IllegalArgumentException(
+                "Number of additional Votes is invalid"
+            );
+        }
+        else
+        {
+            numVotes += Integer.parseInt(strVotes);
+        }
+    }
+
     public String  getState()           { return state; }
     public int     getIdDivision()      { return idDivision; }
     public String  getNameDivision()    { return nameDivision; }

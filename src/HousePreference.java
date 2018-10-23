@@ -81,6 +81,20 @@ public class HousePreference
         }
     }
 
+    public void addNumInformalVotes(String strVotes)
+    {
+        if (! validateInt(strVotes))
+        {
+            throw new IllegalArgumentException(
+                "Number of additional Votes invalid"
+            );
+        }
+        else
+        {
+            numInformalVotes += Integer.parseInt(strVotes);
+        }
+    }
+
     public void addNomineeToList(Nominee inNominee)
     {
         if (! validateObject(inNominee))

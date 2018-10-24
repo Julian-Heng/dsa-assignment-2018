@@ -97,7 +97,7 @@ public class Driver
             catch (Exception e)
             {
                 System.out.println("Exception caught:");
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -352,16 +352,6 @@ public class Driver
         {
             line = iter.next();
 
-            outputStr = String.format(
-                "Processing %s... [%d/%d] %s",
-                file,
-                count,
-                divisionIdList.getCount(),
-                spinner[count++ % spinner.length]
-            );
-
-            System.out.printf("%s\r", outputStr);
-
             tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
             inList = getPreferenceFromDivisionId(list, line);
 
@@ -375,6 +365,16 @@ public class Driver
             iter2 = inList.iterator();
             while (iter2.hasNext())
             {
+                outputStr = String.format(
+                    "Processing %s... [%d/%d] %s",
+                    file,
+                    count,
+                    list.getCount(),
+                    spinner[count++ % spinner.length]
+                );
+
+                System.out.printf("%s\r", outputStr);
+
                 split = iter2.next().split(REGEXSPLIT);
 
                 try
@@ -1106,7 +1106,9 @@ public class Driver
             }
         }
 
-        userInput = Input.string("Attempt optimisation? [Y/n]: ");
+        userInput = Input.string(
+            "Attempt optimisation? Note: Starting location may change [Y/n]: "
+        );
 
         if ((userInput.matches("^[yY]$")) ||
             (userInput.isEmpty()))

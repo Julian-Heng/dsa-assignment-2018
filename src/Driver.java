@@ -20,7 +20,7 @@ public class Driver
             }
             catch (Exception e)
             {
-                System.out.println(e.getMessage());
+                System.out.println(e.getStackTrace());
                 System.out.println("Exiting...");
             }
         }
@@ -96,7 +96,8 @@ public class Driver
             }
             catch (Exception e)
             {
-                System.out.printf("Exception caught: %s\n", e.getMessage());
+                System.out.println("Exception caught:");
+                e.printStackTrace();
             }
         }
     }
@@ -950,6 +951,7 @@ public class Driver
 
         int[] visitDivisionIndex;
         String[] visitDivision;
+        boolean allLocations, enableOptimise;
 
         DSAStack<Location> path;
         DSAStack<Location> tempStack;
@@ -961,6 +963,9 @@ public class Driver
 
         csvLine = "";
         partyFilter = "";
+
+        allLocations = false;
+        enableOptimise = false;
 
         if ((partyFilter = getPartyFilter()) == null)
         {
@@ -1030,6 +1035,7 @@ public class Driver
 
         if (userInput.isEmpty())
         {
+            allLocations = true;
             System.out.println(
                 "No locations selected, using all locations"
             );
@@ -1043,6 +1049,7 @@ public class Driver
         }
         else
         {
+            allLocations = false;
             split = userInput.split(" ");
             visitDivisionIndex = new int[split.length];
 
@@ -1067,9 +1074,35 @@ public class Driver
             }
         }
 
+        userInput = Input.string("Attempt optimisation? [Y/n]: ");
+
+        if ((userInput.matches("^[yY]$")) ||
+            (userInput.isEmpty()))
+        {
+            enableOptimise = true;
+        }
+        else
+        {
+            enableOptimise = false;
+        }
+
         timeStart = System.nanoTime();
         count = 0;
         visitDivision = new String[visitDivisionIndex.length];
+
+        if (enableOptimise)
+        {
+            if (allLocations)
+            {
+                System.out.println(
+                    "All Locations are selected, ignoring optimisation"
+                );
+            }
+            else
+            {
+                mergeSort(visitDivisionIndex);
+            }
+        }
 
         for (int i = 0; i < visitDivisionIndex.length; i++)
         {
@@ -1104,6 +1137,8 @@ public class Driver
         {
             path.push(tempStack.pop());
         }
+
+        System.out.print("\n");
 
         printItinerary(
             path,
@@ -1444,7 +1479,7 @@ public class Driver
         {
             userInput = Input.string(
                 String.format(
-                    "Enter filename [%s]: ", "Enter filename", defaultName
+                    "Enter filename [%s]: ", defaultName
                 )
             );
 
@@ -1487,6 +1522,63 @@ public class Driver
         }
 
         return isUnique;
+    }
+
+    public static void mergeSort(int[] A)
+    {
+        recurseMergeSort(A, 0, A.length - 1);
+    }
+
+    public static void recurseMergeSort(int[] A, int leftIndex, int rightIndex)
+    {
+        int midIndex;
+        if (leftIndex < rightIndex)
+        {
+            midIndex = (leftIndex + rightIndex) / 2;
+            recurseMergeSort(A, leftIndex, midIndex);
+            recurseMergeSort(A, midIndex + 1, rightIndex);
+            merge(A, leftIndex, midIndex, rightIndex);
+        }
+    }
+
+    public static void merge(int[] A, int leftIndex, int midIndex, int rightIndex)
+    {
+        int[] tempArr = new int[rightIndex - leftIndex + 1];
+        int i = leftIndex;
+        int j = midIndex + 1;
+        int k = 0;
+
+        while ((i <= midIndex) && (j <= rightIndex))
+        {
+            if (A[i] <= A[j])
+            {
+                tempArr[k] = A[i];
+                i++;
+            }
+            else
+            {
+                tempArr[k] = A[j];
+                j++;
+            }
+            k++;
+        }
+
+        for (int ii = i; ii <= midIndex; ii++)
+        {
+            tempArr[k] = A[ii];
+            k++;
+        }
+
+        for (int jj = j; jj <= rightIndex; jj++)
+        {
+            tempArr[k] = A[jj];
+            k++;
+        }
+
+        for (int kk = leftIndex; kk <= rightIndex; kk++)
+        {
+            A[kk] = tempArr[kk - leftIndex];
+        }
     }
 
     public static boolean compareIntString(int num, String str)

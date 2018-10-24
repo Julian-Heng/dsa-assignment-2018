@@ -70,8 +70,8 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
         System.out.printf(
-                "Processing preference file took %sms\n",
-                toMiliseconds(duration)
+            "Processing preference file took %sms\n",
+            toMiliseconds(duration)
         );
 
         while (! exit)

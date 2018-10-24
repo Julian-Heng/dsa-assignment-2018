@@ -114,7 +114,8 @@ public class Driver
         long timeStart, timeEnd, funcDuration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 0;
+        String outputStr = "";
+        int count = 1;
 
         Trip tripInfo;
 
@@ -129,14 +130,19 @@ public class Driver
         list = FileIO.readText(file);
         iter = list.iterator();
 
-        System.out.printf("Processing %s... ", file);
-
         locationGraph = new DSAGraph<Location,Trip>();
 
         while (iter.hasNext())
         {
             line = iter.next();
-            printSpinner(spinner, count++);
+            outputStr = String.format(
+                "Processing %s... [%d/%d] %s",
+                file,
+                count,
+                list.getCount(),
+                spinner[count++ % spinner.length]
+            );
+            System.out.printf("%s\r", outputStr);
 
             split = line.split(REGEXSPLIT);
 
@@ -209,7 +215,10 @@ public class Driver
         timeEnd = System.nanoTime();
         funcDuration = timeEnd - timeStart;
 
-        System.out.printf("%sms\n", toMiliseconds(funcDuration));
+        System.out.printf(
+            "\u001B[" + (outputStr.length() - 1) + "C%sms\n",
+            toMiliseconds(funcDuration)
+        );
 
         return locationGraph;
     }
@@ -225,13 +234,12 @@ public class Driver
         long timeStart, timeEnd, duration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 0;
+        String outputStr = "";
+        int count = 1;
 
         timeStart = System.nanoTime();
         list = FileIO.readText(file);
         iter = list.iterator();
-
-        System.out.printf("Processing %s... ", file);
 
         nomineeList = new DSALinkedList<Nominee>();
         invalidEntries = new DSALinkedList<String>();
@@ -240,10 +248,20 @@ public class Driver
         if (iter.hasNext())
         {
             iter.next();
+            count++;
 
             while (iter.hasNext())
             {
-                printSpinner(spinner, count++);
+                outputStr = String.format(
+                    "Processing %s... [%d/%d] %s",
+                    file,
+                    count,
+                    list.getCount(),
+                    spinner[count++ % spinner.length]
+                );
+
+                System.out.printf("%s\r", outputStr);
+
                 try
                 {
                     line = iter.next();
@@ -275,7 +293,10 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.printf("%sms\n", toMiliseconds(duration));
+        System.out.printf(
+            "\u001B[" + (outputStr.length() - 1) + "C%sms\n",
+            toMiliseconds(duration)
+        );
 
         return nomineeList;
     }
@@ -303,15 +324,14 @@ public class Driver
         String[] split;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 0;
+        String outputStr = "";
+        int count = 1;
 
         timeStart = System.nanoTime();
         list = FileIO.readText(file);
         iter = list.iterator();
 
         divisionIdList = new DSALinkedList<String>();
-
-        System.out.printf("Processing %s... ", file);
 
         while (iter.hasNext())
         {
@@ -331,7 +351,16 @@ public class Driver
         while (iter.hasNext())
         {
             line = iter.next();
-            printSpinner(spinner, count++);
+
+            outputStr = String.format(
+                "Processing %s... [%d/%d] %s",
+                file,
+                count,
+                divisionIdList.getCount(),
+                spinner[count++ % spinner.length]
+            );
+
+            System.out.printf("%s\r", outputStr);
 
             tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
             inList = getPreferenceFromDivisionId(list, line);
@@ -392,7 +421,10 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.printf("%sms\n", toMiliseconds(duration));
+        System.out.printf(
+            "\u001B[" + (outputStr.length() - 1) + "C%sms\n",
+            toMiliseconds(duration)
+        );
 
         return preferenceList;
     }

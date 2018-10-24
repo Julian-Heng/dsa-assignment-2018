@@ -59,11 +59,13 @@ public class DSALinkedList<E> implements Iterable<E>
 
     public DSAListNode<E> head;
     public DSAListNode<E> tail;
+    public int count;
 
     public DSALinkedList()
     {
         head = null;
         tail = null;
+        count = 0;
     }
 
     public boolean isEmpty()
@@ -98,6 +100,7 @@ public class DSALinkedList<E> implements Iterable<E>
                 head = newNode;
             }
         }
+        count++;
     }
 
     public void insertLast(E newValue)
@@ -125,6 +128,7 @@ public class DSALinkedList<E> implements Iterable<E>
                 tail = newNode;
             }
         }
+        count++;
     }
 
     public E peekFirst()
@@ -184,6 +188,8 @@ public class DSALinkedList<E> implements Iterable<E>
             tail = tail.getPrev();
             tail.setNext(null);
         }
+        count--;
+
         return nodeValue;
     }
 
@@ -209,8 +215,12 @@ public class DSALinkedList<E> implements Iterable<E>
             tail = tail.getPrev();
             tail.setNext(null);
         }
+        count--;
+
         return nodeValue;
     }
+
+    public int getCount() { return count; }
 
     public Iterator<E> iterator()
     {

@@ -2,7 +2,11 @@ import java.util.*;
 
 public class Driver
 {
-    public static final String REGEXSPLIT = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
+    public static final
+        String SPLIT_REGEX = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
+
+    public static final
+        String WHITESPACE_REGEX = "\\s+";
 
     public static void main(String[] args)
     {
@@ -114,7 +118,6 @@ public class Driver
         long timeStart, timeEnd, funcDuration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        String outputStr = "";
         int count = 1;
 
         Trip tripInfo;
@@ -135,16 +138,15 @@ public class Driver
         while (iter.hasNext())
         {
             line = iter.next();
-            outputStr = String.format(
-                "Processing %s... [%d/%d] %s",
+            System.out.printf(
+                "\rProcessing %s... [%d/%d] %s",
                 file,
                 count,
                 list.getCount(),
                 spinner[count++ % spinner.length]
             );
-            System.out.printf("%s\r", outputStr);
 
-            split = line.split(REGEXSPLIT);
+            split = line.split(SPLIT_REGEX);
 
             startLocation = new Location(split[0], split[1],
                                          split[2], split[3]);
@@ -215,10 +217,7 @@ public class Driver
         timeEnd = System.nanoTime();
         funcDuration = timeEnd - timeStart;
 
-        System.out.printf(
-            "\u001B[" + (outputStr.length() - 1) + "C%sms\n",
-            toMiliseconds(funcDuration)
-        );
+        System.out.printf("\u0008%sms\n", toMiliseconds(funcDuration));
 
         return locationGraph;
     }
@@ -234,7 +233,6 @@ public class Driver
         long timeStart, timeEnd, duration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        String outputStr = "";
         int count = 1;
 
         timeStart = System.nanoTime();
@@ -252,15 +250,13 @@ public class Driver
 
             while (iter.hasNext())
             {
-                outputStr = String.format(
-                    "Processing %s... [%d/%d] %s",
+                System.out.printf(
+                    "\rProcessing %s... [%d/%d] %s",
                     file,
                     count,
                     list.getCount(),
                     spinner[count++ % spinner.length]
                 );
-
-                System.out.printf("%s\r", outputStr);
 
                 try
                 {
@@ -293,10 +289,7 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.printf(
-            "\u001B[" + (outputStr.length() - 1) + "C%sms\n",
-            toMiliseconds(duration)
-        );
+        System.out.printf("\u0008%sms\n", toMiliseconds(duration));
 
         return nomineeList;
     }
@@ -324,7 +317,6 @@ public class Driver
         String[] split;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        String outputStr = "";
         int count = 1;
 
         timeStart = System.nanoTime();
@@ -336,7 +328,7 @@ public class Driver
         while (iter.hasNext())
         {
             line = iter.next();
-            split = line.split(REGEXSPLIT);
+            split = line.split(SPLIT_REGEX);
             if (! split[1].isEmpty() &&
                 ! split[1].equals("DivisionID") &&
                 isUnique(divisionIdList, split[1]))
@@ -355,7 +347,7 @@ public class Driver
             tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
             inList = getPreferenceFromDivisionId(list, line);
 
-            split = inList.peekFirst().split(REGEXSPLIT);
+            split = inList.peekFirst().split(SPLIT_REGEX);
 
             divisionName = split[2];
             divisionId = split[1];
@@ -365,17 +357,15 @@ public class Driver
             iter2 = inList.iterator();
             while (iter2.hasNext())
             {
-                outputStr = String.format(
-                    "Processing %s... [%d/%d] %s",
+                System.out.printf(
+                    "\rProcessing %s... [%d/%d] %s",
                     file,
                     count,
                     list.getCount(),
                     spinner[count++ % spinner.length]
                 );
 
-                System.out.printf("%s\r", outputStr);
-
-                split = iter2.next().split(REGEXSPLIT);
+                split = iter2.next().split(SPLIT_REGEX);
 
                 try
                 {
@@ -421,10 +411,7 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.printf(
-            "\u001B[" + (outputStr.length() - 1) + "C%sms\n",
-            toMiliseconds(duration)
-        );
+        System.out.printf("\u0008%sms\n", toMiliseconds(duration));
 
         return preferenceList;
     }
@@ -507,7 +494,7 @@ public class Driver
         while (iter.hasNext())
         {
             inList = iter.next();
-            split = inList.split(REGEXSPLIT);
+            split = inList.split(SPLIT_REGEX);
             if (! split[1].isEmpty() && split[1].equals(inDivisionId))
             {
                 returnList.insertLast(inList);
@@ -574,7 +561,7 @@ public class Driver
 
         filterMenu.printMenu();
         userInput = Input.string();
-        split = userInput.split(" ");
+        split = userInput.split(WHITESPACE_REGEX);
 
         if (! userInput.isEmpty())
         {
@@ -588,7 +575,7 @@ public class Driver
 
         orderMenu.printMenu();
         userInput = Input.string();
-        split = userInput.split(" ");
+        split = userInput.split(WHITESPACE_REGEX);
 
         timeStart = System.nanoTime();
 
@@ -612,7 +599,6 @@ public class Driver
         while (iter.hasNext())
         {
             inList = iter.next();
-
             if (searchNominee1(inList, filters))
             {
                 searchResult[i] = inList;
@@ -699,7 +685,7 @@ public class Driver
 
         filterMenu.printMenu();
         userInput = Input.string();
-        split = userInput.split(" ");
+        split = userInput.split(WHITESPACE_REGEX);
 
         if (! userInput.isEmpty())
         {
@@ -1082,7 +1068,7 @@ public class Driver
         else
         {
             allLocations = false;
-            split = userInput.split(" ");
+            split = userInput.split(WHITESPACE_REGEX);
             visitDivisionIndex = new int[split.length];
 
             try
@@ -1141,7 +1127,7 @@ public class Driver
         for (int i = 0; i < visitDivisionIndex.length; i++)
         {
             split = fileContents[visitDivisionIndex[i] - 1].split(
-                REGEXSPLIT
+                SPLIT_REGEX
             );
 
             visitDivision[count] = split[2];
@@ -1432,7 +1418,7 @@ public class Driver
 
         for (int i = 0; i < csvArr.length; i++)
         {
-            fields[i] = csvArr[i].split(REGEXSPLIT);
+            fields[i] = csvArr[i].split(SPLIT_REGEX);
         }
 
         for (int i = 0; i < paddingArr.length; i++)

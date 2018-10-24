@@ -2,6 +2,8 @@ import java.util.*;
 
 public class Driver
 {
+    public static final String REGEXSPLIT = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
+
     public static void main(String[] args)
     {
         if (args.length < 3 ||
@@ -135,7 +137,7 @@ public class Driver
             line = iter.next();
             printSpinner(spinner, count++);
 
-            split = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            split = line.split(REGEXSPLIT);
 
             startLocation = new Location(split[0], split[1],
                                          split[2], split[3]);
@@ -313,7 +315,7 @@ public class Driver
         while (iter.hasNext())
         {
             line = iter.next();
-            split = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            split = line.split(REGEXSPLIT);
             if (! split[1].isEmpty() &&
                 ! split[1].equals("DivisionID") &&
                 isUnique(divisionIdList, split[1]))
@@ -333,9 +335,7 @@ public class Driver
             tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
             inList = getPreferenceFromDivisionId(list, line);
 
-            split = inList.peekFirst().split(
-                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
-            );
+            split = inList.peekFirst().split(REGEXSPLIT);
 
             divisionName = split[2];
             divisionId = split[1];
@@ -345,9 +345,7 @@ public class Driver
             iter2 = inList.iterator();
             while (iter2.hasNext())
             {
-                split = iter2.next().split(
-                    ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
-                );
+                split = iter2.next().split(REGEXSPLIT);
 
                 try
                 {
@@ -476,7 +474,7 @@ public class Driver
         while (iter.hasNext())
         {
             inList = iter.next();
-            split = inList.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            split = inList.split(REGEXSPLIT);
             if (! split[1].isEmpty() && split[1].equals(inDivisionId))
             {
                 returnList.insertLast(inList);
@@ -1076,7 +1074,7 @@ public class Driver
         for (int i = 0; i < visitDivisionIndex.length; i++)
         {
             split = fileContents[visitDivisionIndex[i] - 1].split(
-                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+                REGEXSPLIT
             );
 
             visitDivision[count] = split[2];
@@ -1365,9 +1363,7 @@ public class Driver
 
         for (int i = 0; i < csvArr.length; i++)
         {
-            fields[i] = csvArr[i].split(
-                ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
-            );
+            fields[i] = csvArr[i].split(REGEXSPLIT);
         }
 
         for (int i = 0; i < paddingArr.length; i++)

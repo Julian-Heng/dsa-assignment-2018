@@ -559,13 +559,6 @@ public class DSAGraph<E,F>
 
         iter = vertices.iterator();
 
-        while (iter.hasNext())
-        {
-            tempVertex = iter.next();
-            tempVertex.setDistanceFromSource(Integer.MAX_VALUE);
-            tempVertex.setPrevVertex(null);
-        }
-
         return path;
     }
 
@@ -602,12 +595,9 @@ public class DSAGraph<E,F>
         {
             inVertex = iter.next();
             currentKey = inVertex.getLabel();
-            if (
-                (
-                    smallestKey.equals("")
-                ) || (
-                    currentKey.compareTo(smallestKey) < 0
-                ))
+
+            if (smallestKey.equals("") ||
+                currentKey.compareTo(smallestKey) < 0)
             {
                 smallestKey = currentKey;
             }

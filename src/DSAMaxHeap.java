@@ -1,5 +1,15 @@
 import java.util.*;
 
+/**
+ *  Name:     DSAMaxHeap
+ *  Source:   Practical 7
+ *
+ *  Modification:
+ *      Use strings as priority instead of integers
+ *
+ *  Author:       Julian Heng (19473701)
+ **/
+
 public class DSAMaxHeap
 {
     private class DSAMaxHeapEntry
@@ -114,11 +124,6 @@ public class DSAMaxHeap
 
         parentIndex = (index - 1) / 2;
 
-        /*
-        if ((index > 0) &&
-            (m_heap[index].getPriority() >
-                m_heap[parentIndex].getPriority()))
-                */
         if ((index > 0) &&
             (m_heap[index].getPriority().compareTo(
                 m_heap[parentIndex].getPriority()) > 0))
@@ -146,11 +151,7 @@ public class DSAMaxHeap
         if (leftChild < numItems)
         {
             largeIndex = leftChild;
-            /*
-            if ((rightChild < numItems) &&
-                (m_heap[leftChild].getPriority() <
-                    m_heap[rightChild].getPriority()))
-                    */
+
             if ((rightChild < numItems) &&
                 (m_heap[leftChild].getPriority().compareTo(
                     m_heap[rightChild].getPriority()) < 0))
@@ -158,10 +159,6 @@ public class DSAMaxHeap
                 largeIndex = rightChild;
             }
 
-            /*
-            if (m_heap[largeIndex].getPriority() >
-                    m_heap[index].getPriority())
-                    */
             if (m_heap[largeIndex].getPriority().compareTo(
                     m_heap[index].getPriority()) > 0)
             {

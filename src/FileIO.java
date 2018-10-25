@@ -1,6 +1,16 @@
 import java.io.*;
 import io.*;
 
+/**
+ *  Name:     FileIO
+ *  Source:   OOPD Assignment 2018 Sem 1
+ *
+ *  Modifications:
+ *      Convert so that it would read to a linked list instead of an array
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class FileIO
 {
     public static DSALinkedList<String> readText(String inFilename)
@@ -63,108 +73,6 @@ public class FileIO
         return fileContents;
     }
 
-    public static String[] readTextToArray(String inFilename)
-    {
-        FileInputStream inFileStream = null;
-        InputStreamReader rdr;
-        BufferedReader buffRdr;
-
-        String line;
-        String[] fileContents;
-        int numLines = 0;
-
-        if (! validateString(inFilename))
-        {
-            throw new IllegalArgumentException(
-                err("Invalid filename")
-            );
-        }
-        else
-        {
-            numLines = calcFileLines(inFilename);
-            fileContents = new String[numLines];
-
-            try
-            {
-                inFileStream = new FileInputStream(inFilename);
-                rdr = new InputStreamReader(inFileStream);
-                buffRdr = new BufferedReader(rdr);
-
-                for (int i = 0; i < numLines; i++)
-                {
-                    fileContents[i] = buffRdr.readLine();
-                }
-                inFileStream.close();
-            }
-            catch (FileNotFoundException e)
-            {
-                throw new IllegalArgumentException(
-                    err("File does not exist")
-                );
-            }
-            catch (IOException e)
-            {
-                if (inFileStream != null)
-                {
-                    try
-                    {
-                        inFileStream.close();
-                    }
-                    catch (IOException ex)
-                    {
-
-                    }
-                }
-            }
-        }
-
-        return fileContents;
-    }
-
-    public static Object readObject(String inFilename)
-    {
-        FileInputStream inFileStream = null;
-        ObjectInputStream inObjStream;
-
-        Object inObj = null;
-
-        if (! validateString(inFilename) || ! validateFile(inFilename))
-        {
-            throw new IllegalArgumentException(
-                err("Invalid filename")
-            );
-        }
-        else
-        {
-            try
-            {
-                inFileStream = new FileInputStream(inFilename);
-                inObjStream = new ObjectInputStream(inFileStream);
-                inObj = inObjStream.readObject();
-                inObjStream.close();
-            }
-            catch (ClassNotFoundException e)
-            {
-                System.out.println(
-                    err("Class is not found" + e.getMessage())
-                );
-            }
-            catch (FileNotFoundException e)
-            {
-                throw new IllegalArgumentException(
-                    err("File does not exist")
-                );
-            }
-            catch (Exception e)
-            {
-                throw new IllegalArgumentException(
-                    err("Unable to load object from file")
-                );
-            }
-        }
-        return inObj;
-    }
-
     public static void writeText(String inFilename, String[] inFileContents)
     {
         FileOutputStream outFileStream = null;
@@ -207,82 +115,10 @@ public class FileIO
         }
     }
 
-    public static void writeObject(String inFilename, Object inObj)
-    {
-        FileOutputStream outFileStream = null;
-        ObjectOutputStream outObjStream;
-
-        if (! validateString(inFilename))
-        {
-            throw new IllegalArgumentException(
-                err("Filename is invalid")
-            );
-        }
-        else
-        {
-            try
-            {
-                outFileStream = new FileOutputStream(inFilename);
-                outObjStream = new ObjectOutputStream(outFileStream);
-                outObjStream.writeObject(inObj);
-                outObjStream.close();
-            }
-            catch (Exception e)
-            {
-                throw new IllegalArgumentException(
-                    err("Unable to save object to file, " + e.getMessage())
-                );
-            }
-        }
-    }
-
-    public static int calcFileLines(String inFilename)
-    {
-        FileInputStream inFileStream = null;
-        InputStreamReader rdr;
-        BufferedReader buffRdr;
-
-        int numLines = 0;
-        try
-        {
-            inFileStream = new FileInputStream(inFilename);
-            rdr = new InputStreamReader(inFileStream);
-            buffRdr = new BufferedReader(rdr);
-
-            while (buffRdr.readLine() != null)
-            {
-                numLines++;
-            }
-            inFileStream.close();
-        }
-        catch (IOException e)
-        {
-            if (inFileStream != null)
-            {
-                try
-                {
-                    inFileStream.close();
-                }
-                catch (IOException ex)
-                {
-
-                }
-            }
-        }
-        return numLines;
-    }
-
     private static boolean validateString(String inString)
     {
         boolean isValid = false;
         isValid = ((inString != null) && (! inString.equals("")));
-        return isValid;
-    }
-
-    private static boolean validateFile(String inFilename)
-    {
-        boolean isValid = false;
-        isValid = (calcFileLines(inFilename) != 0);
         return isValid;
     }
 

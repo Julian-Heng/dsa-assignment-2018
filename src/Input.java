@@ -1,5 +1,15 @@
 import java.util.*;
 
+/**
+ *  Name:     Input
+ *  Source:   OOPD Assignment 2018 Sem 1
+ *
+ *  Modifications:
+ *      No modification in terms of logic, only stylistic changes
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class Input
 {
     public static int integer(int lower, int upper)

@@ -1,5 +1,15 @@
 import java.util.*;
 
+/**
+ *  Name:     DSAMinHeap
+ *  Source:   Practical 7
+ *
+ *  Modification:
+ *      Convert from a max heap to a minimum heap
+ *
+ *  Author:       Julian Heng (19473701)
+ **/
+
 public class DSAMinHeap
 {
     private class DSAMinHeapEntry

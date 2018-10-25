@@ -1,6 +1,18 @@
 import java.util.*;
 import java.io.*;
 
+/**
+ *  Name:     DSALinkedList
+ *  Source:   Practical 3
+ *
+ *  Modification:
+ *      Added a integer class field count to keep
+ *      track of how many objects there are in the
+ *      linked list
+ *
+ *  Author:       Julian Heng (19473701)
+ **/
+
 public class DSALinkedList<E> implements Iterable<E>
 {
     private class DSAListNode<E>

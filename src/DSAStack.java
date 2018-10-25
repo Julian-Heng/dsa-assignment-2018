@@ -1,6 +1,16 @@
 import java.util.*;
 import java.io.*;
 
+/**
+ *  Name:     DSAStack
+ *  Source:   Practical 3
+ *
+ *  Modification:
+ *      Converted object field to generics
+ *
+ *  Author:       Julian Heng (19473701)
+ **/
+
 public class DSAStack<E> implements Iterable<E>
 {
     public DSALinkedList<E> stack;

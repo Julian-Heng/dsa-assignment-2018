@@ -1,3 +1,13 @@
+/**
+ *  Name:     DSAMergeSort
+ *  Source:   Practical 2
+ *
+ *  Modification:
+ *      Seperate merge sort into it's own file
+ *
+ *  Author:       Julian Heng (19473701)
+ **/
+
 public class DSAMergeSort
 {
     public static void mergeSort(int[] A)
@@ -5,7 +15,10 @@ public class DSAMergeSort
         recurseMergeSort(A, 0, A.length - 1);
     }
 
-    public static void recurseMergeSort(int[] A, int leftIndex, int rightIndex)
+    public static void recurseMergeSort(
+        int[] A,
+        int leftIndex,
+        int rightIndex)
     {
         int midIndex;
         if (leftIndex < rightIndex)
@@ -17,7 +30,11 @@ public class DSAMergeSort
         }
     }
 
-    public static void merge(int[] A, int leftIndex, int midIndex, int rightIndex)
+    public static void merge(
+        int[] A,
+        int leftIndex,
+        int midIndex,
+        int rightIndex)
     {
         int[] tempArr = new int[rightIndex - leftIndex + 1];
         int i = leftIndex;

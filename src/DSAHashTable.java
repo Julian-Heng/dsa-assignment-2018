@@ -41,6 +41,11 @@ public class DSAHashTable
     private int numUsed;
     private double load;
 
+    public DSAHashTable()
+    {
+        m_hashTable = this.makeTable(nextPrime(MIN_SIZE));
+    }
+
     public DSAHashTable(int maxSize)
     {
         m_hashTable = this.makeTable(nextPrime(maxSize));
@@ -137,6 +142,19 @@ public class DSAHashTable
         return returnList;
     }
 
+    public DSALinkedList<Object> convertValueToLinkedList()
+    {
+        DSALinkedList<Object> returnList = new DSALinkedList<Object>();
+        for (int i = 0; i < m_hashTable.length; i++)
+        {
+            if (m_hashTable[i].getState() == 1)
+            {
+                returnList.insertLast(m_hashTable[i].getValue());
+            }
+        }
+        return returnList;
+    }
+
     private int hash(String key)
     {
         int hashIndex = 0;
@@ -146,7 +164,7 @@ public class DSAHashTable
             hashIndex ^= ((hashIndex << 5) + (hashIndex << 2) + key.charAt(i));
         }
 
-        return hashIndex % m_hashTable.length;
+        return Math.abs(hashIndex % m_hashTable.length);
     }
 
     private int stepHash(int inKeyHash)

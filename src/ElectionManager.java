@@ -623,6 +623,7 @@ public class ElectionManager
             "Percent", "Margin"
         };
 
+        // Some recycled code from listPartyMargin
         DSALinkedList<VoteStats> voteResults;
         DSALinkedList<String> fileList;
         Iterator<VoteStats> iter;

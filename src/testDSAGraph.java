@@ -1,8 +1,13 @@
 public class testDSAGraph
 {
+    public static void main(String[] args)
+    {
+        run();
+    }
+
     public static void run()
     {
-        testHarness.header("Testing DSAGraph class");
+        testHarnessCommons.header("Testing DSAGraph class");
         testConstructor();
         testInsertVertex();
         testInsertEdge();
@@ -23,20 +28,20 @@ public class testDSAGraph
 
             if (vertex != 0)
             {
-                testHarness.failed("Vertex count is incorrect");
+                testHarnessCommons.failed("Vertex count is incorrect");
             }
             else if (edge != 0)
             {
-                testHarness.failed("Edge count is incorrect");
+                testHarnessCommons.failed("Edge count is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -70,20 +75,20 @@ public class testDSAGraph
 
                 if (vertex != i)
                 {
-                    testHarness.failed("Vertex count is incorrect");
+                    testHarnessCommons.failed("Vertex count is incorrect");
                 }
                 else if (edge != 0)
                 {
-                    testHarness.failed("Edge count is incorrect");
+                    testHarnessCommons.failed("Edge count is incorrect");
                 }
                 else
                 {
-                    testHarness.passed();
+                    testHarnessCommons.passed();
                 }
             }
             catch (Exception e)
             {
-                testHarness.failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
 
@@ -107,20 +112,20 @@ public class testDSAGraph
 
                 if (vertex != 1)
                 {
-                    testHarness.failed("Vertex count is incorrect");
+                    testHarnessCommons.failed("Vertex count is incorrect");
                 }
                 else if (edge != 0)
                 {
-                    testHarness.failed("Edge count is incorrect");
+                    testHarnessCommons.failed("Edge count is incorrect");
                 }
                 else
                 {
-                    testHarness.passed();
+                    testHarnessCommons.passed();
                 }
             }
             catch (Exception e)
             {
-                testHarness.failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
     }
@@ -152,24 +157,24 @@ public class testDSAGraph
 
             if (vertex != 2)
             {
-                testHarness.failed("Vertex count is incorrect");
+                testHarnessCommons.failed("Vertex count is incorrect");
             }
             else if (edge != 1)
             {
-                testHarness.failed("Edge count is incorrect");
+                testHarnessCommons.failed("Edge count is incorrect");
             }
             else if (returnValue != edgeValue)
             {
-                testHarness.failed("Edge value is incorrect");
+                testHarnessCommons.failed("Edge value is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         for (int i = 2; i < num.length; i++)
@@ -199,11 +204,11 @@ public class testDSAGraph
 
                 if (vertex != num[i])
                 {
-                    testHarness.failed("Vertex count is incorrect");
+                    testHarnessCommons.failed("Vertex count is incorrect");
                 }
                 else if (edge != (num[i] / 2))
                 {
-                    testHarness.failed("Edge count is incorrect");
+                    testHarnessCommons.failed("Edge count is incorrect");
                 }
                 else
                 {
@@ -220,12 +225,12 @@ public class testDSAGraph
                         }
                     }
 
-                    testHarness.passed();
+                    testHarnessCommons.passed();
                 }
             }
             catch (Exception e)
             {
-                testHarness.failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
 
@@ -254,24 +259,24 @@ public class testDSAGraph
 
             if (vertex != 2)
             {
-                testHarness.failed("Vertex count is incorrect");
+                testHarnessCommons.failed("Vertex count is incorrect");
             }
             else if (edge != 1)
             {
-                testHarness.failed("Edge count is incorrect");
+                testHarnessCommons.failed("Edge count is incorrect");
             }
             else if (returnValue != edgeValue)
             {
-                testHarness.failed("Edge value is incorrect");
+                testHarnessCommons.failed("Edge value is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         for (int i = 2; i < num.length; i++)
@@ -306,11 +311,11 @@ public class testDSAGraph
 
                 if (vertex != num[i])
                 {
-                    testHarness.failed("Vertex count is incorrect");
+                    testHarnessCommons.failed("Vertex count is incorrect");
                 }
                 else if (edge != (num[i] / 2))
                 {
-                    testHarness.failed("Edge count is incorrect");
+                    testHarnessCommons.failed("Edge count is incorrect");
                 }
                 else
                 {
@@ -331,12 +336,12 @@ public class testDSAGraph
                         }
                     }
 
-                    testHarness.passed();
+                    testHarnessCommons.passed();
                 }
             }
             catch (Exception e)
             {
-                testHarness.failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
 
@@ -361,28 +366,28 @@ public class testDSAGraph
 
             if (vertex != 3)
             {
-                testHarness.failed("Vertex count is incorrectl");
+                testHarnessCommons.failed("Vertex count is incorrectl");
             }
             else if (edge != 2)
             {
-                testHarness.failed("Edge count is incorrect");
+                testHarnessCommons.failed("Edge count is incorrect");
             }
             else if (graph.getEdgeValue("a", "b") != edgeValueArr[0])
             {
-                testHarness.failed("Edge value between a and b is incorrect");
+                testHarnessCommons.failed("Edge value between a and b is incorrect");
             }
             else if (graph.getEdgeValue("a", "c") != edgeValueArr[1])
             {
-                testHarness.failed("Edge value between a and c is incorrect");
+                testHarnessCommons.failed("Edge value between a and c is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 

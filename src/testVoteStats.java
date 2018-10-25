@@ -1,8 +1,13 @@
 public class testVoteStats
 {
+    public static void main(String[] args)
+    {
+        run();
+    }
+
     public static void run()
     {
-        testHarness.header("Testing VoteStats class");
+        testHarnessCommons.header("Testing VoteStats class");
         testConstructor();
         testSetters();
     }
@@ -19,48 +24,48 @@ public class testVoteStats
 
             if (! votes.getNameDivision().equals("TBD"))
             {
-                testHarness.failed("Division Name is incorrect");
+                testHarnessCommons.failed("Division Name is incorrect");
             }
             else if (votes.getIdDivision() != 0)
             {
-                testHarness.failed("Division ID is incorrect");
+                testHarnessCommons.failed("Division ID is incorrect");
             }
             else if (! votes.getState().equals("TBD"))
             {
-                testHarness.failed("State is incorrect");
+                testHarnessCommons.failed("State is incorrect");
             }
             else if (! votes.getAbvParty().equals("TBD"))
             {
-                testHarness.failed("Party Abbreviation is incorrect");
+                testHarnessCommons.failed("Party Abbreviation is incorrect");
             }
             else if (! votes.getNameParty().equals("TBD"))
             {
-                testHarness.failed("Party Name is incorrect");
+                testHarnessCommons.failed("Party Name is incorrect");
             }
             else if (votes.getVotesFor() != 0)
             {
-                testHarness.failed("Votes For is incorrect");
+                testHarnessCommons.failed("Votes For is incorrect");
             }
             else if (votes.getVotesAgainst() != 0)
             {
-                testHarness.failed("Votes Against is incorrect");
+                testHarnessCommons.failed("Votes Against is incorrect");
             }
             else if (votes.getVotesTotal() != 0)
             {
-                testHarness.failed("Votes Total is incorrect");
+                testHarnessCommons.failed("Votes Total is incorrect");
             }
             else if (votes.getMargin() != 0.0)
             {
-                testHarness.failed("Margin is incorrect");
+                testHarnessCommons.failed("Margin is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor: ");
@@ -71,48 +76,48 @@ public class testVoteStats
 
             if (! votes.getNameDivision().equals("a"))
             {
-                testHarness.failed("Division Name is incorrect");
+                testHarnessCommons.failed("Division Name is incorrect");
             }
             else if (votes.getIdDivision() != 1)
             {
-                testHarness.failed("Division ID is incorrect");
+                testHarnessCommons.failed("Division ID is incorrect");
             }
             else if (! votes.getState().equals("a"))
             {
-                testHarness.failed("State is incorrect");
+                testHarnessCommons.failed("State is incorrect");
             }
             else if (! votes.getAbvParty().equals("a"))
             {
-                testHarness.failed("Party Abbreviation is incorrect");
+                testHarnessCommons.failed("Party Abbreviation is incorrect");
             }
             else if (! votes.getNameParty().equals("a"))
             {
-                testHarness.failed("Party Name is incorrect");
+                testHarnessCommons.failed("Party Name is incorrect");
             }
             else if (votes.getVotesFor() != 1)
             {
-                testHarness.failed("Votes For is incorrect");
+                testHarnessCommons.failed("Votes For is incorrect");
             }
             else if (votes.getVotesAgainst() != 2)
             {
-                testHarness.failed("Votes Against is incorrect");
+                testHarnessCommons.failed("Votes Against is incorrect");
             }
             else if (votes.getVotesTotal() != 3)
             {
-                testHarness.failed("Votes Total is incorrect");
+                testHarnessCommons.failed("Votes Total is incorrect");
             }
             else if (Math.abs(votes.getMargin() - -16.666666666) > 0.0000001)
             {
-                testHarness.failed("Margin is incorrect");
+                testHarnessCommons.failed("Margin is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -129,16 +134,16 @@ public class testVoteStats
 
             if (! votes.getNameDivision().equals("asdf"))
             {
-                testHarness.failed("Division Name is set incorrectly");
+                testHarnessCommons.failed("Division Name is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setIdDivision(): ");
@@ -151,16 +156,16 @@ public class testVoteStats
 
             if (votes.getIdDivision() != 4)
             {
-                testHarness.failed("Division ID is set incorrectly");
+                testHarnessCommons.failed("Division ID is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setState(): ");
@@ -173,16 +178,16 @@ public class testVoteStats
 
             if (! votes.getState().equals("A"))
             {
-                testHarness.failed("State is set incorrectly");
+                testHarnessCommons.failed("State is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setAbvParty(): ");
@@ -195,16 +200,16 @@ public class testVoteStats
 
             if (! votes.getAbvParty().equals("A"))
             {
-                testHarness.failed("Party Abbreviation is set incorrectly");
+                testHarnessCommons.failed("Party Abbreviation is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setNameParty(): ");
@@ -217,16 +222,16 @@ public class testVoteStats
 
             if (! votes.getNameParty().equals("A"))
             {
-                testHarness.failed("Party Name is set incorrectly");
+                testHarnessCommons.failed("Party Name is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setVotesFor(): ");
@@ -239,16 +244,16 @@ public class testVoteStats
 
             if (votes.getVotesFor() != 1)
             {
-                testHarness.failed("Votes For is set incorrectly");
+                testHarnessCommons.failed("Votes For is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setVotesAgainst(): ");
@@ -261,16 +266,16 @@ public class testVoteStats
 
             if (votes.getVotesAgainst() != 1)
             {
-                testHarness.failed("Votes Against is set incorrectly");
+                testHarnessCommons.failed("Votes Against is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setVotesTotal(): ");
@@ -283,16 +288,16 @@ public class testVoteStats
 
             if (votes.getVotesTotal() != 1)
             {
-                testHarness.failed("Votes Total is set incorrectly");
+                testHarnessCommons.failed("Votes Total is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 }

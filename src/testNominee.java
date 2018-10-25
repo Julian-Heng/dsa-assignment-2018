@@ -1,8 +1,13 @@
 public class testNominee
 {
+    public static void main(String[] args)
+    {
+        run();
+    }
+
     public static void run()
     {
-        testHarness.header("Testing Nominee Class");
+        testHarnessCommons.header("Testing Nominee Class");
         testConstructor();
     }
 
@@ -17,52 +22,52 @@ public class testNominee
 
             if (! candidate.getState().equals("TBD"))
             {
-                testHarness.failed("State is incorrect");
+                testHarnessCommons.failed("State is incorrect");
             }
             else if (candidate.getIdDivision() != 0)
             {
-                testHarness.failed("Division ID is incorrect");
+                testHarnessCommons.failed("Division ID is incorrect");
             }
             else if (! candidate.getNameDivision().equals("TBD"))
             {
-                testHarness.failed("Division Name is incorrect");
+                testHarnessCommons.failed("Division Name is incorrect");
             }
             else if (! candidate.getAbvParty().equals("TBD"))
             {
-                testHarness.failed("Party Abbreviation is incorrect");
+                testHarnessCommons.failed("Party Abbreviation is incorrect");
             }
             else if (! candidate.getNameParty().equals("TBD"))
             {
-                testHarness.failed("Party Name is incorrect");
+                testHarnessCommons.failed("Party Name is incorrect");
             }
             else if (candidate.getIdCandidate() != 0)
             {
-                testHarness.failed("Candidate ID is incorrect");
+                testHarnessCommons.failed("Candidate ID is incorrect");
             }
             else if (! candidate.getSurname().equals("TBD"))
             {
-                testHarness.failed("Surname is incorrect");
+                testHarnessCommons.failed("Surname is incorrect");
             }
             else if (! candidate.getFirstName().equals("TBD"))
             {
-                testHarness.failed("First Name is incorrect");
+                testHarnessCommons.failed("First Name is incorrect");
             }
             else if (candidate.getElected())
             {
-                testHarness.failed("Elected is incorrect");
+                testHarnessCommons.failed("Elected is incorrect");
             }
             else if (candidate.getHistoricElected())
             {
-                testHarness.failed("Historic Elected is incorrect");
+                testHarnessCommons.failed("Historic Elected is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor [valid]: ");
@@ -75,52 +80,52 @@ public class testNominee
 
             if (! candidate.getState().equals("NSW"))
             {
-                testHarness.failed("State is incorrect");
+                testHarnessCommons.failed("State is incorrect");
             }
             else if (candidate.getIdDivision() != 151)
             {
-                testHarness.failed("Division ID is incorrect");
+                testHarnessCommons.failed("Division ID is incorrect");
             }
             else if (! candidate.getNameDivision().equals("Warringah"))
             {
-                testHarness.failed("Division Name is incorrect");
+                testHarnessCommons.failed("Division Name is incorrect");
             }
             else if (! candidate.getAbvParty().equals("LP"))
             {
-                testHarness.failed("Party Abbreviation is incorrect");
+                testHarnessCommons.failed("Party Abbreviation is incorrect");
             }
             else if (! candidate.getNameParty().equals("Liberal"))
             {
-                testHarness.failed("Party Name is incorrect");
+                testHarnessCommons.failed("Party Name is incorrect");
             }
             else if (candidate.getIdCandidate() != 28624)
             {
-                testHarness.failed("Candidate ID is incorrect");
+                testHarnessCommons.failed("Candidate ID is incorrect");
             }
             else if (! candidate.getSurname().equals("ABBOTT"))
             {
-                testHarness.failed("Surname is incorrect");
+                testHarnessCommons.failed("Surname is incorrect");
             }
             else if (! candidate.getFirstName().equals("Tony"))
             {
-                testHarness.failed("First Name is incorrect");
+                testHarnessCommons.failed("First Name is incorrect");
             }
             else if (! candidate.getElected())
             {
-                testHarness.failed("Elected is incorrect");
+                testHarnessCommons.failed("Elected is incorrect");
             }
             else if (! candidate.getHistoricElected())
             {
-                testHarness.failed("Historic Elected is incorrect");
+                testHarnessCommons.failed("Historic Elected is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -132,11 +137,11 @@ public class testNominee
             candidate = new Nominee(
                 "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y"
             );
-            testHarness.failed("Created a valid Nominee");
+            testHarnessCommons.failed("Created a valid Nominee");
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print("Testing Alternate Constructor [all invalid]: ");
@@ -144,11 +149,11 @@ public class testNominee
         try
         {
             candidate = new Nominee(",,,,,,,,,");
-            testHarness.failed("Created a valid Nominee");
+            testHarnessCommons.failed("Created a valid Nominee");
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print("Testing Alternate Constructor [state invalid]: ");
@@ -161,16 +166,16 @@ public class testNominee
 
             if (! candidate.getState().equals("TBD"))
             {
-                testHarness.failed("State is set incorrectly");
+                testHarnessCommons.failed("State is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -202,12 +207,12 @@ public class testNominee
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -222,16 +227,16 @@ public class testNominee
 
             if (! candidate.getNameDivision().equals("TBD"))
             {
-                testHarness.failed("Division Name is set incorrectly");
+                testHarnessCommons.failed("Division Name is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -246,16 +251,16 @@ public class testNominee
 
             if (! candidate.getAbvParty().equals("TBD"))
             {
-                testHarness.failed("Party Abbreviation is set incorrectly");
+                testHarnessCommons.failed("Party Abbreviation is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -270,16 +275,16 @@ public class testNominee
 
             if (! candidate.getNameParty().equals("TBD"))
             {
-                testHarness.failed("Party Name is set incorrectly");
+                testHarnessCommons.failed("Party Name is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -305,16 +310,16 @@ public class testNominee
 
             if (candidate.getIdCandidate() != 0)
             {
-                testHarness.failed("Candidate ID is set incorrectly");
+                testHarnessCommons.failed("Candidate ID is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor [surname invalid]: ");
@@ -327,16 +332,16 @@ public class testNominee
 
             if (! candidate.getSurname().equals("TBD"))
             {
-                testHarness.failed("Surname is set incorrectly");
+                testHarnessCommons.failed("Surname is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -351,16 +356,16 @@ public class testNominee
 
             if (! candidate.getFirstName().equals("TBD"))
             {
-                testHarness.failed("First Name is set incorrectly");
+                testHarnessCommons.failed("First Name is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor [elected invalid]: ");
@@ -382,11 +387,11 @@ public class testNominee
                 "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,asdf,Y"
             );
 
-            testHarness.failed("Created a valid Nominee");
+            testHarnessCommons.failed("Created a valid Nominee");
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print(
@@ -410,11 +415,11 @@ public class testNominee
                 "NSW,151,Warringah,LP,Liberal,28624,ABBOTT,Tony,Y,asdf"
             );
 
-            testHarness.failed("Created a valid Nominee");
+            testHarnessCommons.failed("Created a valid Nominee");
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarnessCommons.passed();
         }
     }
 }

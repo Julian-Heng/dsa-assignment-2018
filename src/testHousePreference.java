@@ -1,8 +1,13 @@
 public class testHousePreference
 {
+    public static void main(String[] args)
+    {
+        run();
+    }
+
     public static void run()
     {
-        testHarness.header("Testing HousePreference class");
+        testHarnessCommons.header("Testing HousePreference class");
         testConstructor();
         testSetters();
         testAddNominee();
@@ -19,28 +24,28 @@ public class testHousePreference
 
             if (! pref.getPrefNameDivision().equals("TBD"))
             {
-                testHarness.failed("Division Name is incorrect");
+                testHarnessCommons.failed("Division Name is incorrect");
             }
             else if (pref.getPrefIdDivision() != 0)
             {
-                testHarness.failed("Division ID is incorrect");
+                testHarnessCommons.failed("Division ID is incorrect");
             }
             else if (pref.getNumInformalVotes() != 0)
             {
-                testHarness.failed("Informal votes count is incorrect");
+                testHarnessCommons.failed("Informal votes count is incorrect");
             }
             else if (pref.getNumTotalVotes() != 0)
             {
-                testHarness.failed("Total votes count is incorrect");
+                testHarnessCommons.failed("Total votes count is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing Alternate Constructor: ");
@@ -51,20 +56,20 @@ public class testHousePreference
 
             if (! pref.getPrefNameDivision().equals("name"))
             {
-                testHarness.failed("Division Name is incorrect");
+                testHarnessCommons.failed("Division Name is incorrect");
             }
             else if (pref.getPrefIdDivision() != 100)
             {
-                testHarness.failed("Division ID is incorrect");
+                testHarnessCommons.failed("Division ID is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -80,16 +85,16 @@ public class testHousePreference
 
             if (! pref.getPrefNameDivision().equals("new"))
             {
-                testHarness.failed("Division Name is set incorrectly");
+                testHarnessCommons.failed("Division Name is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setPrefIdDivision(): ");
@@ -101,16 +106,16 @@ public class testHousePreference
 
             if (pref.getPrefIdDivision() != 200)
             {
-                testHarness.failed("Division ID is set incorrectly");
+                testHarnessCommons.failed("Division ID is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setNumInformalVotes(): ");
@@ -122,16 +127,16 @@ public class testHousePreference
 
             if (pref.getNumInformalVotes() != 200)
             {
-                testHarness.failed("Informal Votes is set incorrectly");
+                testHarnessCommons.failed("Informal Votes is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing setNumTotalVotes(): ");
@@ -143,16 +148,16 @@ public class testHousePreference
 
             if (pref.getNumTotalVotes() != 200)
             {
-                testHarness.failed("Total Votes is set incorrectly");
+                testHarnessCommons.failed("Total Votes is set incorrectly");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -173,16 +178,16 @@ public class testHousePreference
 
             if (pref.getNumTotalVotes() != 200)
             {
-                testHarness.failed("Total votes count is incorrect");
+                testHarnessCommons.failed("Total votes count is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing addNomineeToList() with 3 Nominees: ");
@@ -202,16 +207,16 @@ public class testHousePreference
 
             if (pref.getNumTotalVotes() != 500)
             {
-                testHarness.failed("Total votes count is incorrect");
+                testHarnessCommons.failed("Total votes count is incorrect");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 }

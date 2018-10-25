@@ -1,11 +1,11 @@
 all:
 	javac -Xlint *.java
 
-run: all
-	java Driver
-
 test: all
-	java testHarness
+	for i in test*.class; do \
+		[ "$$i" != "testHarnessCommons.class" ] && \
+			java $${i%.*}; \
+	done
 
 clean:
 	@rm -fv *.class *.csv

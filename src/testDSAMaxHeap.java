@@ -2,9 +2,14 @@ import java.util.*;
 
 public class testDSAMaxHeap
 {
+    public static void main(String[] args)
+    {
+        run();
+    }
+
     public static void run()
     {
-        testHarness.header("Testing DSAMaxHeap Class");
+        testHarnessCommons.header("Testing DSAMaxHeap Class");
         testConstructor();
         testAdd();
         testRemove();
@@ -23,20 +28,20 @@ public class testDSAMaxHeap
 
             if (heap.getSize() != 100)
             {
-                testHarness.failed("Incorrect heap max size");
+                testHarnessCommons.failed("Incorrect heap max size");
             }
             else if (heap.getUsedSize() != 0)
             {
-                testHarness.failed("Incorrect heap used size");
+                testHarnessCommons.failed("Incorrect heap used size");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing alternate constructor: ");
@@ -47,20 +52,20 @@ public class testDSAMaxHeap
 
             if (heap.getSize() != 1024)
             {
-                testHarness.failed("Incorrect heap max size");
+                testHarnessCommons.failed("Incorrect heap max size");
             }
             else if (heap.getUsedSize() != 0)
             {
-                testHarness.failed("Incorrect heap used size");
+                testHarnessCommons.failed("Incorrect heap used size");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -79,20 +84,20 @@ public class testDSAMaxHeap
 
             if (heap.getSize() != 1024)
             {
-                testHarness.failed("Incorrect heap max size");
+                testHarnessCommons.failed("Incorrect heap max size");
             }
             else if (heap.getUsedSize() != 1)
             {
-                testHarness.failed("Incorrect heap used size");
+                testHarnessCommons.failed("Incorrect heap used size");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing add() with a full heap: ");
@@ -103,11 +108,11 @@ public class testDSAMaxHeap
 
             heap.add("A", "A");
             heap.add("B", "B");
-            testHarness.failed("Added an item");
+            testHarnessCommons.failed("Added an item");
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print("Testing add() with the same priority: ");
@@ -123,20 +128,20 @@ public class testDSAMaxHeap
 
             if (heap.getSize() != 1024)
             {
-                testHarness.failed("Incorrect heap max size");
+                testHarnessCommons.failed("Incorrect heap max size");
             }
             else if (heap.getUsedSize() != 1024)
             {
-                testHarness.failed("Incorrect heap used size");
+                testHarnessCommons.failed("Incorrect heap used size");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -154,11 +159,11 @@ public class testDSAMaxHeap
             heap = new DSAMaxHeap();
 
             removedObj = heap.remove();
-            testHarness.failed("Successfully removed an object");
+            testHarnessCommons.failed("Successfully removed an object");
         }
         catch (Exception e)
         {
-            testHarness.passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print("Testing remove() with a single item: ");
@@ -172,16 +177,16 @@ public class testDSAMaxHeap
 
             if (! removedObj.toString().equals("This is the object"))
             {
-                testHarness.failed("Invalid return value");
+                testHarnessCommons.failed("Invalid return value");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with alphabet: ");
@@ -217,16 +222,16 @@ public class testDSAMaxHeap
 
             if (! isValid)
             {
-                testHarness.failed("Invalid return value");
+                testHarnessCommons.failed("Invalid return value");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with reverse alphabet: ");
@@ -262,16 +267,16 @@ public class testDSAMaxHeap
 
             if (! isValid)
             {
-                testHarness.failed("Invalid return value");
+                testHarnessCommons.failed("Invalid return value");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
     }
 
@@ -313,16 +318,16 @@ public class testDSAMaxHeap
 
             if (! validateSort(pool))
             {
-                testHarness.failed("Array is not sorted");
+                testHarnessCommons.failed("Array is not sorted");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -353,16 +358,16 @@ public class testDSAMaxHeap
 
             if (! validateSort(pool))
             {
-                testHarness.failed("Array is not sorted");
+                testHarnessCommons.failed("Array is not sorted");
             }
             else
             {
-                testHarness.passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            testHarness.failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         for (int inSize : sizes)
@@ -387,16 +392,16 @@ public class testDSAMaxHeap
 
                 if (! validateSort(pool))
                 {
-                    testHarness.failed("Array is not sorted");
+                    testHarnessCommons.failed("Array is not sorted");
                 }
                 else
                 {
-                    testHarness.passed();
+                    testHarnessCommons.passed();
                 }
             }
             catch (Exception e)
             {
-                testHarness.failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
     }

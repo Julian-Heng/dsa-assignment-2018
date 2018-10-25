@@ -1,15 +1,38 @@
 import java.util.*;
 
+/**
+ *  Name:    Election Manager
+ *  Purpose: Manage election by viewing stats and calculations
+ *  Imports:
+ *    - Distance File
+ *    - Candidates File
+ *    - Polling place Files
+ *  Exports:
+ *    - None
+ *  Author:  Julian Heng (19473701)
+ **/
+
 public class Driver
 {
+    // Regex String constants
     public static final
         String SPLIT_REGEX = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
     public static final
         String WHITESPACE_REGEX = "\\s+";
 
+    /**
+     *  Name:     main
+     *  Purpose:  The starting point of the program
+     *  Imports:
+     *    - args : A string array
+     *  Exports:
+     *    - none
+     **/
+
     public static void main(String[] args)
     {
+        // Check if there's enough arguments
         if (args.length < 3 ||
             args[0].equals("--help") ||
             args[0].equals("-h"))
@@ -18,6 +41,8 @@ public class Driver
         }
         else
         {
+            // Load menu, try catch for any unhandled exception
+            // before the menu starts
             try
             {
                 menu(args);
@@ -30,17 +55,27 @@ public class Driver
         }
     }
 
+    /**
+     *  Name:     menu
+     *  Purpose:  The interface the user will be interacting with
+     *  Imports:
+     *    - files : A string array representing the filenames
+     *  Exports:
+     *    - none
+     **/
+
     public static void menu(String[] files)
     {
         Menu menu;
         boolean exit;
-        long timeStart, timeEnd, duration;
         DSAGraph<Location,Trip> locations;
         DSALinkedList<Nominee> nomineesList;
         DSALinkedList<HousePreference> preferenceList;
         DSALinkedList<HousePreference> tempPrefList;
         Iterator<HousePreference> iter;
+        long timeStart, timeEnd, duration;
 
+        // Making menu
         menu = new Menu(6);
         menu.addOption("Please select an option:");
         menu.addOption("    1. List Nominees");
@@ -50,6 +85,7 @@ public class Driver
         menu.addOption("    5. Exit");
         exit = false;
 
+        // Parsing files
         locations = processDistances(files[0]);
         nomineesList = processNominees(files[1]);
         preferenceList = new DSALinkedList<HousePreference>();
@@ -74,6 +110,7 @@ public class Driver
             toMiliseconds(duration)
         );
 
+        // Main program loop
         while (! exit)
         {
             try
@@ -107,6 +144,15 @@ public class Driver
         }
     }
 
+    /**
+     *  Name:     processDistances
+     *  Purpose:  Parse the distance file into a graph
+     *  Imports:
+     *    - file : A string for the filename
+     *  Exports:
+     *    - locationGraph : A Graph containing all the locations
+     **/
+
     public static DSAGraph<Location,Trip> processDistances(
         String file)
     {
@@ -131,13 +177,17 @@ public class Driver
         String[] timeSplit;
 
         timeStart = System.nanoTime();
+
+        // Read the file
         list = FileIO.readText(file);
         iter = list.iterator();
 
         locationGraph = new DSAGraph<Location,Trip>();
 
+        // Loop through the file
         while (iter.hasNext())
         {
+            // Print status
             line = iter.next();
             System.out.printf(
                 "\rProcessing %s... [%d/%d] %s",
@@ -147,6 +197,7 @@ public class Driver
                 spinner[count++ % spinner.length]
             );
 
+            // Split csv and create starting and ending locations
             split = line.split(SPLIT_REGEX);
 
             startLocation = new Location(split[0], split[1],
@@ -156,6 +207,7 @@ public class Driver
 
             try
             {
+                // Getting distance
                 if (split[8].equals("NONE"))
                 {
                     distance = 0;
@@ -165,6 +217,7 @@ public class Driver
                     distance = Integer.parseInt(split[8]);
                 }
 
+                // Getting time
                 if (split[9].contains(":"))
                 {
                     timeSplit = split[9].split(":");
@@ -181,9 +234,13 @@ public class Driver
                     duration = Integer.parseInt(split[9]);
                 }
 
+                // Getting transport
                 transportType = split[10];
+
+                // Creating a tripInfo Object as the edge value
                 tripInfo = new Trip(transportType, distance, duration);
 
+                // Add starting and ending locations to the graph
                 locationGraph.addVertex(
                     startLocation.getDivision(),
                     startLocation
@@ -194,6 +251,7 @@ public class Driver
                     endLocation
                 );
 
+                // Connect them
                 locationGraph.addEdge(
                     startLocation.getDivision(),
                     endLocation.getDivision(),
@@ -203,18 +261,21 @@ public class Driver
             }
             catch (NumberFormatException e)
             {
+                // Catch any invalid string integers
                 throw new IllegalArgumentException(
                     "Invalid Distance File: " + e.getMessage()
                 );
             }
             catch (Exception e)
             {
+                // Catch any other exception for formatting
                 throw new IllegalArgumentException(
                     "Error: " + e.getMessage()
                 );
             }
         }
 
+        // Time statistics
         timeEnd = System.nanoTime();
         funcDuration = timeEnd - timeStart;
 
@@ -222,6 +283,15 @@ public class Driver
 
         return locationGraph;
     }
+
+    /**
+     *  Name:     processNominees
+     *  Purpose:  Parse the house candidates file to Nominee Objects
+     *  Imports:
+     *    - file : A string for the filename
+     *  Exports:
+     *    - nomineeList : A linked list for the list of nominees
+     **/
 
     public static DSALinkedList<Nominee> processNominees(String file)
     {
@@ -237,6 +307,8 @@ public class Driver
         int count = 1;
 
         timeStart = System.nanoTime();
+
+        // Read the file
         list = FileIO.readText(file);
         iter = list.iterator();
 
@@ -244,13 +316,12 @@ public class Driver
         invalidEntries = new DSALinkedList<String>();
         line = "";
 
+        // Loop through the file
         if (iter.hasNext())
         {
-            iter.next();
-            count++;
-
             while (iter.hasNext())
             {
+                // Print status
                 System.out.printf(
                     "\rProcessing %s... [%d/%d] %s",
                     file,
@@ -259,6 +330,7 @@ public class Driver
                     spinner[count++ % spinner.length]
                 );
 
+                // Create a new nominee object and insert last
                 try
                 {
                     line = iter.next();
@@ -266,27 +338,34 @@ public class Driver
                 }
                 catch (IllegalArgumentException e)
                 {
+                    // For any invalid entries, insert to a seperate list
                     invalidEntries.insertLast(line);
                 }
             }
         }
         else
         {
+            // Throw exception file is empty
             throw new IllegalArgumentException(
                 "House candidate file is invalid"
             );
         }
 
-        iter = invalidEntries.iterator();
-
-        while (iter.hasNext())
+        // Print invalid entries
+        if (invalidEntries.getCount() != 0)
         {
-            System.out.printf(
-                "Invalid entry in %s: %s, ignoring\n",
-                file, iter.next()
-            );
+            System.out.print("\n");
+            iter = invalidEntries.iterator();
+            while (iter.hasNext())
+            {
+                System.out.printf(
+                    "Invalid entry in %s: %s, ignoring...\n",
+                    file, iter.next()
+                );
+            }
         }
 
+        // Print time statistics
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
@@ -294,6 +373,17 @@ public class Driver
 
         return nomineeList;
     }
+
+    /**
+     *  Name:     processPreference
+     *  Purpose:  Parse the preference file to HousePreference Objects
+     *  Imports:
+     *    - file        : A string for the filename
+     *    - nomineeList : A linked list containing the list of Nominees
+     *                    to refer to
+     *  Exports:
+     *    - preferenceList : A list of preferences
+     **/
 
     public static DSALinkedList<HousePreference> processPreference(
         String file, DSALinkedList<Nominee>nomineeList)
@@ -321,11 +411,14 @@ public class Driver
         int count = 1;
 
         timeStart = System.nanoTime();
+
+        // Read the file
         list = FileIO.readText(file);
         iter = list.iterator();
 
         divisionIdList = new DSALinkedList<String>();
 
+        // Get unique Division IDs from the preference files
         while (iter.hasNext())
         {
             line = iter.next();
@@ -341,74 +434,101 @@ public class Driver
         preferenceList = new DSALinkedList<HousePreference>();
         iter = divisionIdList.iterator();
 
-        while (iter.hasNext())
+        // For every unique Division IDs, loop through the preference file
+        // and calculate total votes for the Nominees in that Division
+        if (iter.hasNext())
         {
-            line = iter.next();
-
-            tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
-            inList = getPreferenceFromDivisionId(list, line);
-
-            split = inList.peekFirst().split(SPLIT_REGEX);
-
-            divisionName = split[2];
-            divisionId = split[1];
-
-            tempHousePref = new HousePreference(divisionName, divisionId);
-
-            iter2 = inList.iterator();
-            while (iter2.hasNext())
+            while (iter.hasNext())
             {
-                System.out.printf(
-                    "\rProcessing %s... [%d/%d] %s",
-                    file,
-                    count,
-                    list.getCount(),
-                    spinner[count++ % spinner.length]
-                );
+                line = iter.next();
 
-                split = iter2.next().split(SPLIT_REGEX);
+                // Get the list of nominees from unique Division ID
+                tempNomineeList = getNomineeFromDivisionId(nomineeList, line);
 
-                try
+                // Get the list of preferences from unique Division ID
+                inList = getPreferenceFromDivisionId(list, line);
+
+                // Get Division Name and ID
+                split = inList.peekFirst().split(SPLIT_REGEX);
+
+                divisionName = split[2];
+                divisionId = split[1];
+
+                tempHousePref = new HousePreference(divisionName, divisionId);
+
+                iter2 = inList.iterator();
+
+                // Loop preference file
+                while (iter2.hasNext())
                 {
-                    if (! split[6].equals("Informal") &&
-                        ! split[7].equals("Informal"))
-                    {
+                    // Print status
+                    System.out.printf(
+                        "\rProcessing %s... [%d/%d] %s",
+                        file,
+                        count,
+                        list.getCount(),
+                        spinner[count++ % spinner.length]
+                    );
 
-                        tempNominee = getNomineeFromCandidateId(
-                            tempNomineeList, split[5]
+                    split = iter2.next().split(SPLIT_REGEX);
+
+                    try
+                    {
+                        // Checking for informal votes
+                        if (! split[6].equals("Informal") &&
+                            ! split[7].equals("Informal"))
+                        {
+                            // Update the nominee's votes
+                            tempNominee = getNomineeFromCandidateId(
+                                tempNomineeList, split[5]
+                            );
+
+                            tempNominee.addNumVotes(split[13]);
+                        }
+                        else
+                        {
+                            tempHousePref.addNumInformalVotes(split[13]);
+                        }
+                    }
+                    // Formatting exceptions
+                    catch (NumberFormatException e)
+                    {
+                        throw new IllegalArgumentException(
+                            "Invalid Number of Votes: " + split[13]
                         );
-
-                        tempNominee.addNumVotes(split[13]);
                     }
-                    else
+                    catch (ArrayIndexOutOfBoundsException e)
                     {
-                        tempHousePref.addNumInformalVotes(split[13]);
+                        // Checks if there's enough information
+                        throw new IllegalArgumentException(
+                            "Invalid House Preference File"
+                        );
                     }
                 }
-                catch (NumberFormatException e)
-                {
-                    throw new IllegalArgumentException(
-                        "Invalid Number of Votes: " + split[13]
-                    );
-                }
-                catch (ArrayIndexOutOfBoundsException e)
-                {
-                    throw new IllegalArgumentException(
-                        "Invalid House Preference File"
-                    );
-                }
-            }
 
-            iterNominee = tempNomineeList.iterator();
-            while (iterNominee.hasNext())
-            {
-                tempHousePref.addNomineeToList(iterNominee.next());
-            }
+                // For all nominees in Division, add to the
+                // house preference object
+                iterNominee = tempNomineeList.iterator();
+                while (iterNominee.hasNext())
+                {
+                    tempHousePref.addNomineeToList(iterNominee.next());
+                }
 
-            tempHousePref.updateTotalVotes();
-            preferenceList.insertLast(tempHousePref);
+                // Add house preference for that unique division to the
+                // overall preference list
+                tempHousePref.updateTotalVotes();
+                preferenceList.insertLast(tempHousePref);
+            }
+        }
+        else
+        {
+            // Throw exception file is empty
+            throw new IllegalArgumentException(
+                "House preference file is invalid"
+            );
         }
 
+        // Print time statistics
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
@@ -416,6 +536,16 @@ public class Driver
 
         return preferenceList;
     }
+
+    /**
+     *  Name:     getNomineeFromState
+     *  Purpose:  Extract Nominees from a state search
+     *  Imports:
+     *    - nomineeList : A list of nominees objects
+     *    - inState     : A string for the state to search
+     *  Exports:
+     *    - returnList : A list of nominess with the corresponding state
+     **/
 
     public static DSALinkedList<Nominee> getNomineeFromState(
         DSALinkedList<Nominee> nomineeList, String inState)
@@ -427,9 +557,12 @@ public class Driver
         returnList = new DSALinkedList<Nominee>();
         iter = nomineeList.iterator();
 
+        // For all Nominees in list
         while (iter.hasNext())
         {
             inList = iter.next();
+
+            // If Nominee is from search state, add to list
             if (inList.getState().equals(inState))
             {
                 returnList.insertLast(inList);
@@ -438,6 +571,16 @@ public class Driver
 
         return returnList;
     }
+
+    /**
+     *  Name:     getNomineeFromDivisionId
+     *  Purpose:  Extract Nominees from a division search
+     *  Imports:
+     *    - nomineeList  : A list of nominees objects
+     *    - inDivisionId : A string for the division to search
+     *  Exports:
+     *    - returnList : A list of nominees with the corresponding division ID
+     **/
 
     public static DSALinkedList<Nominee> getNomineeFromDivisionId(
         DSALinkedList<Nominee> nomineeList, String inDivisionId)
@@ -449,9 +592,12 @@ public class Driver
 
         iter = nomineeList.iterator();
 
+        // For all Nominees in list
         while (iter.hasNext())
         {
             inList = iter.next();
+
+            // If Nominee is from division, add to list
             if (compareIntString(inList.getIdDivision(), inDivisionId))
             {
                 returnList.insertLast(inList);
@@ -461,6 +607,16 @@ public class Driver
         return returnList;
     }
 
+    /**
+     *  Name:     getNomineeFromCandidateId
+     *  Purpose:  Extract Nominee from candidate id search
+     *  Imports:
+     *    - nomineeList   : A list of nominees objects
+     *    - inCandidateId : A string for the candidate id to search
+     *  Exports:
+     *    - result : The nominee with the corresponding candidate id
+     **/
+
     public static Nominee getNomineeFromCandidateId(
         DSALinkedList<Nominee> nomineeList, String inCandidateId)
     {
@@ -469,9 +625,12 @@ public class Driver
         Iterator<Nominee> iter = nomineeList.iterator();
         boolean isFound = false;
 
+        // For all Nominees in list
         while (! isFound && iter.hasNext())
         {
             inList = iter.next();
+
+            // If nominee has the Candidate ID
             if (compareIntString(inList.getIdCandidate(), inCandidateId))
             {
                 result = inList;
@@ -482,6 +641,17 @@ public class Driver
         return result;
     }
 
+    /**
+     *  Name:     getPreferenceFromDivisionId
+     *  Purpose:  Return a list of entries in the preference file
+     *            containing the Division ID
+     *  Imports:
+     *    - list         : A string list containing the preference file
+     *    - inDivisionId : A string for the division ID to search
+     *  Exports:
+     *    - returnList : A String list extracting from the prefernce file
+     **/
+
     public static DSALinkedList<String> getPreferenceFromDivisionId(
         DSALinkedList<String> list, String inDivisionId)
     {
@@ -491,11 +661,14 @@ public class Driver
         String[] split;
         returnList = new DSALinkedList<String>();
 
+        // For all entries in preference file
         iter = list.iterator();
         while (iter.hasNext())
         {
             inList = iter.next();
             split = inList.split(SPLIT_REGEX);
+
+            // If Division ID matches, add to return list
             if (! split[1].isEmpty() && split[1].equals(inDivisionId))
             {
                 returnList.insertLast(inList);
@@ -505,8 +678,19 @@ public class Driver
         return returnList;
     }
 
+    /**
+     *  Name:     listNominees
+     *  Purpose:  First option of the menu, displaying sorted Nominees
+     *            with filters
+     *  Imports:
+     *    - nomineeList : A list of all Nominees
+     *  Exports:
+     *    - none
+     **/
+
     public static void listNominees(DSALinkedList<Nominee> nomineeList)
     {
+        // Header for the output file
         String header[] = {
             "StateAb", "DivisionID", "DivisionNm", "PartyAb", "PartyNm",
             "CandidateID", "Surname", "GivenNm", "Elected", "HistoricElected"
@@ -523,7 +707,10 @@ public class Driver
 
         iter = nomineeList.iterator();
 
+        // Array of booleans for determining filter options
         boolean filterOptions[] = {false, false, false};
+
+        // Array to contain filter messages
         String filterMsg[] = {
             "Input state filter: ",
             "Input party filter: ",
@@ -546,6 +733,7 @@ public class Driver
 
         String[] fileContents;
 
+        // Creating menus
         filterMenu = new Menu(4);
         orderMenu = new Menu(5);
 
@@ -564,22 +752,28 @@ public class Driver
         userInput = Input.string();
         split = userInput.split(WHITESPACE_REGEX);
 
+        // Get filter options
         if (! userInput.isEmpty())
         {
             processFilterOptions(filterOptions, split);
         }
 
+        // Process filter options
         for (i = 0; i < filters.length; i++)
         {
             filters[i] = filterOptions[i] ? getFilter(filterMsg[i]) : ".*";
         }
 
+        // Get order options
         orderMenu.printMenu();
         userInput = Input.string();
         split = userInput.split(WHITESPACE_REGEX);
 
         timeStart = System.nanoTime();
 
+        // Get the number of matches for creating array
+        // Array because of sorting an array is easier than
+        // sorting a linked list
         while (iter.hasNext())
         {
             numNominee++;
@@ -597,6 +791,7 @@ public class Driver
         iter = nomineeList.iterator();
         i = 0;
 
+        // Get the matched nominees and add them to the array
         while (iter.hasNext())
         {
             inList = iter.next();
@@ -607,8 +802,11 @@ public class Driver
             }
         }
 
+        // If order options were selected
         if (! userInput.isEmpty())
         {
+            // For each search result, generate the sort line
+            // and add to the heap as the priority
             for (int j = 0; j < searchResult.length; j++)
             {
                 inResult = searchResult[j];
@@ -616,6 +814,7 @@ public class Driver
                 heap.add(sortLine, inResult);
             }
 
+            // Sort and convert back to an array
             heap.heapSort();
             sorted = heap.toObjArray();
 
@@ -625,6 +824,7 @@ public class Driver
             }
         }
 
+        // Convert the array to a csv format
         fileContents = new String[numMatches];
 
         for (i = 0; i < numMatches; i++)
@@ -635,6 +835,7 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
+        // Print table and prompt for saving the results as a file
         printCsvTable(fileContents, header);
         System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));
@@ -642,8 +843,19 @@ public class Driver
         saveCsvToFile(fileContents, "nominees_list.csv");
     }
 
+    /**
+     *  Name:     searchNominees
+     *  Purpose:  Second option in the menu, displays nominees that match
+     *            a user's search field
+     *  Imports:
+     *    - nomineeList : A list of nominees to search through
+     *  Exports:
+     *    - none
+     **/
+
     public static void searchNominees(DSALinkedList<Nominee> nomineeList)
     {
+        // Header for the output file
         String header[] = {
             "StateAb", "DivisionID", "DivisionNm", "PartyAb", "PartyNm",
             "CandidateID", "Surname", "GivenNm", "Elected", "HistoricElected"
@@ -657,7 +869,10 @@ public class Driver
 
         iter = nomineeList.iterator();
 
+        // Array of booleans for filter options
         boolean filterOptions[] = {false, false};
+
+        // Array of strings for filter messages
         String filterMsg[] = {
             "Input state filter: ",
             "Input party filter: "
@@ -676,28 +891,36 @@ public class Driver
 
         String fileContents[];
 
+        // Create menu
         filterMenu = new Menu(3);
 
         filterMenu.addOption("Select filter type (eg: 1 2 3):");
         filterMenu.addOption("    1. State");
         filterMenu.addOption("    2. Party");
 
+        // Get the search term
         nameFilter = Input.string("Input surname search term: ");
 
+        // Get any filter options
         filterMenu.printMenu();
         userInput = Input.string();
+
+        timeStart = System.nanoTime();
         split = userInput.split(WHITESPACE_REGEX);
 
+        // If there are filters, process them into arrays
         if (! userInput.isEmpty())
         {
             processFilterOptions(filterOptions, split);
         }
 
+        // For all selected filter options, convert them to regex
         for (i = 0; i < filters.length; i++)
         {
             filters[i] = filterOptions[i] ? getFilter(filterMsg[i]) : ".*";
         }
 
+        // Count the number of matches
         while (iter.hasNext())
         {
             if (searchNominee2(iter.next(), nameFilter, filters))
@@ -706,19 +929,19 @@ public class Driver
             }
         }
 
-        timeStart = System.nanoTime();
-
         searchResult = new Nominee[numMatches];
         iter = null;
         inList = null;
         iter = nomineeList.iterator();
         i = 0;
 
+        // For each nominee in nominee list
         while (iter.hasNext())
         {
             numNominee++;
             inList = iter.next();
 
+            // If matches, add to array
             if (searchNominee2(inList, nameFilter, filters))
             {
                 searchResult[i] = inList;
@@ -728,6 +951,7 @@ public class Driver
 
         fileContents = new String[numMatches];
 
+        // Convert to csv file
         for (i = 0; i < numMatches; i++)
         {
             fileContents[i] = searchResult[i].toString();
@@ -736,31 +960,46 @@ public class Driver
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
+        // Print table and prompt to save to file
         printCsvTable(fileContents, header);
         System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
-
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
         saveCsvToFile(fileContents, "nominees_search.csv");
     }
+
+    /**
+     *  Name:     processFilterOptions
+     *  Purpose:  Set an array of booleans true depending on user input
+     *  Imports:
+     *    - options : A boolean array containing options
+     *    - input   : A String of integers inputted by the user
+     *  Exports:
+     *    - none
+     **/
 
     public static void processFilterOptions(boolean[] options, String[] input)
     {
         String option;
         int optionSwitch;
 
+        // Loop through each user selected input
         for (int i = 0; i < input.length; i++)
         {
             option = input[i];
             try
             {
+                // Attempt to convert from string to int
                 optionSwitch = Integer.parseInt(option);
+
+                // If user input is within range of the number of options
                 if (optionSwitch > 0 && optionSwitch <= options.length)
                 {
                     options[optionSwitch - 1] = true;
                 }
                 else
                 {
+                    // Print error message
                     System.out.println(
                         "Invalid option: " + option + ". Ignoring"
                     );
@@ -775,15 +1014,43 @@ public class Driver
         }
     }
 
+    /**
+     *  Name:     getFilter
+     *  Purpose:  A wrapper function to get user input and convert to
+     *            a regex string
+     *  Imports:
+     *    - msg : A string for the message to prompt the user with
+     *  Exports:
+     *    - String : A regex string for the search term
+     **/
+
     public static String getFilter(String msg)
     {
         String userInput;
         userInput = Input.string(msg);
+        // If user did not enter anything, use "match all" regex
         return ! userInput.isEmpty() ? userInput : ".*";
     }
 
+    /**
+     *  Name:     searchNominee1
+     *  Purpose:  Search a Nominee's classfields, iteration 1
+     *  Imports:
+     *    - inNominee : A nominee object used to search
+     *    - filters   : A string array of user defined filters
+     *  Exports:
+     *    - Boolean
+     **/
+
     public static boolean searchNominee1(Nominee inNominee, String[] filters)
     {
+        /**
+         * Attempts to match the nominee's State, the name or abbreviation
+         * of the Party name, and the Division's name or ID
+         *
+         * We can match all of them at the same time because if user
+         * did not specify a filter, the "match all" regex is used
+         **/
         return (inNominee.getState().matches(filters[0])) &&
                ((inNominee.getNameParty().matches(filters[1])) ||
                 (inNominee.getAbvParty().matches(filters[1]))) &&
@@ -792,6 +1059,17 @@ public class Driver
                     filters[2]
                 )));
     }
+
+    /**
+     *  Name:     searchNominee2
+     *  Purpose:  Search a Nominee's classfields, iteration 2
+     *  Imports:
+     *    - inNominee : A nominee object used to search
+     *    - name      : A string for searching the name
+     *    - filters   : A string array of user defined filters
+     *  Exports:
+     *    - none
+     **/
 
     public static boolean searchNominee2(
         Nominee inNominee,
@@ -804,16 +1082,31 @@ public class Driver
                 (inNominee.getAbvParty().matches(filters[1])));
     }
 
+    /**
+     *  Name:     generateSortLine
+     *  Purpose:  Given the order of the user defined sorts, generate a
+     *            sort line used as the priority when inserting to the heap
+     *  Imports:
+     *    - inNominee : A nominee object used to generate the sort line
+     *    - order     : A String array of the user defined sort order
+     *  Exports:
+     *    - sortLine : A String containing the sort line
+     **/
+
     public static String generateSortLine(Nominee inNominee, String[] order)
     {
         String sortLine = "";
         String choice;
 
+        // For each option in sort order
         for (int i = 0; i < order.length; i++)
         {
             choice = order[i];
             try
             {
+                // Determine Nominee classfield and add
+                // the contents in the classfield to the
+                // sort line
                 switch (Integer.parseInt(choice))
                 {
                     case 1:
@@ -848,9 +1141,21 @@ public class Driver
         return sortLine;
     }
 
+    /**
+     *  Name:     listPartyMargin
+     *  Purpose:  Third option in the menu. List division's of a
+     *            selected party whose margin is below a user
+     *            defined threshold
+     *  Imports:
+     *    - prefList : A list of house preference objects
+     *  Exports:
+     *    - none
+     **/
+
     public static void listPartyMargin(
         DSALinkedList<HousePreference> prefList)
     {
+        // Header for outputing to file
         String headerFile[] = {
             "Num", "DivisionID", "DivisionNm", "StateAb", "PartyAb",
             "PartyNm", "VotesFor", "VotesAgainst", "VotesTotal",
@@ -880,6 +1185,7 @@ public class Driver
         csvLine = "";
         partyFilter = "";
 
+        // If user did not enter a party name
         if ((partyFilter = getPartyFilter()) == null)
         {
             throw new IllegalArgumentException(
@@ -887,32 +1193,47 @@ public class Driver
             );
         }
 
+        // Get the margin limit
         marginLimit = getMarginLimit();
 
         timeStart = System.nanoTime();
+
+        // Calculate the votes into each a voteStats object
+        // and return as a list, distinguished by division
         voteResults = calcVotes(prefList, partyFilter);
         fileList = new DSALinkedList<String>();
 
         iter = voteResults.iterator();
 
+        // For each division's vote stats
         while (iter.hasNext())
         {
             total++;
             inStats = iter.next();
+
+            // If margin is below the threshold
             if (Math.abs(inStats.getMargin()) < marginLimit)
             {
+                // Append to csv file list
                 count++;
                 csvLine = count + "," + inStats.toString();
                 fileList.insertLast(csvLine);
             }
         }
 
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
+        // If there are no results recorded
         if (count == 0)
         {
-            System.out.println("No party found.");
+            throw new IllegalArgumentException(
+                "No party found: " + partyFilter
+            );
         }
         else
         {
+            // Begin converting csv list to a string array
             fileContents = new String[count];
             count = 0;
 
@@ -923,9 +1244,7 @@ public class Driver
                 count++;
             }
 
-            timeEnd = System.nanoTime();
-            duration = timeEnd - timeStart;
-
+            // Print the csv table and save to file
             printCsvTable(fileContents, headerFile);
 
             System.out.printf("\n%d/%d matches\n", count, total);
@@ -942,10 +1261,21 @@ public class Driver
         }
     }
 
+    /**
+     *  Name:     createItinerary
+     *  Purpose:  Create an itinerary on locations selected by the user
+     *  Imports:
+     *    - prefList : A list of house preference objects
+     *    - map      : A graph containing all the locations
+     *  Exports:
+     *    - none
+     **/
+
     public static void createItinerary(
         DSALinkedList<HousePreference> prefList,
         DSAGraph<Location,Trip> map)
     {
+        // Header for output file
         String headerFile[] = {
             "Num", "DivisionID", "DivisionNm", "StateAb", "PartyAb",
             "PartyNm", "VotesFor", "VotesAgainst", "VotesTotal",
@@ -986,6 +1316,7 @@ public class Driver
         allLocations = false;
         enableOptimise = false;
 
+        // If user did not enter a party filter
         if ((partyFilter = getPartyFilter()) == null)
         {
             throw new IllegalArgumentException(
@@ -993,21 +1324,29 @@ public class Driver
             );
         }
 
+        // Get margin threshold
         marginLimit = getMarginLimit();
 
         timeStart = System.nanoTime();
+
+        // Get the list of calculated votes in the form of
+        // a linked list of voteStats objects
         voteResults = calcVotes(prefList, partyFilter);
         fileList = new DSALinkedList<String>();
 
         iter = voteResults.iterator();
 
+        // For each vote result in each division
         while (iter.hasNext())
         {
             total++;
             inStats = iter.next();
+
+            // If margin is below the threshold
             if (Math.abs(inStats.getMargin()) < marginLimit)
             {
                 count++;
+                // Append to csv linked list
                 csvLine = count + "," + inStats.toString();
                 fileList.insertLast(csvLine);
             }
@@ -1015,16 +1354,21 @@ public class Driver
 
         fileContents = new String[count];
 
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
+        // If party did not match anything
         if (count == 0)
         {
             throw new IllegalArgumentException(
-                "No party found."
+                "No party found: " + partyFilter
             );
         }
 
         fileContents = new String[count];
         count = 0;
 
+        // Convert linked list to array
         iter2 = fileList.iterator();
         while (iter2.hasNext())
         {
@@ -1032,26 +1376,17 @@ public class Driver
             count++;
         }
 
+        // Print table and time statistics
         printCsvTable(fileContents, headerFile);
-
         System.out.printf("\n%d/%d matches\n", count, total);
-
-        timeEnd = System.nanoTime();
-        duration = timeEnd - timeStart;
-
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));
 
-        if (count == 0)
-        {
-            throw new IllegalArgumentException(
-                "No party found: Search field doesn't match anything"
-            );
-        }
-
+        // Get the locations the user wants to visit
         userInput = Input.string(
             "Input Division indexes to visit (eg: 1 2 3): "
         );
 
+        // Empty user input indicates that user wants to visit all locations
         if (userInput.isEmpty())
         {
             allLocations = true;
@@ -1061,6 +1396,10 @@ public class Driver
 
             visitDivisionIndex = new int[count];
 
+            // For each id in csv file, set to an array
+            // containing all the divisions to visit
+            //
+            // Offset is 1 because 0 index arrays
             for (int i = 1; i <= count; i++)
             {
                 visitDivisionIndex[i - 1] = i;
@@ -1069,6 +1408,9 @@ public class Driver
         else
         {
             allLocations = false;
+
+            // Get the id in csv file and set to an array
+            // containing the divisions to visit
             split = userInput.split(WHITESPACE_REGEX);
             visitDivisionIndex = new int[split.length];
 
@@ -1093,38 +1435,40 @@ public class Driver
             }
         }
 
-        userInput = Input.string(
-            "Attempt optimisation? Note: Starting location may change [Y/n]: "
-        );
-
-        if ((userInput.matches("^[yY]$")) ||
-            (userInput.isEmpty()))
+        // If all locations are selected, do not attempt locations
+        // Assuming that the states are already in order before hand
+        if (! allLocations)
         {
-            enableOptimise = true;
-        }
-        else
-        {
-            enableOptimise = false;
+            // Prompt user
+            userInput = Input.string(
+                "Attempt optimisation? " +
+                "Note: Starting location may change [Y/n]: "
+            );
+
+            // If user selected yes or did not enter anything
+            if ((userInput.matches("^[yY]$")) ||
+                (userInput.isEmpty()))
+            {
+                enableOptimise = true;
+            }
+            else
+            {
+                enableOptimise = false;
+            }
         }
 
+        // Restart timer
         timeStart = System.nanoTime();
         count = 0;
         visitDivision = new String[visitDivisionIndex.length];
 
+        // Sort by division id if optimisation is enabled
         if (enableOptimise)
         {
-            if (allLocations)
-            {
-                System.out.println(
-                    "All Locations are selected, ignoring optimisation"
-                );
-            }
-            else
-            {
-                DSAMergeSort.mergeSort(visitDivisionIndex);
-            }
+            DSAMergeSort.mergeSort(visitDivisionIndex);
         }
 
+        // For each selected divisions, get the division name
         for (int i = 0; i < visitDivisionIndex.length; i++)
         {
             split = fileContents[visitDivisionIndex[i] - 1].split(
@@ -1138,19 +1482,24 @@ public class Driver
         path = new DSAStack<Location>();
         path.push(map.getVertexValue(visitDivision[0]));
 
+        // For each division
         for (int i = 1; i < visitDivision.length; i++)
         {
+            // Get the shortest route from previous element
+            // to current element
             tempStack = map.dijkstra(
                 visitDivision[i - 1],
                 visitDivision[i]
             );
 
+            // Aggregate stacks
             while (! tempStack.isEmpty())
             {
                 path.push(tempStack.pop());
             }
         }
 
+        // Reverse the stack
         tempStack = path;
         path = new DSAStack<Location>();
 
@@ -1161,6 +1510,7 @@ public class Driver
 
         System.out.print("\n");
 
+        // Print path
         printItinerary(
             path,
             map,
@@ -1171,16 +1521,36 @@ public class Driver
         );
     }
 
+    /**
+     *  Name:     getPartyFilter
+     *  Purpose:  Prompt user for the party filter
+     *  Imports:
+     *    - none
+     *  Exports:
+     *    - userInput : A String for the user input
+     **/
+
     public static String getPartyFilter()
     {
         String userInput;
         userInput = Input.string("Input party: ");
+
+        // Set userInput to null if user did not enter anything
         if (userInput.isEmpty())
         {
             userInput = null;
         }
         return userInput;
     }
+
+    /**
+     *  Name:     getMarginLimit
+     *  Purpose:  Prompt user for margin limit
+     *  Imports:
+     *    - none
+     *  Exports:
+     *    - marginLimit : A double for the user defined margin limit
+     **/
 
     public static double getMarginLimit()
     {
@@ -1189,12 +1559,15 @@ public class Driver
 
         userInput = Input.string("Input margin [6.0]: ");
 
+        // Set the default value for margin limit if user did not
+        // input anything
         if (userInput.isEmpty())
         {
             marginLimit = 6.0;
         }
         else
         {
+            // Attempt to convert from string to double
             try
             {
                 marginLimit = Double.parseDouble(userInput);
@@ -1210,6 +1583,17 @@ public class Driver
 
         return marginLimit;
     }
+
+    /**
+     *  Name:     calcVotes
+     *  Purpose:  Calculate votes in a division within a house preference
+     *            and stores it into a linked list
+     *  Imports:
+     *    - prefList    : A list of House Preference objects
+     *    - partyFilter : A string of the user defined party name
+     *  Exports:
+     *    - voteResultList : A linked list containing all the voting results
+     **/
 
     public static DSALinkedList<VoteStats> calcVotes(
         DSALinkedList<HousePreference> prefList, String partyFilter)
@@ -1237,6 +1621,7 @@ public class Driver
 
         voteResultList = new DSALinkedList<VoteStats>();
 
+        // For each house preference object
         while (iterPref.hasNext())
         {
             state = "";
@@ -1251,15 +1636,20 @@ public class Driver
             nameDivision = tempPref.getPrefNameDivision();
             idDivision = tempPref.getPrefIdDivision();
 
+            // For each nominee in the house preference
             while (iterNominee.hasNext())
             {
                 tempNominee = iterNominee.next();
 
+                // Check if the nominee is in the user defined party
                 if ((tempNominee.getAbvParty().matches(partyFilter)) ||
                     (tempNominee.getNameParty().matches(partyFilter)))
                 {
+                    // Calculate votes for that party
                     votesFor += tempNominee.getNumVotes();
 
+                    // If these variables are not set, set them from
+                    // the nominee object
                     if (abvParty.isEmpty() &&
                         nameParty.isEmpty())
                     {
@@ -1274,21 +1664,38 @@ public class Driver
                 }
                 else
                 {
+                    // Calculate votes for against that party
                     votesAgainst += tempNominee.getNumVotes();
                 }
             }
 
+            // Create VoteStat object with the calculated votes
             votesTotal += tempPref.getNumTotalVotes();
             pollStats = new VoteStats(nameDivision,
                                       Integer.toString(idDivision),
                                       state, abvParty, nameParty, votesFor,
                                       votesAgainst, votesTotal);
 
+            // Add to the end of the vote result list
             voteResultList.insertLast(pollStats);
         }
 
         return voteResultList;
     }
+
+    /**
+     *  Name:     printItinerary
+     *  Purpose:  Print the path of the itinerary
+     *  Imports:
+     *    - path         : The path for the itinerary
+     *    - map          : A graph containing all locations connected by edges
+     *    - partyFilter  : A string for the user defined party filter
+     *    - marginLimit  : A double for the user defined margin limit
+     *    - numLocations : The number of locations user has inputed
+     *    - timeStart    : A long int for the start time of the algorithm
+     *  Exports:
+     *    - none
+     **/
 
     public static void printItinerary(
         DSAStack<Location> path,
@@ -1299,6 +1706,8 @@ public class Driver
         long timeStart)
     {
         String[] fileContents;
+
+        // Header for outputing to file
         String[] header = {
             "from_State", "from_Division", "from_Latitude",
             "from_Longitude", "to_State", "to_Division",
@@ -1321,19 +1730,23 @@ public class Driver
         from = path.pop();
         count = 0;
 
+        // Get information from the starting point before the loop started
         fromState = from.getState();
         fromDivision = from.getDivision();
         fromLat = from.getLatitude();
         fromLong = from.getLongitude();
 
+        // While the path stack is not empty and the count is within range
         while (! path.isEmpty() && count < fileContents.length)
         {
+            // Get the next location
             to = path.pop();
             tripInfo = map.getEdgeValue(
                 from.getDivision(),
                 to.getDivision()
             );
 
+            // Get information of the next location
             toState = to.getState();
             toDivision = to.getDivision();
             toLat = to.getLatitude();
@@ -1343,6 +1756,7 @@ public class Driver
             time = tripInfo.getDuration();
             trans = tripInfo.getTransportType();
 
+            // Format csv line
             fileContents[count] = String.format(
                 "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
                 fromState, fromDivision, fromLat, fromLong,
@@ -1350,9 +1764,12 @@ public class Driver
                 time, trans
             );
 
+            // Calculate total time
             totalTime += time;
             count++;
 
+            // Set next location to the current location for the next
+            // iteration
             from = to;
             fromState = toState;
             fromDivision = toDivision;
@@ -1360,9 +1777,11 @@ public class Driver
             fromLong = toLong;
         }
 
+        // Time statistics
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
+        // Print csv table and save to file
         printCsvTable(fileContents, header);
 
         System.out.printf(
@@ -1383,17 +1802,38 @@ public class Driver
         );
     }
 
+    /**
+     *  Name:     convertTimeToString
+     *  Purpose:  Convert seconds to day, hours, minutes and seconds format
+     *  Imports:
+     *    - totalSecs : An integer for the total number of seconds
+     *  Exports:
+     *    - none
+     **/
+
     public static String convertTimeToString(int totalSecs)
     {
         int days, hours, mins, secs;
 
+        // Calculate days, hours, minutes and seconds
         days = (totalSecs / 3600) / 24;
         hours = (totalSecs / 3600) % 24;
         mins = (totalSecs / 60) % 60;
         secs = (totalSecs % 60) % 60;
 
+        // Format the string
         return String.format("%dd %dh %dm %ds", days, hours, mins, secs);
     }
+
+    /**
+     *  Name:     printCsvTable
+     *  Purpose:  Print a csv formatted string array into a table
+     *  Imports:
+     *    - csvArr : The csv array
+     *    - header : The header of the csv table
+     *  Exports:
+     *    - none
+     **/
 
     public static void printCsvTable(
         String[] csvArr,
@@ -1417,11 +1857,13 @@ public class Driver
 
         paddingArr = new int[header.length];
 
+        // Split csv into a 2D String array
         for (int i = 0; i < csvArr.length; i++)
         {
             fields[i] = csvArr[i].split(SPLIT_REGEX);
         }
 
+        // Get the maximum string length for each column
         for (int i = 0; i < paddingArr.length; i++)
         {
             tempArr[0] = header[i];
@@ -1434,6 +1876,7 @@ public class Driver
             paddingArr[i] = calcMaxStringArrLenght(tempArr);
         }
 
+        // Format the header
         for (int i = 0; i < paddingArr.length - 1; i++)
         {
             padding = "%-" + (paddingArr[i] + 2) + "s";
@@ -1448,6 +1891,7 @@ public class Driver
         headerStr += "| " + String.format(padding, header[header.length - 1])
                   + " |";
 
+        // Format each cell in the csv table
         for (int i = 0; i < fields.length; i++)
         {
             for (int j = 0; j < fields[i].length - 1; j++)
@@ -1462,6 +1906,7 @@ public class Driver
                   " |\n";
         }
 
+        // Print table
         if (csvArr.length != 0)
         {
             table = String.format(
@@ -1472,20 +1917,45 @@ public class Driver
         }
     }
 
+    /**
+     *  Name:     calcMaxStringArrLenght
+     *  Purpose:  Find the longest string in an array of string
+     *  Imports:
+     *    - arr : An array of string
+     *  Exports:
+     *    - maxLength : An integer for the longest string
+     **/
+
     public static int calcMaxStringArrLenght(String[] arr)
     {
         int length, maxLength;
         length = 0;
         maxLength = 0;
 
+        // For each element in the string array
         for (int i = 0; i < arr.length; i++)
         {
             length = arr[i].length();
+
+            // Check if the current string's length is larger
+            // than the current max length
             maxLength = (length > maxLength) ? length : maxLength;
         }
 
         return maxLength;
     }
+
+    /**
+     *  Name:     saveCsvToFile
+     *  Purpose:  Wrapper function to get filename from user input
+     *            and save csv array to a file
+     *  Imports:
+     *    - fileContents : A String array containing csv entries
+     *    - defaultName  : A String for the default filename if user
+     *                     did not enter anything
+     *  Exports:
+     *    - none
+     **/
 
     public static void saveCsvToFile(
         String[] fileContents,
@@ -1493,11 +1963,14 @@ public class Driver
     {
         String userInput;
 
+        // Prompt user for saving to file
         userInput = Input.string("Save report to file? [Y/n]: ");
 
+        // If user selected yes or did not enter anything
         if ((userInput.matches("^[yY]$")) ||
             (userInput.isEmpty()))
         {
+            // Get filename
             userInput = Input.string(
                 String.format(
                     "Enter filename [%s]: ", defaultName
@@ -1509,24 +1982,64 @@ public class Driver
                 userInput = defaultName;
             }
 
+            // Write file
             FileIO.writeText(userInput, fileContents);
         }
     }
+
+    /**
+     *  Name:     formatPadding
+     *  Purpose:  Wrapper function for printing whitespace padding
+     *  Imports:
+     *    - padding : The format string
+     *  Exports:
+     *    - A string containing padding
+     **/
 
     public static String formatPadding(String padding)
     {
         return String.format(padding, " ");
     }
 
+    /**
+     *  Name:     formatPadding
+     *  Purpose:  An alternative function where instead of using
+     *            whitespace, use a user specified character
+     *  Imports:
+     *    - padding : The format string
+     *    - line    : The character to replace whitespace with
+     *  Exports:
+     *    - A string containing padding
+     **/
+
     public static String formatPadding(String padding, char line)
     {
         return String.format(padding, " ").replace(' ', line);
     }
 
+    /**
+     *  Name:     generateLine
+     *  Purpose:  Generates a line of length size
+     *  Imports:
+     *    - size : An int for the size of the line
+     *  Exports:
+     *    - A String line of length size
+     **/
+
     public static String generateLine(int size)
     {
         return String.format("%" + size + "s", " ").replace(' ', '=');
     }
+
+    /**
+     *  Name:     isUnique
+     *  Purpose:  Check if search is not in list
+     *  Imports:
+     *    - list   : The list to check
+     *    - search : The search term to compare with
+     *  Exports:
+     *    - isUnique : A boolean
+     **/
 
     public static boolean isUnique(DSALinkedList<String> list, String search)
     {
@@ -1536,6 +2049,8 @@ public class Driver
 
         iter = list.iterator();
 
+        // While search is still unique and haven't
+        // iterate through the list
         while (isUnique && iter.hasNext())
         {
             inList = iter.next();
@@ -1545,15 +2060,43 @@ public class Driver
         return isUnique;
     }
 
+    /**
+     *  Name:     compareIntString
+     *  Purpose:  Wrapper function to compare a string int with an int
+     *  Imports:
+     *    - num : An integer to compare with
+     *    - str : A String for an integer
+     *  Exports:
+     *    - Boolean
+     **/
+
     public static boolean compareIntString(int num, String str)
     {
         return Integer.toString(num).equals(str);
     }
 
+    /**
+     *  Name:     toMiliseconds
+     *  Purpose:  Convert nanoseconds to miliseconds
+     *  Imports:
+     *    - nano : A long for the amount of nanoseconds
+     *  Exports:
+     *    - The formatted string
+     **/
+
     public static String toMiliseconds(long nano)
     {
         return String.format("%1.3f", (double)nano / 1000000);
     }
+
+    /**
+     *  Name:     printHelp
+     *  Purpose:  Print the help message
+     *  Imports:
+     *    - none
+     *  Exports:
+     *    - none
+     **/
 
     public static void printHelp()
     {

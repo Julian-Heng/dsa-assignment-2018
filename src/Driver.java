@@ -15,6 +15,9 @@ import java.util.*;
 public class Driver
 {
     // Regex String constants
+    // Obtained from:
+    //  https://stackoverflow.com/questions/6542996/how-to-split-csv-whose-columns-may-contain
+    //  https://stackoverflow.com/a/49670696
     public static final
         String SPLIT_REGEX = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
@@ -1028,7 +1031,7 @@ public class Driver
         String userInput;
         userInput = Input.string(msg);
         // If user did not enter anything, use "match all" regex
-        return ! userInput.isEmpty() ? userInput : ".*";
+        return userInput.isEmpty() ? ".*" : userInput;
     }
 
     /**
@@ -1486,6 +1489,10 @@ public class Driver
         {
             // Get the shortest route from previous element
             // to current element
+            //
+            // Could be better optimised as the scope is only
+            // two locations at a time, not the entire locations
+            // selected
             tempStack = map.dijkstra(
                 visitDivision[i - 1],
                 visitDivision[i]
@@ -1724,7 +1731,7 @@ public class Driver
         Trip tripInfo;
 
         fileContents = new String[path.getCount() - 1];
-        totalTime = numLocations * 10800;
+        totalTime = numLocations * (3 * 60 * 60);
 
         from = path.pop();
         count = 0;
@@ -1786,7 +1793,7 @@ public class Driver
         System.out.printf(
             "Total Time: %s (%1.2f hours)\n",
             convertTimeToString(totalTime),
-            (double)totalTime / 3600
+            (double)totalTime / (60 * 60)
         );
 
         System.out.printf("Took %sms\n\n", toMiliseconds(duration));

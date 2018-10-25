@@ -290,10 +290,10 @@ public class ElectionManagerInit
         timeStart = System.nanoTime();
 
         // Read the file
-        list = FileIO.readText(file);
+        list = sortByDivisionId(FileIO.readText(file));
         iter = list.iterator();
 
-        hashTable = new DSAHashTable(list.getCount());
+        hashTable = new DSAHashTable();
         divisionIdList = new DSALinkedList<String>();
 
         while (iter.hasNext())
@@ -310,7 +310,13 @@ public class ElectionManagerInit
             }
             catch (IllegalArgumentException e)
             {
-
+                if (! e.getMessage().equals("Keys must be unique"))
+                {
+                    throw new IllegalArgumentException(
+                        "Unexpected exception occurred when getting unique " +
+                        "Division ID"
+                    );
+                }
             }
         }
 
@@ -419,6 +425,51 @@ public class ElectionManagerInit
         System.out.printf("\u0008%sms\n", Commons.toMiliseconds(duration));
 
         return preferenceList;
+    }
+
+    /**
+     *  Name:     sortByDivisionId
+     *  Purpose:  Sort the preference file by Division ID
+     *  Imports:
+     *    - list : An unsorted linked list of strings
+     *  Exports:
+     *    - returnList : A sorted linked list of strings
+     **/
+
+    public static DSALinkedList<String> sortByDivisionId(
+        DSALinkedList<String> list)
+    {
+        DSAMaxHeap heap;
+        String entry;
+        String[] split;
+
+        DSALinkedList<String> returnList;
+        Iterator<String> iter = list.iterator();
+        Object[] sorted;
+
+        heap = new DSAMaxHeap(list.getCount());
+        returnList = new DSALinkedList<String>();
+
+        // Insert all entries in linked list to heap
+        while (iter.hasNext())
+        {
+            entry = iter.next();
+            split = entry.split(SPLIT_REGEX);
+
+            heap.add(split[1], entry);
+        }
+
+        // Sort and convert out to arrays
+        heap.heapSort();
+        sorted = heap.toObjArray();
+
+        // Convert back to a linked list
+        for (int i = 0; i < sorted.length; i++)
+        {
+            returnList.insertLast((String)sorted[i]);
+        }
+
+        return returnList;
     }
 
     /**
@@ -541,13 +592,31 @@ public class ElectionManagerInit
     {
         DSALinkedList<String> returnList;
         Iterator<String> iter;
-        String inList;
+        String inList = "";
         String[] split;
+        boolean start, end;
+
         returnList = new DSALinkedList<String>();
+
+        start = false;
+        end = false;
 
         // For all entries in preference file
         iter = list.iterator();
-        while (iter.hasNext())
+
+        while (iter.hasNext() && ! start)
+        {
+            inList = iter.next();
+            split = inList.split(SPLIT_REGEX);
+            if (! split[1].isEmpty() && split[1].equals(inDivisionId))
+            {
+                start = true;
+            }
+        }
+
+        returnList.insertLast(inList);
+
+        while (iter.hasNext() && ! end)
         {
             inList = iter.next();
             split = inList.split(SPLIT_REGEX);
@@ -556,6 +625,10 @@ public class ElectionManagerInit
             if (! split[1].isEmpty() && split[1].equals(inDivisionId))
             {
                 returnList.insertLast(inList);
+            }
+            else
+            {
+                end = true;
             }
         }
 

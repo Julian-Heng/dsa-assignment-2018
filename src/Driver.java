@@ -49,7 +49,7 @@ public class Driver
             }
             catch (Exception e)
             {
-                System.out.println(e.getStackTrace());
+                e.printStackTrace();
                 System.out.println("Exiting...");
             }
         }
@@ -165,7 +165,7 @@ public class Driver
         long timeStart, timeEnd, funcDuration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 0;
+        int count = 1;
 
         Trip tripInfo;
 
@@ -304,7 +304,7 @@ public class Driver
         long timeStart, timeEnd, duration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 0;
+        int count = 1;
 
         timeStart = System.nanoTime();
 

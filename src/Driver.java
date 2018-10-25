@@ -165,7 +165,7 @@ public class Driver
         long timeStart, timeEnd, funcDuration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 1;
+        int count = 0;
 
         Trip tripInfo;
 
@@ -304,7 +304,7 @@ public class Driver
         long timeStart, timeEnd, duration;
 
         String spinner[] = {"\\", "|", "/", "-"};
-        int count = 1;
+        int count = 0;
 
         timeStart = System.nanoTime();
 
@@ -351,10 +351,15 @@ public class Driver
             );
         }
 
+        // Print time statistics
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
+        System.out.printf("\u0008%sms\n", toMiliseconds(duration));
+
         // Print invalid entries
         if (invalidEntries.getCount() != 0)
         {
-            System.out.print("\n");
             iter = invalidEntries.iterator();
             while (iter.hasNext())
             {
@@ -364,12 +369,6 @@ public class Driver
                 );
             }
         }
-
-        // Print time statistics
-        timeEnd = System.nanoTime();
-        duration = timeEnd - timeStart;
-
-        System.out.printf("\u0008%sms\n", toMiliseconds(duration));
 
         return nomineeList;
     }

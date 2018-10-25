@@ -1,3 +1,11 @@
+/**
+ *  Name:     HousePreference
+ *  Purpose:  Provide a class that contains information for storing the
+ *            voting information and the nominees involved in a division
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class HousePreference
 {
     private String prefNameDivision;
@@ -7,6 +15,7 @@ public class HousePreference
 
     public static final String DEFAULT = "TBD";
 
+    // Default Constuctor
     public HousePreference()
     {
         prefNameDivision = DEFAULT;
@@ -16,6 +25,7 @@ public class HousePreference
         numTotalVotes = 0;
     }
 
+    // Alternate Constructor
     public HousePreference(String inNameDivision, String inIdDivision)
     {
         setPrefNameDivision(inNameDivision);
@@ -25,6 +35,7 @@ public class HousePreference
         numTotalVotes = 0;
     }
 
+    // Setters
     public void setPrefNameDivision(String inNameDivision)
     {
         if (! validateString(inNameDivision))
@@ -81,6 +92,7 @@ public class HousePreference
         }
     }
 
+    // Mutators
     public void addNumInformalVotes(String strVotes)
     {
         if (! validateInt(strVotes))
@@ -119,6 +131,7 @@ public class HousePreference
         }
     }
 
+    // Getters
     public String getPrefNameDivision() { return prefNameDivision; }
     public int getPrefIdDivision() { return prefIdDivision; }
     public DSALinkedList<Nominee> getListNominee() { return listNominee; }

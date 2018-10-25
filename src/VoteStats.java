@@ -1,3 +1,12 @@
+/**
+ *  Name:     VoteStats
+ *  Purpose:  Provide a class that contains information for storing
+ *            the number of votes one particular party has against
+ *            other parties within a division
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class VoteStats
 {
     String nameDivision, state;
@@ -8,6 +17,7 @@ public class VoteStats
 
     public static final String DEFAULT = "TBD";
 
+    // Default Constructor
     public VoteStats()
     {
         nameDivision = DEFAULT;
@@ -21,6 +31,7 @@ public class VoteStats
         margin = 0.0;
     }
 
+    // Alternate Constructor
     public VoteStats(
         String inNameDivision,
         String inIdDivision,
@@ -42,6 +53,7 @@ public class VoteStats
         this.calculateMargin();
     }
 
+    // Setters
     public void setNameDivision(String inNameDivision)
     {
         if (! validateString(inNameDivision))
@@ -144,6 +156,7 @@ public class VoteStats
         }
     }
 
+    // Getters
     public String getNameDivision() { return nameDivision; }
     public int getIdDivision() { return idDivision; }
     public String getState() { return state; }
@@ -157,11 +170,15 @@ public class VoteStats
     {
         double percent;
 
-        percent = 0.0;
-
         if (votesTotal != 0)
         {
             percent = ((double)votesFor / (double)votesTotal) * 100;
+        }
+        else
+        {
+            throw new IllegalArgumentException(
+                "Votes Total is 0, division by 0"
+            )
         }
 
         return percent;
@@ -178,6 +195,7 @@ public class VoteStats
                String.format("%2.4f", margin);
     }
 
+    // Mutators
     private void calculateMargin()
     {
         margin = this.getPercent() - 50.0;

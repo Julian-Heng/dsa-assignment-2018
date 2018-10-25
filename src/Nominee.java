@@ -1,3 +1,12 @@
+/**
+ *  Name:     Nominee
+ *  Purpose:  Provide a class that contains a candidate or nominee details.
+ *            Based on the house candidates file, it also stores the number
+ *            of votes as well
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class Nominee
 {
     private String state,
@@ -11,6 +20,7 @@ public class Nominee
 
     public static final String DEFAULT = "TBD";
 
+    // Default Constructor
     public Nominee()
     {
         state = DEFAULT;
@@ -26,6 +36,7 @@ public class Nominee
         numVotes = 0;
     }
 
+    // Alternate Constructor
     public Nominee(String inEntry)
     {
         String[] splitString;
@@ -68,6 +79,7 @@ public class Nominee
         }
     }
 
+    // Setters
     public void setState(String input)
     {
         if (! validateString(input))
@@ -242,6 +254,7 @@ public class Nominee
         }
     }
 
+    // Getters
     public String  getState()           { return state; }
     public int     getIdDivision()      { return idDivision; }
     public String  getNameDivision()    { return nameDivision; }

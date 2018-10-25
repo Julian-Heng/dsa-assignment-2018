@@ -1,3 +1,12 @@
+/**
+ *  Name:     Location
+ *  Purpose:  Provide a class that contains information for storing
+ *            the attributes for a location. Used as the object stored
+ *            in the verticies of the graph
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class Location
 {
     private String state, division;
@@ -5,6 +14,7 @@ public class Location
 
     public static final String DEFAULT = "TBD";
 
+    // Default Constructor
     public Location()
     {
         state = DEFAULT;
@@ -13,6 +23,7 @@ public class Location
         longitude = 0.0;
     }
 
+    // Alternate Constructor
     public Location(
         String inState,
         String inDivision,
@@ -25,6 +36,7 @@ public class Location
         this.setLongitude(inLong);
     }
 
+    // Setters
     public void setState(String inState)
     {
         if (! validateString(inState))
@@ -73,6 +85,7 @@ public class Location
         }
     }
 
+    // Getters
     public String getState()     { return state; }
     public String getDivision()  { return division; }
     public double getLatitude()  { return latitude; }

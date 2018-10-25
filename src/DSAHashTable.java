@@ -124,6 +124,19 @@ public class DSAHashTable
         return numUsed == 0;
     }
 
+    public DSALinkedList<String> convertKeyToLinkedList()
+    {
+        DSALinkedList<String> returnList = new DSALinkedList<String>();
+        for (int i = 0; i < m_hashTable.length; i++)
+        {
+            if (m_hashTable[i].getState() == 1)
+            {
+                returnList.insertLast(m_hashTable[i].getKey());
+            }
+        }
+        return returnList;
+    }
+
     private int hash(String key)
     {
         int hashIndex = 0;

@@ -278,6 +278,7 @@ public class ElectionManagerInit
         String divisionId, divisionName;
 
         DSALinkedList<String> divisionIdList;
+        DSAHashTable hashTable;
 
         long timeStart, timeEnd, duration;
 
@@ -292,21 +293,28 @@ public class ElectionManagerInit
         list = FileIO.readText(file);
         iter = list.iterator();
 
+        hashTable = new DSAHashTable(list.getCount());
         divisionIdList = new DSALinkedList<String>();
 
-        // Get unique Division IDs from the preference files
         while (iter.hasNext())
         {
             line = iter.next();
             split = line.split(SPLIT_REGEX);
-            if (! split[1].isEmpty() &&
-                ! split[1].equals("DivisionID") &&
-                Commons.isUnique(divisionIdList, split[1]))
+            try
             {
-                divisionIdList.insertLast(split[1]);
+                if (! split[1].isEmpty() &&
+                    ! split[1].equals("DivisionID"))
+                {
+                    hashTable.put(split[1], split[1]);
+                }
+            }
+            catch (IllegalArgumentException e)
+            {
+
             }
         }
 
+        divisionIdList = hashTable.convertKeyToLinkedList();
         preferenceList = new DSALinkedList<HousePreference>();
         iter = divisionIdList.iterator();
 

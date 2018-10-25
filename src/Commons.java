@@ -250,35 +250,6 @@ public class Commons
     }
 
     /**
-     *  Name:     isUnique
-     *  Purpose:  Check if search is not in list
-     *  Imports:
-     *    - list   : The list to check
-     *    - search : The search term to compare with
-     *  Exports:
-     *    - isUnique : A boolean
-     **/
-
-    public static boolean isUnique(DSALinkedList<String> list, String search)
-    {
-        Iterator<String> iter;
-        String inList;
-        boolean isUnique = true;
-
-        iter = list.iterator();
-
-        // While search is still unique and haven't
-        // iterate through the list
-        while (isUnique && iter.hasNext())
-        {
-            inList = iter.next();
-            isUnique = ! search.equals(inList);
-        }
-
-        return isUnique;
-    }
-
-    /**
      *  Name:     compareIntString
      *  Purpose:  Wrapper function to compare a string int with an int
      *  Imports:

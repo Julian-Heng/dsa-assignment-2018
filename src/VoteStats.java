@@ -178,7 +178,7 @@ public class VoteStats
         {
             throw new IllegalArgumentException(
                 "Votes Total is 0, division by 0"
-            )
+            );
         }
 
         return percent;

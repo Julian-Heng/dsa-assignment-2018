@@ -1,8 +1,8 @@
 all:
-	javac -Xlint *.java
+	@javac -Xlint *.java
 
 test: all
-	for i in test*.class; do \
+	@for i in test*.class; do \
 		[ "$$i" != "testHarnessCommons.class" ] && \
 			java $${i%.*}; \
 	done

@@ -303,7 +303,6 @@ public class testDSAHashTable
 
                 for (int i = 0; i < size; i++)
                 {
-                    //System.out.println(hash.getSize());
                     hash.put(intObj[i].toString(), intObj[i]);
                 }
 

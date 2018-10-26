@@ -56,14 +56,6 @@ public class DSAStack<E> implements Iterable<E>
         return topObj;
     }
 
-    public void flush()
-    {
-        while (! this.isEmpty())
-        {
-            this.pop();
-        }
-    }
-
     public Iterator<E> iterator() { return stack.iterator(); }
 
     private String err(String msg)

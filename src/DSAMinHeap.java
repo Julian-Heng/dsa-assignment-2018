@@ -86,15 +86,6 @@ public class DSAMinHeap
         return removedObj;
     }
 
-    public void heapSort()
-    {
-        for (int i = m_count - 1; i > 0; i--)
-        {
-            swap(0, i);
-            recurseTrickleDown(0, i);
-        }
-    }
-
     private void heapify(int[] arr)
     {
         for (int inArr : arr)
@@ -106,18 +97,6 @@ public class DSAMinHeap
         {
             trickleDown(i);
         }
-    }
-
-    public int[] toIntArray()
-    {
-        int[] newArr = new int[m_count];
-
-        for (int i = 0; i < m_count; i++)
-        {
-            newArr[i] = m_heap[i].getPriority();
-        }
-
-        return newArr;
     }
 
     private void trickleUp(int index)

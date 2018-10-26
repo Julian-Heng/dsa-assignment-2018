@@ -81,7 +81,7 @@ public class DSALinkedList<E> implements Iterable<E>
 
     public boolean isEmpty()
     {
-        return (head == null);
+        return (head == null && tail == null);
     }
 
     public void insertFirst(E newValue)
@@ -197,9 +197,9 @@ public class DSALinkedList<E> implements Iterable<E>
         }
         else
         {
-            nodeValue = tail.getValue();
-            tail = tail.getPrev();
-            tail.setNext(null);
+            nodeValue = head.getValue();
+            head = head.getNext();
+            head.setPrev(null);
         }
 
         count--;

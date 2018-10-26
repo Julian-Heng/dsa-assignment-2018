@@ -39,14 +39,15 @@ public class Input
                 System.out.println("Try again.");
                 inputValid = false;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 String flush = sc.nextLine();
                 System.out.println(
-                    err("Unknown exception caught, " + ex.getMessage())
+                    err("Unknown exception caught, " + e.getMessage())
                 );
             }
         }
+
         return userInput;
     }
 
@@ -58,8 +59,7 @@ public class Input
 
     public static String string()
     {
-        Scanner sc = new Scanner(System.in);
-        return sc.nextLine();
+        return new Scanner(System.in).nextLine();
     }
 
     private static String err(String msg)

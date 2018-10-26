@@ -31,6 +31,7 @@ public class Commons
 
     public static String convertTimeToString(int totalSecs)
     {
+        String out;
         int days, hours, mins, secs;
 
         // Calculate days, hours, minutes and seconds
@@ -40,7 +41,16 @@ public class Commons
         secs = (totalSecs % 60) % 60;
 
         // Format the string
-        return String.format("%dd %dh %dm %ds", days, hours, mins, secs);
+        out = String.format(
+                "%d day%s, %d hour%s, %d min%s, %d sec%s",
+                days,  (days != 0)  ? "s" : "",
+                hours, (hours != 0) ? "s" : "",
+                mins,  (mins != 0)  ? "s" : "",
+                secs,  (secs != 0)  ? "s" : ""
+        );
+
+        return out;
+        //return String.format("%dd %dh %dm %ds", days, hours, mins, secs);
     }
 
     /**
@@ -277,5 +287,4 @@ public class Commons
     {
         return String.format("%1.3f", (double)nano / 1000000);
     }
-
 }

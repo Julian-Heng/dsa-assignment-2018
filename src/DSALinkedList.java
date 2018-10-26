@@ -46,9 +46,7 @@ public class DSALinkedList<E> implements Iterable<E>
 
         public boolean hasNext()
         {
-            boolean hasNext = false;
-            hasNext = (iterNext != null);
-            return hasNext;
+            return (iterNext != null);
         }
 
         public E next()
@@ -60,6 +58,7 @@ public class DSALinkedList<E> implements Iterable<E>
                 value = iterNext.getValue();
                 iterNext = iterNext.getNext();
             }
+
             return value;
         }
 
@@ -82,9 +81,7 @@ public class DSALinkedList<E> implements Iterable<E>
 
     public boolean isEmpty()
     {
-        boolean isEmpty = false;
-        isEmpty = (head == null);
-        return isEmpty;
+        return (head == null);
     }
 
     public void insertFirst(E newValue)
@@ -112,6 +109,7 @@ public class DSALinkedList<E> implements Iterable<E>
                 head = newNode;
             }
         }
+
         count++;
     }
 
@@ -140,6 +138,7 @@ public class DSALinkedList<E> implements Iterable<E>
                 tail = newNode;
             }
         }
+
         count++;
     }
 
@@ -157,6 +156,7 @@ public class DSALinkedList<E> implements Iterable<E>
         {
             nodeValue = head.getValue();
         }
+
         return nodeValue;
     }
 
@@ -175,6 +175,7 @@ public class DSALinkedList<E> implements Iterable<E>
         {
             nodeValue = tail.getValue();
         }
+
         return nodeValue;
     }
 
@@ -200,6 +201,7 @@ public class DSALinkedList<E> implements Iterable<E>
             tail = tail.getPrev();
             tail.setNext(null);
         }
+
         count--;
 
         return nodeValue;
@@ -227,6 +229,7 @@ public class DSALinkedList<E> implements Iterable<E>
             tail = tail.getPrev();
             tail.setNext(null);
         }
+
         count--;
 
         return nodeValue;
@@ -241,9 +244,7 @@ public class DSALinkedList<E> implements Iterable<E>
 
     private boolean validateObject(Object inObj)
     {
-        boolean isValid = false;
-        isValid = (inObj != null);
-        return isValid;
+        return (inObj != null);
     }
 
     private String err(String msg)

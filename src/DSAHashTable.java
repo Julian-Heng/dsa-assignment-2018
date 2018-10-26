@@ -359,5 +359,4 @@ public class DSAHashTable
     {
         load = (double)numUsed / (double)m_hashTable.length;
     }
-
 }

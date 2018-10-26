@@ -82,98 +82,42 @@ public class Nominee
     // Setters
     public void setState(String input)
     {
-        if (! validateString(input))
-        {
-            state = DEFAULT;
-        }
-        else
-        {
-            state = input;
-        }
+        state = (! validateString(input)) ? DEFAULT : input;
     }
 
     public void setIdDivision(String input)
     {
-        if (! validateInt(input))
-        {
-            idDivision = 0;
-        }
-        else
-        {
-            idDivision = Integer.parseInt(input);
-        }
+        idDivision = (! validateInt(input)) ? 0 : Integer.parseInt(input);
     }
 
     public void setNameDivision(String input)
     {
-        if (! validateString(input))
-        {
-            nameDivision = DEFAULT;
-        }
-        else
-        {
-            nameDivision = input;
-        }
+        nameDivision = (! validateString(input)) ? DEFAULT : input;
     }
 
     public void setAbvParty(String input)
     {
-        if (! validateString(input))
-        {
-            abvParty = DEFAULT;
-        }
-        else
-        {
-            abvParty = input;
-        }
+        abvParty = (! validateString(input)) ? DEFAULT : input;
     }
 
     public void setNameParty(String input)
     {
-        if (! validateString(input))
-        {
-            nameParty = DEFAULT;
-        }
-        else
-        {
-            nameParty = input;
-        }
+        nameParty = (! validateString(input)) ? DEFAULT : input;
     }
 
     public void setIdCandidate(String input)
     {
-        if (! validateInt(input))
-        {
-            idCandidate = 0;
-        }
-        else
-        {
-            idCandidate = Integer.parseInt(input);
-        }
+        idCandidate = (! validateInt(input)) ? 0 : Integer.parseInt(input);
     }
 
     public void setSurname(String input)
     {
-        if (! validateString(input))
-        {
-            surname = DEFAULT;
-        }
-        else
-        {
-            surname = input;
-        }
+        surname = (! validateString(input)) ? DEFAULT : input;
     }
 
     public void setFirstName(String input)
     {
-        if (! validateString(input))
-        {
-            firstname = DEFAULT;
-        }
-        else
-        {
-            firstname = input;
-        }
+        firstname = (! validateString(input)) ? DEFAULT : input;
     }
 
     public void setElected(String input)
@@ -269,11 +213,12 @@ public class Nominee
 
     public String toString()
     {
-        return state + "," + idDivision + "," + nameDivision + "," +
-               abvParty + "," + nameParty + "," + idCandidate + "," +
-               surname + "," + firstname + "," + 
-               (elected ? "Y" : "N") + "," +
-               (historicElected ? "Y" : "N");
+        return  String.format(
+                    "%s,%d,%s,%s,%s,%d,%s,%s,%s,%s",
+                    state, idDivision, nameDivision, abvParty,
+                    nameParty, idCandidate, surname, firstname,
+                    (elected ? "Y" : "N"), (historicElected ? "Y" : "N")
+                );
     }
 
     private boolean validateString(String str)

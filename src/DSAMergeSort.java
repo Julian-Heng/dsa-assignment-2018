@@ -53,6 +53,7 @@ public class DSAMergeSort
                 tempArr[k] = A[j];
                 j++;
             }
+
             k++;
         }
 

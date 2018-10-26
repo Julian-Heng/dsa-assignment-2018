@@ -56,62 +56,29 @@ public class VoteStats
     // Setters
     public void setNameDivision(String inNameDivision)
     {
-        if (! validateString(inNameDivision))
-        {
-            nameDivision = DEFAULT;
-        }
-        else
-        {
-            nameDivision = inNameDivision;
-        }
+        nameDivision = (! validateString(inNameDivision)) ?
+                            DEFAULT : inNameDivision;
     }
 
     public void setIdDivision(String inIdDivision)
     {
-        if (! validateInt(inIdDivision))
-        {
-            idDivision = 0;
-        }
-        else
-        {
-            idDivision = Integer.parseInt(inIdDivision);
-        }
+        idDivision = (! validateInt(inIdDivision)) ?
+                            0 : Integer.parseInt(inIdDivision);
     }
 
     public void setState(String inState)
     {
-        if (! validateString(inState))
-        {
-            state = DEFAULT;
-        }
-        else
-        {
-            state = inState;
-        }
+        state = (! validateString(inState)) ? DEFAULT : inState;
     }
 
     public void setAbvParty(String inAbvParty)
     {
-        if (! validateString(inAbvParty))
-        {
-            abvParty = DEFAULT;
-        }
-        else
-        {
-            abvParty = inAbvParty;
-        }
+        abvParty = (! validateString(inAbvParty)) ? DEFAULT : inAbvParty;
     }
 
     public void setNameParty(String inNameParty)
     {
-        if (! validateString(inNameParty))
-        {
-            nameParty = DEFAULT;
-        }
-        else
-        {
-            nameParty = inNameParty;
-        }
+        nameParty = (! validateString(inNameParty)) ? DEFAULT : inNameParty;
     }
 
     public void setVotesFor(int inFor)
@@ -186,13 +153,12 @@ public class VoteStats
 
     public String toString()
     {
-        return idDivision + "," + nameDivision + "," +
-               state + "," +
-               abvParty + "," + nameParty + "," +
-               votesFor + "," + votesAgainst + "," +
-               votesTotal + "," +
-               String.format("%3.2f", getPercent()) + "%," +
-               String.format("%2.4f", margin);
+        return  String.format(
+                    "%d,%s,%s,%s,%s,%d,%d,%d,%3.2f%%,%2.4f",
+                    idDivision, nameDivision, state, abvParty,
+                    nameParty, votesFor, votesAgainst, votesTotal,
+                    getPercent(), margin
+                );
     }
 
     // Mutators

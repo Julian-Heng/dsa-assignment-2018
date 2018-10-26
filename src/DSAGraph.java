@@ -146,24 +146,6 @@ public class DSAGraph<E,F>
         public void clearVisited() { visited = false; }
         public boolean getVisited() { return visited; }
 
-        public String toString()
-        {
-            String out;
-            DSAGraphVertex<E,F> linkNode = null;
-            Iterator<DSAGraphVertex<E,F>> iter = links.iterator();
-
-            out = "Label: " + label + "\n"
-                + "Value: " + value + "\n"
-                + "Links: ";
-
-            while (iter.hasNext())
-            {
-                out += iter.next().getLabel() + ", ";
-            }
-            out = out.substring(0, out.length() - 2) + "\n";
-            return out;
-        }
-
         private boolean validateVertex(
             DSAGraphVertex<E,F> newVertex)
         {
@@ -527,7 +509,7 @@ public class DSAGraph<E,F>
         DSAGraphVertex<E,F> inVertex = null;
         Iterator<DSAGraphVertex<E,F>> iter = vertex2.getAdjacent().iterator();
 
-        while ((iter.hasNext()) && (isAdjacent != true))
+        while ((iter.hasNext()) && ! isAdjacent)
         {
             inVertex = iter.next();
             if (vertex1 == inVertex)
@@ -594,15 +576,9 @@ public class DSAGraph<E,F>
         while (iter.hasNext())
         {
             tempVertex = iter.next();
-
-            if (tempVertex == source)
-            {
-                tempVertex.setDistanceFromSource(0);
-            }
-            else
-            {
-                tempVertex.setDistanceFromSource(Integer.MAX_VALUE);
-            }
+            tempVertex.setDistanceFromSource(
+                (tempVertex != source) ? Integer.MAX_VALUE : 0
+            );
 
             tempVertex.setPrevVertex(null);
             queue.add(tempVertex.getDistanceFromSource(), tempVertex);
@@ -632,11 +608,11 @@ public class DSAGraph<E,F>
                     vertexAdjacent.setVisited();
 
                     // Get distance from source
-                    alt = tempVertex.getDistanceFromSource()
-                        + this.getEdgeWeight(
+                    alt = tempVertex.getDistanceFromSource() +
+                        this.getEdgeWeight(
                             tempVertex,
                             vertexAdjacent
-                    );
+                        );
 
                     // If distance is shorter than the recorded distance
                     // from source

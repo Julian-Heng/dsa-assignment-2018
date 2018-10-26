@@ -39,50 +39,24 @@ public class Location
     // Setters
     public void setState(String inState)
     {
-        if (! validateString(inState))
-        {
-            state = DEFAULT;
-        }
-        else
-        {
-            state = inState;
-        }
+        state = (! validateString(inState)) ? DEFAULT : inState;
     }
 
     public void setDivision(String inDivision)
     {
-        if (! validateString(inDivision))
-        {
-            division = DEFAULT;
-        }
-        else
-        {
-            division = inDivision;
-        }
+        division = (! validateString(inDivision)) ? DEFAULT : inDivision;
     }
 
     public void setLatitude(String inLat)
     {
-        if (! (validateDouble(inLat) && checkBound(inLat, -90, 90)))
-        {
-            latitude = 0.0;
-        }
-        else
-        {
-            latitude = Double.parseDouble(inLat);
-        }
+        latitude = (! (validateDouble(inLat) && checkBound(inLat, -90, 90))) ?
+                        0.0 : Double.parseDouble(inLat);
     }
 
     public void setLongitude(String inLong)
     {
-        if (! (validateDouble(inLong) && checkBound(inLong, -180, 180)))
-        {
-            longitude = 0.0;
-        }
-        else
-        {
-            longitude = Double.parseDouble(inLong);
-        }
+        longitude = (! (validateDouble(inLong) && checkBound(inLong, -180, 180))) ?
+                        0.0 : Double.parseDouble(inLong);
     }
 
     // Getters

@@ -23,13 +23,7 @@ public class DSAStack<E> implements Iterable<E>
     }
 
     public int getCount() { return count; }
-
-    public boolean isEmpty()
-    {
-        boolean isEmpty = false;
-        isEmpty = (count == 0);
-        return isEmpty;
-    }
+    public boolean isEmpty() { return (count == 0); }
 
     public void push(E inObj)
     {
@@ -58,6 +52,7 @@ public class DSAStack<E> implements Iterable<E>
         {
             topObj = stack.peekLast();
         }
+
         return topObj;
     }
 
@@ -69,10 +64,7 @@ public class DSAStack<E> implements Iterable<E>
         }
     }
 
-    public Iterator<E> iterator()
-    {
-        return stack.iterator();
-    }
+    public Iterator<E> iterator() { return stack.iterator(); }
 
     private String err(String msg)
     {

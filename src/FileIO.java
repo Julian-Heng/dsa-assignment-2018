@@ -70,6 +70,7 @@ public class FileIO
                 }
             }
         }
+
         return fileContents;
     }
 
@@ -117,9 +118,7 @@ public class FileIO
 
     private static boolean validateString(String inString)
     {
-        boolean isValid = false;
-        isValid = ((inString != null) && (! inString.equals("")));
-        return isValid;
+        return ((inString != null) && (! inString.equals("")));
     }
 
     private static String err(String msg)

@@ -1,12 +1,11 @@
 import java.util.*;
-import java.io.*;
 
 /**
  *  Name:     DSAGraph
  *  Source:   Practical 6
  *
  *  Modifications:
- *      Implemented Dijkstra's algorithm and removed unneccessary
+ *      Implemented Dijkstra's algorithm and removed unnecessary
  *      functions like the printing functions for adjacency list and
  *      adjacency matrix
  *
@@ -602,27 +601,21 @@ public class DSAGraph<E,F>
                     reached = true;
                 }
 
-                // If vertex has not yet been visited
-                if (! vertexAdjacent.getVisited())
+                // Get distance from source
+                alt = tempVertex.getDistanceFromSource() +
+                    this.getEdgeWeight(
+                        tempVertex,
+                        vertexAdjacent
+                    );
+
+                // If distance is shorter than the recorded distance
+                // from source
+                if (alt < vertexAdjacent.getDistanceFromSource())
                 {
-                    vertexAdjacent.setVisited();
-
-                    // Get distance from source
-                    alt = tempVertex.getDistanceFromSource() +
-                        this.getEdgeWeight(
-                            tempVertex,
-                            vertexAdjacent
-                        );
-
-                    // If distance is shorter than the recorded distance
-                    // from source
-                    if (alt < vertexAdjacent.getDistanceFromSource())
-                    {
-                        // Set distance and the vertex to access it
-                        vertexAdjacent.setDistanceFromSource(alt);
-                        vertexAdjacent.setPrevVertex(tempVertex);
-                        queue.add(alt, vertexAdjacent);
-                    }
+                    // Set distance and the vertex to access it
+                    vertexAdjacent.setDistanceFromSource(alt);
+                    vertexAdjacent.setPrevVertex(tempVertex);
+                    queue.add(alt, vertexAdjacent);
                 }
             }
         }

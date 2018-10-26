@@ -1,3 +1,14 @@
+/**
+ *  Name:     testDSAGraph
+ *  Source:   Practical 6
+ *
+ *  Modifications:
+ *      Changed testing in order to reflect changes to the graph
+ *      such as having an edge class and testing dijkstra's algorithm
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class testDSAGraph
 {
     public static void main(String[] args)
@@ -11,6 +22,7 @@ public class testDSAGraph
         testConstructor();
         testInsertVertex();
         testInsertEdge();
+        testDijkstra();
     }
 
     public static void testConstructor()
@@ -384,6 +396,73 @@ public class testDSAGraph
             {
                 testHarnessCommons.passed();
             }
+        }
+        catch (Exception e)
+        {
+            testHarnessCommons.failed(e.getMessage());
+        }
+    }
+
+    public static void testDijkstra()
+    {
+        DSAGraph<String,Integer> graph;
+        DSAStack<String> path;
+
+        System.out.print("Testing dijkstra(): ");
+
+        try
+        {
+            graph = new DSAGraph<String,Integer>();
+
+            graph.addVertex("a", "a");
+            graph.addVertex("b", "b");
+            graph.addVertex("c", "c");
+            graph.addVertex("d", "d");
+            graph.addVertex("e", "e");
+            graph.addVertex("f", "f");
+            graph.addVertex("g", "g");
+
+            graph.addEdge("a", "b", 4, Integer.valueOf(1));
+            graph.addEdge("a", "c", 3, Integer.valueOf(1));
+            graph.addEdge("a", "e", 7, Integer.valueOf(1));
+
+            graph.addEdge("b", "c", 6, Integer.valueOf(1));
+            graph.addEdge("b", "d", 5, Integer.valueOf(1));
+
+            graph.addEdge("c", "d", 11, Integer.valueOf(1));
+            graph.addEdge("c", "e", 8, Integer.valueOf(1));
+
+            graph.addEdge("d", "e", 2, Integer.valueOf(1));
+            graph.addEdge("d", "g", 5, Integer.valueOf(1));
+            graph.addEdge("d", "f", 2, Integer.valueOf(1));
+
+            graph.addEdge("e", "g", 5, Integer.valueOf(1));
+
+            graph.addEdge("f", "g", 3, Integer.valueOf(1));
+
+            path = graph.dijkstra("a", "f");
+
+            if (! path.pop().equals("b") ||
+                ! path.pop().equals("d") ||
+                ! path.pop().equals("f"))
+            {
+                throw new IllegalArgumentException(
+                    "Wrong path"
+                );
+            }
+
+            path = graph.dijkstra("f", "a");
+
+            if (! path.pop().equals("d") ||
+                ! path.pop().equals("e") ||
+                ! path.pop().equals("a"))
+            {
+                throw new IllegalArgumentException(
+                    "Wrong path"
+                );
+            }
+
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {

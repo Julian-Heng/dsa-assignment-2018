@@ -1,5 +1,16 @@
 import java.util.*;
 
+/**
+ *  Name:     testDSAHashTable
+ *  Source:   Practical 8
+ *
+ *  Modifications:
+ *      Removed unnecessary testing functions as they are in
+ *      testHarnessCommons
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class testDSAHashTable
 {
     public static void main(String[] args)
@@ -30,11 +41,11 @@ public class testDSAHashTable
             try
             {
                 hash = new DSAHashTable(i);
-                passed();
+                testHarnessCommons.passed();
             }
             catch (Exception e)
             {
-                failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
     }
@@ -59,16 +70,16 @@ public class testDSAHashTable
 
             if (hash.getUsedCount() == 26)
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Incorrect number of slots filled");
+                testHarnessCommons.failed("Incorrect number of slots filled");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing put() with string permutation size 4: ");
@@ -94,16 +105,16 @@ public class testDSAHashTable
 
             if (hash.getUsedCount() == (6 * 6 * 6 * 6))
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Incorrect number of slots filled");
+                testHarnessCommons.failed("Incorrect number of slots filled");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing put() with ids 10000 to 10100: ");
@@ -119,16 +130,16 @@ public class testDSAHashTable
 
             if (hash.getUsedCount() == 100)
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Incorrect number of slots filled");
+                testHarnessCommons.failed("Incorrect number of slots filled");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing put() with ids 10000 to 10100 shuffed: ");
@@ -152,16 +163,16 @@ public class testDSAHashTable
 
             if (hash.getUsedCount() == 100)
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Incorrect number of slots filled");
+                testHarnessCommons.failed("Incorrect number of slots filled");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -179,16 +190,16 @@ public class testDSAHashTable
 
             if (hash.getUsedCount() == 10)
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Incorrect number of slots filled");
+                testHarnessCommons.failed("Incorrect number of slots filled");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing put() with a set of integers: ");
@@ -206,16 +217,16 @@ public class testDSAHashTable
 
             if (hash.getUsedCount() == 6)
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Incorrect number of slots filled");
+                testHarnessCommons.failed("Incorrect number of slots filled");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         for (int size : sizes)
@@ -233,11 +244,11 @@ public class testDSAHashTable
                     hash.put(Integer.toString(1), Integer.valueOf(1));
                 }
 
-                failed("Successfully added a key");
+                testHarnessCommons.failed("Successfully added a key");
             }
             catch (Exception e)
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
     }
@@ -264,16 +275,16 @@ public class testDSAHashTable
             hash.put(intObj[0].toString(), intObj[0]);
             if (hash.get(intObj[0].toString()) == intObj[0])
             {
-                passed();
+                testHarnessCommons.passed();
             }
             else
             {
-                failed("Return value doesn't match");
+                testHarnessCommons.failed("Return value doesn't match");
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         for (int size : sizes)
@@ -306,11 +317,11 @@ public class testDSAHashTable
                     }
                 }
 
-                passed();
+                testHarnessCommons.passed();
             }
             catch (Exception e)
             {
-                failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
 
@@ -335,11 +346,11 @@ public class testDSAHashTable
                 }
             }
 
-            passed();
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing get() with string permutation size 4: ");
@@ -383,11 +394,11 @@ public class testDSAHashTable
                 }
             }
 
-            passed();
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing get() with ids 10000 to 10100: ");
@@ -412,11 +423,11 @@ public class testDSAHashTable
                 }
             }
 
-            passed();
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing get() with ids 10000 to 10100 shuffed: ");
@@ -452,11 +463,11 @@ public class testDSAHashTable
                 }
             }
 
-            passed();
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -483,11 +494,11 @@ public class testDSAHashTable
                 }
             }
 
-            passed();
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing get() with a set of integers: ");
@@ -514,11 +525,11 @@ public class testDSAHashTable
                 }
             }
 
-            passed();
+            testHarnessCommons.passed();
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing get() with an empty table: ");
@@ -528,11 +539,11 @@ public class testDSAHashTable
             hash = new DSAHashTable(10);
             hash.get("asdf");
 
-            failed("Found something in the empty table");
+            testHarnessCommons.failed("Found something in the empty table");
         }
         catch (Exception e)
         {
-            passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print("Testing get() with a non existant key: ");
@@ -547,11 +558,11 @@ public class testDSAHashTable
             }
 
             hash.get("12");
-            failed("Found a non existant key in table");
+            testHarnessCommons.failed("Found a non existant key in table");
         }
         catch (Exception e)
         {
-            passed();
+            testHarnessCommons.passed();
         }
     }
 
@@ -586,24 +597,24 @@ public class testDSAHashTable
 
             if (intObj[1] != intObj[0])
             {
-                failed("Return value doesn't match");
+                testHarnessCommons.failed("Return value doesn't match");
             }
             else if (hash.getCount() != 0)
             {
-                failed("Count is incorrect");
+                testHarnessCommons.failed("Count is incorrect");
             }
             else if (! hash.isEmpty())
             {
-                failed("Table is not empty");
+                testHarnessCommons.failed("Table is not empty");
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         for (int size : sizes)
@@ -621,7 +632,6 @@ public class testDSAHashTable
 
                 for (int i = 0; i < size; i++)
                 {
-                    //System.out.println(hash.getSize());
                     hash.put(intObj[i].toString(), intObj[i]);
                 }
 
@@ -651,12 +661,12 @@ public class testDSAHashTable
                 }
                 else
                 {
-                    passed();
+                    testHarnessCommons.passed();
                 }
             }
             catch (Exception e)
             {
-                failed(e.getMessage());
+                testHarnessCommons.failed(e.getMessage());
             }
         }
 
@@ -705,12 +715,12 @@ public class testDSAHashTable
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with string permutation size 4: ");
@@ -782,12 +792,12 @@ public class testDSAHashTable
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with ids 10000 to 10100: ");
@@ -834,12 +844,12 @@ public class testDSAHashTable
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with ids 10000 to 10100 shuffed: ");
@@ -892,12 +902,12 @@ public class testDSAHashTable
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print(
@@ -947,12 +957,12 @@ public class testDSAHashTable
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with a set of integers: ");
@@ -1002,12 +1012,12 @@ public class testDSAHashTable
             }
             else
             {
-                passed();
+                testHarnessCommons.passed();
             }
         }
         catch (Exception e)
         {
-            failed(e.getMessage());
+            testHarnessCommons.failed(e.getMessage());
         }
 
         System.out.print("Testing remove() with an empty table: ");
@@ -1017,11 +1027,11 @@ public class testDSAHashTable
             hash = new DSAHashTable(10);
             hash.remove("asdf");
 
-            failed("Found something in the empty table");
+            testHarnessCommons.failed("Found something in the empty table");
         }
         catch (Exception e)
         {
-            passed();
+            testHarnessCommons.passed();
         }
 
         System.out.print("Testing remove() with a non existant key: ");
@@ -1036,11 +1046,11 @@ public class testDSAHashTable
             }
 
             hash.remove("12");
-            failed("Found a non existant key in table");
+            testHarnessCommons.failed("Found a non existant key in table");
         }
         catch (Exception e)
         {
-            passed();
+            testHarnessCommons.passed();
         }
     }
 
@@ -1056,28 +1066,5 @@ public class testDSAHashTable
             arr[index] = arr[i];
             arr[i] = temp;
         }
-    }
-
-    public static void header(String msg)
-    {
-        String line = "";
-        String stripMsg = msg.replaceAll("\u001B\\[;\\d]*m", "");
-
-        for (int i = 0; i < stripMsg.length(); i++)
-        {
-            line += "=";
-        }
-
-        System.out.println(line + "\n" + msg + "\n" + line);
-    }
-
-    public static void passed()
-    {
-        System.out.println("\u001B[32mPassed\u001B[0m");
-    }
-
-    public static void failed(String err)
-    {
-        System.out.println("\u001B[31mFailed\u001B[0m. " + err);
     }
 }

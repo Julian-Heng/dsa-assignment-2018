@@ -1,13 +1,30 @@
 import java.util.*;
 
+/**
+ *  Name:     DSAHashTable
+ *  Source:   Practical 8
+ *
+ *  Modifications:
+ *      Fixed double hashing and changed certain coding
+ *      styles
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class DSAHashTable
 {
+    /**
+     *  Name:     DSAHashEntry
+     *  Purpose:  A hash entry in the hash table
+     **/
+
     private class DSAHashEntry
     {
         private String key;
         private Object value;
         private int state;
 
+        // Default Constructor
         public DSAHashEntry()
         {
             setKey(null);
@@ -15,6 +32,7 @@ public class DSAHashTable
             setState(EMPTY);
         }
 
+        // Alternate Constructor
         public DSAHashEntry(String inKey, Object inValue)
         {
             setKey(inKey);
@@ -22,15 +40,18 @@ public class DSAHashTable
             setState(USED);
         }
 
+        // Getters
         public String getKey() { return key; }
         public Object getValue() { return value; }
         public int getState() { return state; }
 
+        // Setters
         public void setKey(String inKey) { key = inKey; }
         public void setValue(Object inValue) { value = inValue; }
         public void setState(int inState) { state = inState; }
     }
 
+    // Constants
     public static final int EMPTY = 0;
     public static final int USED = 1;
     public static final int WAS_OCCUPIED = -1;
@@ -41,15 +62,28 @@ public class DSAHashTable
     private int numUsed;
     private double load;
 
+    // Default Constructor
     public DSAHashTable()
     {
         m_hashTable = this.makeTable(nextPrime(MIN_SIZE));
     }
 
+    // Alternate Constructor
     public DSAHashTable(int maxSize)
     {
         m_hashTable = this.makeTable(nextPrime(maxSize));
     }
+
+    /**
+     *  Name:     put
+     *  Purpose:  Add an entry to the hash table
+     *  Imports:
+     *    - inKey   : The key to identify the object
+     *    - inValue : The object to be stored
+     *
+     *  Exports:
+     *    - none
+     **/
 
     public void put(String inKey, Object inValue)
     {
@@ -63,6 +97,16 @@ public class DSAHashTable
             this.put(newEntry);
         }
     }
+
+    /**
+     *  Name:     put
+     *  Purpose:  Add an entry to the hash table
+     *  Imports:
+     *    - inEntry : A hash entry object containing the key and the object
+     *
+     *  Exports:
+     *    - none
+     **/
 
     private void put(DSAHashEntry inEntry)
     {
@@ -87,10 +131,30 @@ public class DSAHashTable
         }
     }
 
+    /**
+     *  Name:     get
+     *  Purpose:  Retrieve an object stored in the hash table
+     *  Imports:
+     *    - inKey : The key used to identify the object
+     *
+     *  Exports:
+     *    - Object in hash table
+     **/
+
     public Object get(String inKey)
     {
         return m_hashTable[find(inKey)].getValue();
     }
+
+    /**
+     *  Name:     remove
+     *  Purpose:  Remove an object in the hash table
+     *  Imports:
+     *    - inKey : The key used to identify the object
+     *
+     *  Exports:
+     *    - Object in hash table
+     **/
 
     public Object remove(String inKey)
     {
@@ -114,6 +178,16 @@ public class DSAHashTable
         return returnValue;
     }
 
+    /**
+     *  Name:     containsKey
+     *  Purpose:  Check if inputted key exist in the hash table
+     *  Imports:
+     *    - inKey : The key used to identify the object
+     *
+     *  Exports:
+     *    - boolean
+     **/
+
     public boolean containsKey(String inKey)
     {
         return find(inKey) != -1 ? true : false;
@@ -129,6 +203,16 @@ public class DSAHashTable
         return numUsed == 0;
     }
 
+    /**
+     *  Name:     convertKeyToLinkedList
+     *  Purpose:  Make the table "iterable" by converting to a linked list
+     *  Imports:
+     *    - none
+     *
+     *  Exports:
+     *    - returnList : A linked list containing objects in the hash table
+     **/
+
     public DSALinkedList<String> convertKeyToLinkedList()
     {
         DSALinkedList<String> returnList = new DSALinkedList<String>();
@@ -139,8 +223,19 @@ public class DSAHashTable
                 returnList.insertLast(m_hashTable[i].getKey());
             }
         }
+
         return returnList;
     }
+
+    /**
+     *  Name:     convertValueToLinkedList
+     *  Purpose:  Make the table "iterable" by converting to a linked list
+     *  Imports:
+     *    - none
+     *
+     *  Exports:
+     *    - returnList
+     **/
 
     public DSALinkedList<Object> convertValueToLinkedList()
     {
@@ -155,17 +250,40 @@ public class DSAHashTable
         return returnList;
     }
 
+    /**
+     *  Name:     hash
+     *  Purpose:  Calculate the hash from input
+     *  Imports:
+     *    - key : The key to hash
+     *
+     *  Exports:
+     *    - hashIndex : The index in the table for the hash
+     **/
+
     private int hash(String key)
     {
         int hashIndex = 0;
 
         for (int i = 0; i < key.length(); i++)
         {
+            // Shift-Add-XOR Hash
             hashIndex ^= ((hashIndex << 5) + (hashIndex << 2) + key.charAt(i));
         }
 
+        // Have to use absolute values because they become negative
+        // due to integer overflow
         return Math.abs(hashIndex % m_hashTable.length);
     }
+
+    /**
+     *  Name:     stepHash
+     *  Purpose:  Calculate the step amount for a given hash
+     *  Imports:
+     *    - inKeyHash : The index for the hash
+     *
+     *  Exports:
+     *    - step : The step amount
+     **/
 
     private int stepHash(int inKeyHash)
     {
@@ -176,6 +294,16 @@ public class DSAHashTable
 
         return step;
     }
+
+    /**
+     *  Name:     find
+     *  Purpose:  Find an object in the hash table by the key
+     *  Imports:
+     *    - inKey : The identifying key
+     *
+     *  Exports:
+     *    - hashIndex : The index for the object
+     **/
 
     private int find(String inKey)
     {
@@ -218,6 +346,16 @@ public class DSAHashTable
         return hashIndex;
     }
 
+    /**
+     *  Name:     findNextAvailable
+     *  Purpose:  Find the next available slot in the table from a given key
+     *  Imports:
+     *    - inKey : The identifying key
+     *
+     *  Exports:
+     *    - hashIndex : The index for the next free available slot
+     **/
+
     private int findNextAvailable(String inKey)
     {
         int hashIndex, origIndex, step;
@@ -259,6 +397,16 @@ public class DSAHashTable
         return hashIndex;
     }
 
+    /**
+     *  Name:     nextPrime
+     *  Purpose:  Find the next prime number for table size
+     *  Imports:
+     *    - start : The starting number
+     *
+     *  Exports:
+     *    - currentPrime : The next prime number
+     **/
+
     private int nextPrime(int start)
     {
         int currentPrime, i;
@@ -297,6 +445,16 @@ public class DSAHashTable
         return currentPrime;
     }
 
+    /**
+     *  Name:     makeTable
+     *  Purpose:  Make a hash table of a given size
+     *  Imports:
+     *    - size : The size of the table
+     *
+     *  Exports:
+     *    - An array of hash entries
+     **/
+
     private DSAHashTable.DSAHashEntry[] makeTable(int size)
     {
         DSAHashEntry[] table;
@@ -309,6 +467,16 @@ public class DSAHashTable
 
         return table;
     }
+
+    /**
+     *  Name:     resize
+     *  Purpose:  Resize and rehash the current table
+     *  Imports:
+     *    - size : The new table size
+     *
+     *  Exports:
+     *    - none
+     **/
 
     private void resize(int size)
     {
@@ -333,6 +501,16 @@ public class DSAHashTable
         this.updateHard();
     }
 
+    /**
+     *  Name:     updateHard
+     *  Purpose:  Count all items in table
+     *  Imports:
+     *    - none
+     *
+     *  Exports:
+     *    - none
+     **/
+
     private void updateHard()
     {
         numUsed = 0;
@@ -354,6 +532,16 @@ public class DSAHashTable
 
         this.updateLoad();
     }
+
+    /**
+     *  Name:     updateLoad()
+     *  Purpose:  Update the load varialbe
+     *  Imports:
+     *    - none
+     *
+     *  Exports:
+     *    - none
+     **/
 
     private void updateLoad()
     {

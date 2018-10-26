@@ -444,8 +444,9 @@ public class ElectionManagerInit
         String[] split;
 
         DSALinkedList<String> returnList;
+        DSALinkedList<Object> sorted;
         Iterator<String> iter = list.iterator();
-        Object[] sorted;
+        Iterator<Object> iter2;
 
         heap = new DSAMaxHeap(list.getCount());
         returnList = new DSALinkedList<String>();
@@ -461,12 +462,13 @@ public class ElectionManagerInit
 
         // Sort and convert out to arrays
         heap.heapSort();
-        sorted = heap.toObjArray();
+        sorted = heap.toObjList();
 
         // Convert back to a linked list
-        for (int i = 0; i < sorted.length; i++)
+        iter2 = sorted.iterator();
+        while (iter2.hasNext())
         {
-            returnList.insertLast((String)sorted[i]);
+            returnList.insertLast((String)iter2.next());
         }
 
         return returnList;

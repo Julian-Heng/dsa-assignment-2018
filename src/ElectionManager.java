@@ -39,11 +39,12 @@ public class ElectionManager
 
         Menu filterMenu;
         Menu orderMenu;
-        Iterator<Nominee> iter;
         Nominee inList;
         Nominee inResult;
-        Nominee searchResult[];
-        Object sorted[];
+        DSALinkedList<Nominee> searchResult;
+        DSALinkedList<Object> sorted;
+        Iterator<Nominee> iter;
+        Iterator<Object> iter2;
         long timeStart, timeEnd, duration;
 
         iter = nomineeList.iterator();
@@ -111,35 +112,15 @@ public class ElectionManager
         split = userInput.split(WHITESPACE_REGEX);
 
         timeStart = System.nanoTime();
+        searchResult = new DSALinkedList<Nominee>();
 
-        // Get the number of matches for creating array
-        // Array because of sorting an array is easier than
-        // sorting a linked list
-        while (iter.hasNext())
-        {
-            numNominee++;
-            if (searchNominee1(iter.next(), filters))
-            {
-                numMatches++;
-            }
-        }
-
-        searchResult = new Nominee[numMatches];
-        sorted = new Nominee[numMatches];
-        heap = new DSAMaxHeap(numMatches);
-        iter = null;
-        inList = null;
-        iter = nomineeList.iterator();
-        i = 0;
-
-        // Get the matched nominees and add them to the array
+        // Insert any matches to a linked list
         while (iter.hasNext())
         {
             inList = iter.next();
             if (searchNominee1(inList, filters))
             {
-                searchResult[i] = inList;
-                i++;
+                searchResult.insertLast(inList);
             }
         }
 
@@ -148,29 +129,38 @@ public class ElectionManager
         {
             // For each search result, generate the sort line
             // and add to the heap as the priority
-            for (int j = 0; j < searchResult.length; j++)
+            heap = new DSAMaxHeap(searchResult.getCount());
+            iter = searchResult.iterator();
+
+            while (iter.hasNext())
             {
-                inResult = searchResult[j];
+                inResult = iter.next();
                 sortLine = generateSortLine(inResult, split);
                 heap.add(sortLine, inResult);
             }
 
-            // Sort and convert back to an array
+            // Sort
             heap.heapSort();
-            sorted = heap.toObjArray();
+            sorted = heap.toObjList();
 
-            for (int j = 0; j < numMatches; j++)
+            iter2 = sorted.iterator();
+            searchResult = new DSALinkedList<Nominee>();
+
+            while (iter2.hasNext())
             {
-                searchResult[j] = (Nominee)sorted[j];
+                searchResult.insertLast((Nominee)iter2.next());
             }
         }
 
-        // Convert the array to a csv format
-        fileContents = new String[numMatches];
+        // Convert the list to a csv format
+        fileContents = new String[searchResult.getCount()];
 
-        for (i = 0; i < numMatches; i++)
+        i = 0;
+        iter = searchResult.iterator();
+
+        while (iter.hasNext())
         {
-            fileContents[i] = searchResult[i].toString();
+            fileContents[i++] = iter.next().toString();
         }
 
         timeEnd = System.nanoTime();
@@ -178,8 +168,13 @@ public class ElectionManager
 
         // Print table and prompt for saving the results as a file
         Commons.printCsvTable(fileContents, header);
-        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
-        System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
+
+        System.out.printf(
+                "\n%d/%d matches\nTook %sms\n\n",
+                searchResult.getCount(),
+                nomineeList.getCount(),
+                Commons.toMiliseconds(duration)
+        );
 
         Commons.saveCsvToFile(fileContents, "nominees_list.csv");
     }
@@ -203,9 +198,9 @@ public class ElectionManager
         };
 
         Menu filterMenu;
-        Iterator<Nominee> iter;
         Nominee inList;
-        Nominee searchResult[];
+        DSALinkedList<Nominee> searchResult;
+        Iterator<Nominee> iter;
         long timeStart, timeEnd, duration;
 
         iter = nomineeList.iterator();
@@ -246,8 +241,8 @@ public class ElectionManager
         filterMenu.printMenu();
         userInput = Input.string();
 
-        timeStart = System.nanoTime();
         split = userInput.split(WHITESPACE_REGEX);
+        timeStart = System.nanoTime();
 
         // If there are filters, process them into arrays
         if (! userInput.isEmpty())
@@ -261,41 +256,27 @@ public class ElectionManager
             filters[i] = filterOptions[i] ? getFilter(filterMsg[i]) : ".*";
         }
 
-        // Count the number of matches
+        searchResult = new DSALinkedList<Nominee>();
+
+        // Get matches to linked list
         while (iter.hasNext())
         {
-            if (searchNominee2(iter.next(), nameFilter, filters))
-            {
-                numMatches++;
-            }
-        }
-
-        searchResult = new Nominee[numMatches];
-        iter = null;
-        inList = null;
-        iter = nomineeList.iterator();
-        i = 0;
-
-        // For each nominee in nominee list
-        while (iter.hasNext())
-        {
-            numNominee++;
             inList = iter.next();
-
-            // If matches, add to array
             if (searchNominee2(inList, nameFilter, filters))
             {
-                searchResult[i] = inList;
-                i++;
+                searchResult.insertLast(inList);
             }
         }
 
-        fileContents = new String[numMatches];
+        fileContents = new String[searchResult.getCount()];
 
         // Convert to csv file
-        for (i = 0; i < numMatches; i++)
+        iter = searchResult.iterator();
+        i = 0;
+
+        while (iter.hasNext())
         {
-            fileContents[i] = searchResult[i].toString();
+            fileContents[i++] = iter.next().toString();
         }
 
         timeEnd = System.nanoTime();
@@ -303,8 +284,13 @@ public class ElectionManager
 
         // Print table and prompt to save to file
         Commons.printCsvTable(fileContents, header);
-        System.out.printf("\n%d/%d matches\n", numMatches, numNominee);
-        System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
+
+        System.out.printf(
+            "\n%d/%d matches\nTook %sms\n\n",
+            searchResult.getCount(),
+            nomineeList.getCount(),
+            Commons.toMiliseconds(duration)
+        );
 
         Commons.saveCsvToFile(fileContents, "nominees_search.csv");
     }

@@ -88,16 +88,16 @@ public class DSAMaxHeap
         }
     }
 
-    public Object[] toObjArray()
+    public DSALinkedList<Object> toObjList()
     {
-        Object[] newArr = new Object[m_count];
+        DSALinkedList<Object> list = new DSALinkedList<Object>();
 
         for (int i = 0; i < m_count; i++)
         {
-            newArr[i] = m_heap[i].getValue();
+            list.insertLast(m_heap[i].getValue());
         }
 
-        return newArr;
+        return list;
     }
 
     public String[] toStringArray()

@@ -1,5 +1,12 @@
 import java.util.*;
 
+/**
+ *  Name:     testDSAMergeSort
+ *  Source:   None
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class testDSAMergeSort
 {
     public static void main(String[] args)

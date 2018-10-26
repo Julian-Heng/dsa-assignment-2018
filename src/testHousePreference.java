@@ -1,3 +1,10 @@
+/**
+ *  Name:     testHousePreference
+ *  Source:   None
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class testHousePreference
 {
     public static void main(String[] args)

@@ -1,3 +1,10 @@
+/**
+ *  Name:     testVoteStats
+ *  Source:   None
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class testVoteStats
 {
     public static void main(String[] args)

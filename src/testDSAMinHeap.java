@@ -1,13 +1,13 @@
 import java.util.*;
 
 /**
- *  Name:     testDSAMaxHeap
+ *  Name:     testDSAMinHeap
  *  Source:   None
  *
  *  Author:   Julian Heng (19473701)
  **/
 
-public class testDSAMaxHeap
+public class testDSAMinHeap
 {
     public static void main(String[] args)
     {
@@ -16,22 +16,21 @@ public class testDSAMaxHeap
 
     public static void run()
     {
-        testHarnessCommons.header("Testing DSAMaxHeap Class");
+        testHarnessCommons.header("Testing DSAMinHeap Class");
         testConstructor();
         testAdd();
         testRemove();
-        testHeapSort();
     }
 
     public static void testConstructor()
     {
-        DSAMaxHeap heap;
+        DSAMinHeap heap;
 
         System.out.print("Testing default constructor: ");
 
         try
         {
-            heap = new DSAMaxHeap();
+            heap = new DSAMinHeap();
 
             if (heap.getSize() != 100)
             {
@@ -55,7 +54,7 @@ public class testDSAMaxHeap
 
         try
         {
-            heap = new DSAMaxHeap(1024);
+            heap = new DSAMinHeap(1024);
 
             if (heap.getSize() != 1024)
             {
@@ -78,16 +77,16 @@ public class testDSAMaxHeap
 
     public static void testAdd()
     {
-        DSAMaxHeap heap;
+        DSAMinHeap heap;
         String toAdd;
 
         System.out.print("Testing add() with an empty heap: ");
 
         try
         {
-            heap = new DSAMaxHeap(1024);
+            heap = new DSAMinHeap(1024);
             toAdd = "A";
-            heap.add(toAdd, toAdd);
+            heap.add(1, toAdd);
 
             if (heap.getSize() != 1024)
             {
@@ -111,10 +110,10 @@ public class testDSAMaxHeap
 
         try
         {
-            heap = new DSAMaxHeap(1);
+            heap = new DSAMinHeap(1);
 
-            heap.add("A", "A");
-            heap.add("B", "B");
+            heap.add(1, "A");
+            heap.add(2, "B");
             testHarnessCommons.failed("Added an item");
         }
         catch (Exception e)
@@ -126,11 +125,11 @@ public class testDSAMaxHeap
 
         try
         {
-            heap = new DSAMaxHeap(1024);
+            heap = new DSAMinHeap(1024);
 
             for (int i = 0; i < 1024; i++)
             {
-                heap.add("A", "A");
+                heap.add(i, "A");
             }
 
             if (heap.getSize() != 1024)
@@ -154,7 +153,7 @@ public class testDSAMaxHeap
 
     public static void testRemove()
     {
-        DSAMaxHeap heap;
+        DSAMinHeap heap;
         String[] pool;
         Object removedObj;
         boolean isValid;
@@ -163,7 +162,7 @@ public class testDSAMaxHeap
 
         try
         {
-            heap = new DSAMaxHeap();
+            heap = new DSAMinHeap();
 
             removedObj = heap.remove();
             testHarnessCommons.failed("Successfully removed an object");
@@ -177,9 +176,9 @@ public class testDSAMaxHeap
 
         try
         {
-            heap = new DSAMaxHeap();
+            heap = new DSAMinHeap();
 
-            heap.add("This is the key", "This is the object");
+            heap.add(1, "This is the object");
             removedObj = heap.remove();
 
             if (! removedObj.toString().equals("This is the object"))
@@ -205,7 +204,7 @@ public class testDSAMaxHeap
 
             isValid = true;
 
-            heap = new DSAMaxHeap(26);
+            heap = new DSAMinHeap(26);
             pool = new String[26];
 
             for (char c = 'a'; c <= 'z'; c++)
@@ -216,15 +215,15 @@ public class testDSAMaxHeap
 
             for (String i : pool)
             {
-                heap.add(i, i);
+                heap.add(index++, i);
             }
 
-            index = pool.length - 1;
+            index = 0;
 
             while (isValid && heap.getUsedSize() > 0)
             {
                 isValid = heap.remove().equals(pool[index]);
-                index--;
+                index++;
             }
 
             if (! isValid)
@@ -250,7 +249,7 @@ public class testDSAMaxHeap
 
             isValid = true;
 
-            heap = new DSAMaxHeap(26);
+            heap = new DSAMinHeap(26);
             pool = new String[26];
 
             for (char c = 'z'; c >= 'a'; c--)
@@ -259,9 +258,11 @@ public class testDSAMaxHeap
                 index++;
             }
 
+            index = 0;
+
             for (String i : pool)
             {
-                heap.add(i, i);
+                heap.add(index++, i);
             }
 
             index = 0;
@@ -284,132 +285,6 @@ public class testDSAMaxHeap
         catch (Exception e)
         {
             testHarnessCommons.failed(e.getMessage());
-        }
-    }
-
-    public static void testHeapSort()
-    {
-        DSAMaxHeap heap;
-        String pool[];
-        int[] sizes = {
-            2, 8, 32, 128, 512, 2048,
-            8192, 32768, 131072, 524288,
-            1000000
-        };
-
-        System.out.print(
-            "Testing heapSort() with a sorted string array: "
-        );
-
-        try
-        {
-            int index;
-            index = 0;
-
-            heap = new DSAMaxHeap(26);
-            pool = new String[26];
-
-            for (char c = 'a'; c <= 'z'; c++)
-            {
-                pool[index] = Character.toString(c);
-                index++;
-            }
-
-            for (String i : pool)
-            {
-                heap.add(i, i);
-            }
-
-            heap.heapSort();
-            pool = heap.toStringArray();
-
-            if (! validateSort(pool))
-            {
-                testHarnessCommons.failed("Array is not sorted");
-            }
-            else
-            {
-                testHarnessCommons.passed();
-            }
-        }
-        catch (Exception e)
-        {
-            testHarnessCommons.failed(e.getMessage());
-        }
-
-        System.out.print(
-            "Testing heapSort() with a reverse sorted string array: "
-        );
-
-        try
-        {
-            int index;
-            index = 0;
-
-            heap = new DSAMaxHeap(26);
-            pool = new String[26];
-
-            for (char c = 'z'; c >= 'a'; c--)
-            {
-                pool[index] = Character.toString(c);
-                index++;
-            }
-
-            for (String i : pool)
-            {
-                heap.add(i, i);
-            }
-
-            heap.heapSort();
-            pool = heap.toStringArray();
-
-            if (! validateSort(pool))
-            {
-                testHarnessCommons.failed("Array is not sorted");
-            }
-            else
-            {
-                testHarnessCommons.passed();
-            }
-        }
-        catch (Exception e)
-        {
-            testHarnessCommons.failed(e.getMessage());
-        }
-
-        for (int inSize : sizes)
-        {
-            System.out.print(
-                "Testing heapSort() with a random string array [size " +
-                inSize + "]: "
-            );
-
-            try
-            {
-                pool = generateStrings(inSize);
-                heap = new DSAMaxHeap(pool.length);
-
-                for (String inPool : pool)
-                {
-                    heap.add(inPool, inPool);
-                }
-
-                heap.heapSort();
-                pool = heap.toStringArray();
-
-                if (! validateSort(pool))
-                {
-                    testHarnessCommons.failed("Array is not sorted");
-                }
-                else
-                {
-                    testHarnessCommons.passed();
-                }
-            }
-            catch (Exception e)
-            {
-                testHarnessCommons.failed(e.getMessage());
-            }
         }
     }
 
@@ -456,19 +331,5 @@ public class testDSAMaxHeap
         }
 
         return returnArr;
-    }
-
-    public static boolean validateSort(String[] arr)
-    {
-        boolean isSorted = true;
-        int i = 1;
-
-        do
-        {
-            isSorted = (arr[i].compareTo(arr[i - 1]) > 0);
-            i++;
-        } while (i < arr.length && isSorted);
-
-        return isSorted;
     }
 }

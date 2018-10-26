@@ -1,3 +1,10 @@
+/**
+ *  Name:     testHarnessCommons
+ *  Source:   None
+ *
+ *  Author:   Julian Heng (19473701)
+ **/
+
 public class testHarnessCommons
 {
     public static void header(String msg)

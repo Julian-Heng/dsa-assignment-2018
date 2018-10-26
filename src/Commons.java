@@ -110,14 +110,16 @@ public class Commons
             padding = "%-" + (paddingArr[i] + 2) + "s";
             sep += "+" + formatPadding(padding, '-');
             padding = "%-" + paddingArr[i] + "s";
-            headerStr += "| " + String.format(padding, header[i]) + " ";
+            headerStr += String.format("| " + padding + " ", header[i]);
         }
 
         padding = "%-" + (paddingArr[paddingArr.length - 1] + 2) + "s";
         sep += "+" + formatPadding(padding, '-') + "+";
         padding = "%-" + paddingArr[paddingArr.length - 1] + "s";
-        headerStr += "| " + String.format(padding, header[header.length - 1])
-                  + " |";
+        headerStr += String.format(
+                            "| " + padding + " |",
+                            header[header.length - 1]
+                        );
 
         // Format each cell in the csv table
         for (int i = 0; i < fields.length; i++)
@@ -125,13 +127,14 @@ public class Commons
             for (int j = 0; j < fields[i].length - 1; j++)
             {
                 padding = "%-" + paddingArr[j] + "s";
-                out += "| " + String.format(padding, fields[i][j]) + " ";
+                out += String.format("| " + padding + " ", fields[i][j]);
             }
 
             padding = "%-" + paddingArr[paddingArr.length - 1] + "s";
-            out += "| " + 
-                   String.format(padding, fields[i][fields[i].length - 1]) +
-                  " |\n";
+            out += String.format(
+                        "| " + padding + " |\n",
+                        fields[i][fields[i].length - 1]
+                    );
         }
 
         // Print table

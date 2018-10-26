@@ -769,12 +769,6 @@ public class ElectionManager
                     "Inputed Division index is invalid"
                 );
             }
-            catch (ArrayIndexOutOfBoundsException e)
-            {
-                throw new IllegalArgumentException(
-                    "Inputed Division index is invalid"
-                );
-            }
         }
 
         // If all locations are selected, do not attempt locations
@@ -811,17 +805,28 @@ public class ElectionManager
         }
 
         // For each selected divisions, get the division name
-        for (int i = 0; i < visitDivisionIndex.length; i++)
+        try
         {
-            split = fileContents[visitDivisionIndex[i] - 1].split(
-                SPLIT_REGEX
-            );
+            for (int i = 0; i < visitDivisionIndex.length; i++)
+            {
+                split = fileContents[visitDivisionIndex[i] - 1].split(
+                    SPLIT_REGEX
+                );
 
-            visitDivision[count] = split[2];
-            count++;
+                visitDivision[count] = split[2];
+                count++;
+            }
+
+            path = new DSAStack<Location>();
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            throw new IllegalArgumentException(
+                "Inputed Division index is invalid"
+            );
         }
 
-        path = new DSAStack<Location>();
+        // Insert starting location to path
         path.push(map.getVertexValue(visitDivision[0]));
 
         // For each division

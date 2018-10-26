@@ -43,10 +43,10 @@ public class Commons
         // Format the string
         out = String.format(
                 "%d day%s, %d hour%s, %d min%s, %d sec%s",
-                days,  (days != 0)  ? "s" : "",
-                hours, (hours != 0) ? "s" : "",
-                mins,  (mins != 0)  ? "s" : "",
-                secs,  (secs != 0)  ? "s" : ""
+                days,  (days > 1)  ? "s" : "",
+                hours, (hours > 1) ? "s" : "",
+                mins,  (mins > 1)  ? "s" : "",
+                secs,  (secs > 1)  ? "s" : ""
         );
 
         return out;

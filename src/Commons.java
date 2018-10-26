@@ -191,27 +191,31 @@ public class Commons
     {
         String userInput;
 
-        // Prompt user for saving to file
-        userInput = Input.string("Save report to file? [Y/n]: ");
-
-        // If user selected yes or did not enter anything
-        if ((userInput.matches("^[yY]$")) ||
-            (userInput.isEmpty()))
+        // If csv file is not empty
+        if (fileContents.length != 0)
         {
-            // Get filename
-            userInput = Input.string(
-                String.format(
-                    "Enter filename [%s]: ", defaultName
-                )
-            );
+            // Prompt user for saving to file
+            userInput = Input.string("Save report to file? [Y/n]: ");
 
-            if (userInput.isEmpty())
+            // If user selected yes or did not enter anything
+            if ((userInput.matches("^[yY]$")) ||
+                (userInput.isEmpty()))
             {
-                userInput = defaultName;
-            }
+                // Get filename
+                userInput = Input.string(
+                    String.format(
+                        "Enter filename [%s]: ", defaultName
+                    )
+                );
 
-            // Write file
-            FileIO.writeText(userInput, fileContents);
+                if (userInput.isEmpty())
+                {
+                    userInput = defaultName;
+                }
+
+                // Write file
+                FileIO.writeText(userInput, fileContents);
+            }
         }
     }
 

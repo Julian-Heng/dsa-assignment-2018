@@ -630,8 +630,8 @@ public class ElectionManager
         String[] visitDivision;
         boolean allLocations, enableOptimise;
 
-        DSAStack<Location> path;
-        DSAStack<Location> tempStack;
+        DSALinkedList<Location> path;
+        DSALinkedList<Location> tempStack;
 
         long timeStart, timeEnd, duration;
 
@@ -803,7 +803,7 @@ public class ElectionManager
                 count++;
             }
 
-            path = new DSAStack<Location>();
+            path = new DSALinkedList<Location>();
         }
         catch (ArrayIndexOutOfBoundsException e)
         {
@@ -813,7 +813,7 @@ public class ElectionManager
         }
 
         // Insert starting location to path
-        path.push(map.getVertexValue(visitDivision[0]));
+        path.insertLast(map.getVertexValue(visitDivision[0]));
 
         // For each division
         for (int i = 1; i < visitDivision.length; i++)
@@ -832,17 +832,17 @@ public class ElectionManager
             // Aggregate stacks
             while (! tempStack.isEmpty())
             {
-                path.push(tempStack.pop());
+                path.insertLast(tempStack.removeLast());
             }
         }
 
         // Reverse the stack
         tempStack = path;
-        path = new DSAStack<Location>();
+        path = new DSALinkedList<Location>();
 
         while (! tempStack.isEmpty())
         {
-            path.push(tempStack.pop());
+            path.insertLast(tempStack.removeLast());
         }
 
         System.out.print("\n");
@@ -1035,7 +1035,7 @@ public class ElectionManager
      **/
 
     public static void printItinerary(
-        DSAStack<Location> path,
+        DSALinkedList<Location> path,
         DSAGraph<Location,Trip> map,
         String partyFilter,
         double marginLimit,
@@ -1064,7 +1064,7 @@ public class ElectionManager
         fileContents = new String[path.getCount() - 1];
         totalTime = numLocations * (3 * 60 * 60);
 
-        from = path.pop();
+        from = path.removeLast();
         count = 0;
 
         // Get information from the starting point before the loop started
@@ -1077,7 +1077,7 @@ public class ElectionManager
         while (! path.isEmpty() && count < fileContents.length)
         {
             // Get the next location
-            to = path.pop();
+            to = path.removeLast();
             tripInfo = map.getEdgeValue(
                 from.getDivision(),
                 to.getDivision()

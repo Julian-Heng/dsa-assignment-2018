@@ -527,10 +527,10 @@ public class DSAGraph<E,F>
      *    - label1 : A String for the label for the source vertex
      *    - label2 : A String for the label for the target vertex
      *  Exports:
-     *    - DSAStack which represents the path
+     *    - DSALinkedList which represents the path
      **/
 
-    public DSAStack<E> dijkstra(String label1, String label2)
+    public DSALinkedList<E> dijkstra(String label1, String label2)
     {
         DSAGraphVertex<E,F> vertex1 = null;
         DSAGraphVertex<E,F> vertex2 = null;
@@ -548,10 +548,10 @@ public class DSAGraph<E,F>
      *    - source : The source vertex
      *    - terget : The target vertex
      *  Exports:
-     *    - DSAStack which represents the path
+     *    - DSALinkedList which represents the path
      **/
 
-    public DSAStack<E> dijkstra(
+    public DSALinkedList<E> dijkstra(
         DSAGraphVertex<E,F> source,
         DSAGraphVertex<E,F> target)
     {
@@ -560,7 +560,7 @@ public class DSAGraph<E,F>
         Iterator<DSAGraphVertex<E,F>> iter = null;
         Iterator<DSAGraphVertex<E,F>> iterInVertex = null;
 
-        DSAStack<E> path;
+        DSALinkedList<E> path;
         DSAMinHeap queue;
         boolean reached = false;
         int alt;
@@ -569,7 +569,7 @@ public class DSAGraph<E,F>
 
         iter = vertices.iterator();
         queue = new DSAMinHeap((int)Math.pow(vertexCount, 2));
-        path = new DSAStack<E>();
+        path = new DSALinkedList<E>();
 
         // Set default values to all vertices and edges and add to the queue
         while (iter.hasNext())
@@ -620,13 +620,13 @@ public class DSAGraph<E,F>
             }
         }
 
-        // Starting at the target, push previous vertex
+        // Starting at the target, insertLast previous vertex
         // to the stack until we've reached the source
         tempVertex = target;
 
         while (tempVertex != source)
         {
-            path.push(tempVertex.getValue());
+            path.insertLast(tempVertex.getValue());
             tempVertex = tempVertex.getPrevVertex();
         }
 

@@ -50,7 +50,6 @@ public class Commons
         );
 
         return out;
-        //return String.format("%dd %dh %dm %ds", days, hours, mins, secs);
     }
 
     /**
@@ -220,6 +219,21 @@ public class Commons
                 FileIO.writeText(userInput, fileContents);
             }
         }
+    }
+
+    /**
+     *  Name:     header
+     *  Purpose:  Print a message surrounded with lines
+     *  Imports:
+     *    - msg : The message to print
+     *  Exports:
+     *    - none
+     **/
+
+    public static void header(String msg)
+    {
+        String line = generateLine(msg.length());
+        System.out.printf("%s\n%s\n%s\n", line, msg, line);
     }
 
     /**

@@ -1,2 +1,6 @@
 *.class
 *.swp
+docs/*.aux
+docs/*.pdf
+docs/*.toc
+docs/*.log

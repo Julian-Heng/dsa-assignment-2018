@@ -53,4 +53,4 @@ run_test: test
 	done
 
 clean:
-	@$(RM) -v *.class
+	@$(RM) -v *.class *.csv

@@ -37,6 +37,12 @@ public class Driver
 
     public static void main(String[] args)
     {
+        DSALinkedList<String> distFiles, nomineesFiles, prefFiles;
+
+        DSAGraph<Location,Trip> locations;
+        DSALinkedList<Nominee> nomineesList;
+        DSALinkedList<HousePreference> preferenceList;
+
         // Check if there's enough arguments
         if (args.length < 3 ||
             args[0].equals("--help") ||
@@ -50,35 +56,200 @@ public class Driver
             // before the menu starts
             try
             {
-                menu(args);
+                distFiles = new DSALinkedList<String>();
+                nomineesFiles = new DSALinkedList<String>();
+                prefFiles = new DSALinkedList<String>();
+
+                locations = new DSAGraph<Location,Trip>();
+                nomineesList = new DSALinkedList<Nominee>();
+                preferenceList = new DSALinkedList<HousePreference>();
+
+                parseArgs(args, distFiles, nomineesFiles, prefFiles);
+
+                prepareLists(
+                    distFiles, nomineesFiles, prefFiles,
+                    locations, nomineesList, preferenceList
+                );
+
+                menu(locations, nomineesList, preferenceList);
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 System.out.println("Exiting...");
             }
         }
     }
 
     /**
-     *  Name:     menu
-     *  Purpose:  The interface the user will be interacting with
+     *  Name:     parseArgs
+     *  Purpose:  Setting the correct filename to the appropriate list
      *  Imports:
-     *    - files : A string array representing the filenames
+     *    - args          : The arguments passed to the program
+     *    - distFiles     : A list for the filenames representing distances
+     *    - nomineesFiles : A list for the filenames representing nominees
+     *    - prefFiels     : A list for the filenames representing preferences
      *  Exports:
      *    - none
      **/
 
-    public static void menu(String[] files)
+    public static void parseArgs(
+        String[] args,
+        DSALinkedList<String> distFiles,
+        DSALinkedList<String> nomineesFiles,
+        DSALinkedList<String> prefFiles)
+    {
+        int i = 0;
+        while (i < args.length)
+        {
+            if (args[i].equals("-d") ||
+                args[i].equals("--distance"))
+            {
+                distFiles.insertLast(args[++i]);
+            }
+            else if (args[i].equals("-c") ||
+                     args[i].equals("--candidate"))
+            {
+                nomineesFiles.insertLast(args[++i]);
+            }
+            else
+            {
+                prefFiles.insertLast(args[i]);
+            }
+
+            i++;
+        }
+    }
+
+    /**
+     *  Name:     prepareLists
+     *  Purpose:  Parsing files and processing them
+     *  Imports:
+     *    - distFiles      : A list for the filenames representing distances
+     *    - nomineesFiles  : A list for the filenames representing nominees
+     *    - prefFiels      : A list for the filenames representing preferences
+     *    - locations      : A graph represeting all the locations
+     *    - nomineesList   : A list representing all the nominees objects
+     *    - preferenceList : A list representing all the preference objects
+     *  Exports:
+     *    - none
+     **/
+
+    public static void prepareLists(
+        DSALinkedList<String> distFiles,
+        DSALinkedList<String> nomineesFiles,
+        DSALinkedList<String> prefFiles,
+        DSAGraph<Location,Trip> locations,
+        DSALinkedList<Nominee> nomineesList,
+        DSALinkedList<HousePreference> preferenceList)
+    {
+        DSALinkedList<Nominee> tempNomineesList;
+        DSALinkedList<HousePreference> tempPrefList;
+        Iterator<Nominee> iterNominee;
+        Iterator<HousePreference> iterPref;
+        Iterator<String> iterFile;
+
+        long timeStart, timeEnd, duration;
+        long timeStartFunc, timeEndFunc, durationFunc;
+
+        timeStart = System.nanoTime();
+        timeStartFunc = System.nanoTime();
+
+        // Parsing files
+        iterFile = distFiles.iterator();
+        while (iterFile.hasNext())
+        {
+            locations = ElectionManagerInit.processDistances(
+                            iterFile.next(),
+                            locations
+                        );
+        }
+
+        timeEndFunc = System.nanoTime();
+        durationFunc = timeEndFunc - timeStartFunc;
+        Commons.header(
+            String.format(
+                "Processing distances took %sms",
+                Commons.toMiliseconds(durationFunc)
+            )
+        );
+
+        timeStartFunc = System.nanoTime();
+        iterFile = nomineesFiles.iterator();
+        while (iterFile.hasNext())
+        {
+            tempNomineesList = ElectionManagerInit.processNominees(
+                                    iterFile.next()
+                                );
+
+            iterNominee = tempNomineesList.iterator();
+            while (iterNominee.hasNext())
+            {
+                nomineesList.insertLast(iterNominee.next());
+            }
+        }
+
+        timeEndFunc = System.nanoTime();
+        durationFunc = timeEndFunc - timeStartFunc;
+        Commons.header(
+            String.format(
+                "Processing nominees took %sms",
+                Commons.toMiliseconds(durationFunc)
+            )
+        );
+
+        timeStartFunc = System.nanoTime();
+        iterFile = prefFiles.iterator();
+        while (iterFile.hasNext())
+        {
+            tempPrefList = ElectionManagerInit.processPreference(
+                                iterFile.next(), nomineesList
+                            );
+
+            iterPref = tempPrefList.iterator();
+            while (iterPref.hasNext())
+            {
+                preferenceList.insertLast(iterPref.next());
+            }
+        }
+
+        timeEndFunc = System.nanoTime();
+        durationFunc = timeEndFunc - timeStartFunc;
+        Commons.header(
+            String.format(
+                "Processing preferences took %sms",
+                Commons.toMiliseconds(durationFunc)
+            )
+        );
+
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+        Commons.header(
+            String.format(
+                "Processing all files took %sms",
+                Commons.toMiliseconds(duration)
+            )
+        );
+    }
+
+    /**
+     *  Name:     menu
+     *  Purpose:  The interface the user will be interacting with
+     *  Imports:
+     *    - locations      : A graph represeting all the locations
+     *    - nomineesList   : A list representing all the nominees objects
+     *    - preferenceList : A list representing all the preference objects
+     *  Exports:
+     *    - none
+     **/
+
+    public static void menu(
+        DSAGraph<Location,Trip> locations,
+        DSALinkedList<Nominee> nomineesList,
+        DSALinkedList<HousePreference> preferenceList)
     {
         Menu menu;
         boolean exit;
-        DSAGraph<Location,Trip> locations;
-        DSALinkedList<Nominee> nomineesList;
-        DSALinkedList<HousePreference> preferenceList;
-        DSALinkedList<HousePreference> tempPrefList;
-        Iterator<HousePreference> iter;
-        long timeStart, timeEnd, duration;
 
         // Making menu
         menu = new Menu(6);
@@ -89,32 +260,6 @@ public class Driver
         menu.addOption("    4. Itinerary by Margin");
         menu.addOption("    5. Exit");
         exit = false;
-
-        // Parsing files
-        locations = ElectionManagerInit.processDistances(files[0]);
-        nomineesList = ElectionManagerInit.processNominees(files[1]);
-        preferenceList = new DSALinkedList<HousePreference>();
-
-        timeStart = System.nanoTime();
-
-        for (int i = 2; i < files.length; i++)
-        {
-            tempPrefList = ElectionManagerInit.processPreference(
-                                files[i], nomineesList);
-
-            iter = tempPrefList.iterator();
-            while (iter.hasNext())
-            {
-                preferenceList.insertLast(iter.next());
-            }
-        }
-
-        timeEnd = System.nanoTime();
-        duration = timeEnd - timeStart;
-        System.out.printf(
-            "Processing preference file took %sms\n",
-            Commons.toMiliseconds(duration)
-        );
 
         // Main program loop
         while (! exit)
@@ -165,8 +310,8 @@ public class Driver
     public static void printHelp()
     {
         String msg[] = {
-            "Usage: java Driver [Distance file] [House candidates file]" +
-            "[House preference file]",
+            "Usage: java Driver -d [Distance file] -c [House candidates file]" +
+            " [House preference file]",
             "",
             "Example distance file:",
             "    from_State,from_Division,from_Latitude,from_Longitude," +

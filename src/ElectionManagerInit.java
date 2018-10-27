@@ -31,10 +31,10 @@ public class ElectionManagerInit
      **/
 
     public static DSAGraph<Location,Trip> processDistances(
-        String file)
+        String file,
+        DSAGraph<Location,Trip> locationGraph)
     {
         DSALinkedList<String> list;
-        DSAGraph<Location,Trip> locationGraph;
         Iterator<String> iter;
         String line;
         Location startLocation, endLocation;
@@ -59,8 +59,6 @@ public class ElectionManagerInit
         list = FileIO.readText(file);
         iter = list.iterator();
 
-        locationGraph = new DSAGraph<Location,Trip>();
-
         // Loop through the file
         while (iter.hasNext())
         {
@@ -74,16 +72,16 @@ public class ElectionManagerInit
                 spinner[count++ % spinner.length]
             );
 
-            // Split csv and create starting and ending locations
-            split = line.split(SPLIT_REGEX);
-
-            startLocation = new Location(split[0], split[1],
-                                         split[2], split[3]);
-            endLocation = new Location(split[4], split[5],
-                                       split[6], split[7]);
-
             try
             {
+                // Split csv and create starting and ending locations
+                split = line.split(SPLIT_REGEX);
+
+                startLocation = new Location(split[0], split[1],
+                                             split[2], split[3]);
+                endLocation = new Location(split[4], split[5],
+                                           split[6], split[7]);
+
                 // Getting distance
                 if (split[8].equals("NONE"))
                 {
@@ -139,8 +137,8 @@ public class ElectionManagerInit
             catch (NumberFormatException e)
             {
                 // Catch any invalid string integers
-                throw new IllegalArgumentException(
-                    "Invalid Distance File: " + e.getMessage()
+                System.out.println(
+                    "\nInvalid Distance File: " + line + ". Ignoring..."
                 );
             }
             catch (Exception e)

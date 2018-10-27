@@ -50,5 +50,8 @@ run_test: test
 			java $${i%.*}; \
 	done
 
+docs:
+	@bash -c '{ cd ../docs || exit; } && pdflatex AssignmentDoc.tex'
+
 clean:
-	@$(RM) -v *.class *.csv
+	@$(RM) -v *.class *.csv /docs/AssignmentDoc.pdf

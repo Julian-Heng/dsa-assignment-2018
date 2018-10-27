@@ -135,9 +135,9 @@ public class testDSALinkedList
 
         try
         {
-            if (list.removeLast().intValue() != 1 ||
+            if (list.removeLast().intValue() != 3 ||
                 list.removeLast().intValue() != 2 ||
-                list.removeLast().intValue() != 3)
+                list.removeLast().intValue() != 1)
             {
                 throw new IllegalArgumentException(
                     "Invalid value"

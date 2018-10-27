@@ -45,9 +45,9 @@
 \setlength\columnseprule{0.4pt}
 \setlength{\parindent}{0pt}
 
-\title{\huge \textbf{DSA Assignment\\Election Program}}
+\title{\huge \textbf{DSA Assignment\\Election Manager Program}}
 \author{Julian Heng (19473701)}
-\date{October, 2018}
+\date{October 29, 2018}
 
 \begin{document}
 
@@ -60,5 +60,456 @@
 \fancyhf[HL]{\footnotesize{DSA Assignment - Election Program}}
 \fancyhf[FC]{\thepage}
 \fancyhf[FL]{\footnotesize{Julian Heng (19473701)}}
+
+\section{UML Diagram}
+\fancyhf[HR]{\footnotesize{UML Diagram}}
+
+% Add uml
+\newpage
+
+\section{Order of Operations}
+\fancyhf[HR]{\footnotesize{Order of Operations}}
+
+The purpose of this section is to describe how the Election Manager is
+initialised as so that it can give an idea on how the entire program works.
+
+\subsection{Usage}
+The program is expected to be run as follows:
+
+\code{java Driver -d [distance\_file.csv]
+-c [candidates\_file.csv] [preference\_file.csv]}
+
+It expects no less than 3 arguments.
+
+\subsection{Initialisation}
+Distance and candidates file are to be specifically set, however the
+preference file can be inputted without being specified.
+
+After parsing the command line arguments and seperated the filenames
+into their respective list, the program will start parsing them, starting
+with locations, then candidates, and finally the preferences.
+
+The functions called in order are:
+\begin{enumerate}
+    \item \code{processDistances()}
+    \item \code{processNominees()}
+    \item \code{processPreference()}
+\end{enumerate}
+
+After all files have been processed, they will be contained in linked list,
+ready to be passed to the menu options for manipulation by the user.
+
+\subsection{Menu}
+
+\begin{lstlisting}
+Please select an option:
+    1. List Nominees
+    2. Nominee Search
+    3. List by Margin
+    4. Itinerary by Margin
+    5. Exit
+\end{lstlisting}
+
+\subsection{Timing}
+
+Each function in the program measures in miliseconds how long it takes
+for it to execute. It starts timing after the last user interation and
+stops before any printing function occurs. In the initialisation stage,
+each file to be parsed will be timed.
+
+\newpage
+
+\section{Classes and Objects}
+\fancyhf[HR]{\footnotesize{Classes and Objects}}
+
+The purpose of this section is to document the different classes that are used
+in the Election Manager program. Classes with the filename starting with
+\code{DSA} are abstract data types while other classes are used for storing
+relevant information for the main program.
+
+\subsection{Summary}
+
+List of Objects used:
+\begin{itemize}[label={--}]
+    \item Menu
+    \item HousePreference
+    \item Location
+    \item Nominee
+    \item Trip
+    \item VoteStats
+\end{itemize}
+
+List of Classes used:
+\begin{itemize}[label={--}]
+    \item Commons
+    \item Driver
+    \item ElectionManagerInit
+    \item ElectionManager
+    \item FileIO
+    \item Input
+\end{itemize}
+
+List of Abstract Data Types used:
+\begin{itemize}[label={--}]
+    \item DSAGraph
+    \item DSAHashTable
+    \item DSALinkedList
+    \item DSAMaxHeap
+    \item DSAMinHeap
+    \item DSAMergeSort
+\end{itemize}
+\newpage
+
+\subsection{Objects}
+
+These are classes that create an object. In other words, they contain a
+constructor and holds values.
+
+\subsubsection{Menu}
+
+A menu object used to display menu. Created with a given size, then
+options are given to it. Uses only arrays as we do not expect to add
+any new options to the menu as they are already predetermined.
+
+\subsubsection{HousePreference}
+
+HousePreference class is used to store relevant information from the
+preference file. A HousePreference object is identified by the name
+of the division. In addition to storing the division name and ID,
+a linked list is also used to store nominees involved in those divisions
+as well as the total number of votes, including informal votes. In the list
+of nominees, we do not copy them from the list of nominees in the main program
+as we will be modifying them as we are parsing the preference file.
+
+A linked list is used as the number of nominees is not fixed, thus a linked
+list is used for conveniently adding more nominees that are part of a division.
+In addition, we are not expecting to access a particlar nominee in the list,
+only iterating through them.
+
+\subsubsection{Location}
+
+In it's simpliest form, just a object that records details about a location.
+This includes storing state, division, latitude and longitude. Mainly used
+as the value stored in the vertex of a graph. It's division is the identifier
+of the location class, thus the division is used as the label of the vertex.
+Used in conjunction with the Trip class in the graph. Does not contain any
+abstract data types.
+
+\subsubsection{Nominee}
+
+Contains information about a nominee or candidate. Other than storing the
+state, division, party and name, it also keeps count of the amount of votes
+for that one nominee. Information, that is not given in the candidates file,
+but in the preference file. In relation to the main program, multiple nominees
+are expected to be made when using the program, thus the nominee class is
+expected to be stored in a linked list in the main program. Does not contain
+any abstract data types.
+
+\subsubsection{Trip}
+
+Just like the Location class, it stores information involving the means of
+travelling from one Location class to another Location class. It stores
+the type of transport, the distance in meters and the duration in seconds.
+Used in conjunction with the Location class in the graph, as the value
+stored in the edges of the graph. It's label would be the the two locations
+connected to the edge and the edge weight would be the duration of the trip.
+Does not contain any abstract data types.
+
+\subsubsection{VoteStats}
+
+In order to simplify calculating the margin and creating an itinerary, a
+VoteStats class is used to store the voting results of each division for
+a specific party. Mutator methods involves calculating the percent of votes
+for one party as well as updating the margin. Does not contain any abstract
+data types.
+
+\subsubsection{Miscellaneous Objects Design}
+
+All objects, excluding the Menu class, have setters and getters. Some of them
+have a \code{toString()} method, only if we are expecting to save the contents
+of the object to a text file.
+
+Because we are parsing information from a text file, we will also be
+constructing these objects with string inputs, as to not complicate
+the main program. Thus converting from String to other data types are passed
+to the classes to handle.
+
+\newpage
+
+\subsection{Classes}
+
+These are classes that do not create an object, in other words, they provide
+functions.
+
+\subsubsection{Commons}
+
+The purpose of the Commons class is to provide common or generic utilities
+and functions for use to the other classes. Hence the name Commons.
+
+\paragraph{convertTimeToString} \hspace{0pt}
+
+Converts from seconds to a more reasonably distinguisable time format.
+Does not use any abstract data types.
+
+\paragraph{printCsvTable} \hspace{0pt}
+
+Converts a csv file stored in an \textit{array} to a neatly formatted table.
+Takes in 2 \textit{arrays} as imports, one for the contents and the other for
+the headers. We use an array instead of a linked list because we expect the
+csv \textit{array} to be stored as a file, which takes in an \textit{array}.
+Hence, this function will accept them as an \textit{array} and does not
+use any abstract data type.
+
+\paragraph{calcMaxStrignArrLength} \hspace{0pt}
+
+Finds the longest string in an array of strings. Only uses \textit{arrays}
+as \code{printCsvTable()} uses arrays. Does not use any abstract data type.
+
+\paragraph{saveCsvToFile} \hspace{0pt}
+
+Saves a csv file stored in an \textit{array} to a text file. Takes in 2
+imports, the contents of the file and the default filename if a filename
+is not provided. Does not use any abstract data type.
+
+\paragraph{header} \hspace{0pt}
+
+Print out a header for a given message. Does not use any abstract data type.
+
+\paragraph{formatPadding} \hspace{0pt}
+
+A wrapper function to simply return back a whitespaces of a size dictated by
+the padding variable. An alternative function takes in an additional
+import to change the whitespace to a different character. Does not use any
+abstract data type.
+
+\paragraph{generateLine} \hspace{0pt}
+
+Very similar to \code{formatPadding()} as it uses similar code, but instead
+takes in a size instead and returns just a line. Does not use any abstract
+data type.
+
+\paragraph{compareIntString} \hspace{0pt}
+
+A wrapper function to compare a string representation of an integer with
+an integer. This is used because when parsing a file, it would be ``simpler''
+to just call this function instead of parsing the string to an integer.
+Does not contain any abstract data type.
+
+\paragraph{toMiliseconds} \hspace{0pt}
+
+Convert nanoseconds to miliseconds to 3 decimal places. Does not contain
+any abstract data type.
+
+\newpage
+
+\subsubsection{Driver}
+
+The purpose of the Driver class is to ``drive'' the Election Manager program,
+handling the initialisation and the user actions of the program.
+
+\paragraph{main} \hspace{0pt}
+
+Check if number of arguments passed are valid, then parse input files and
+run menu.
+
+\paragraph{parseArgs} \hspace{0pt}
+
+Sort out which files belong to which objects. Because there are command line
+switches for specifying which file are distances, nominees or preferences,
+we need some way to process them individually. We used a linked list to
+store the filename because we do not need to access a particular filename
+and we will need to process through all of the items in the list anyways.
+Thus, a linked list is better fit for this task.
+
+\paragraph{prepareLists} \hspace{0pt}
+
+For each filename in the distance, nominee and house preference file, we
+will need to process and parse those files into 3 objects; a \textit{graph}
+representing the map, a \textit{linked list} for the nominees and a
+\textit{linked list} for the house preferences. We will provide rationale
+for using \textit{linked list} when they are being used.
+
+\paragraph{menu} \hspace{0pt}
+
+Provide a user interface for the user to interact with. See above for
+an example of the menu.
+
+\newpage
+
+\subsubsection{ElectionManagerInit}
+
+The purpose of the ElectionManagerInit is to both declutter the Driver
+class and to initialise objects for the main program to use.
+
+\paragraph{processDistance} \hspace{0pt}
+
+For a given filename, read and process each entry in the file
+and create vertices and edges to be added to a \textit{graph} to make a map.
+Every entry in a distance file is expected to be able to create 2
+Location class and create an edge in between them. We can freely add
+an already existing vertex in the \textit{graph} because the \textit{graph}
+will handle duplicate entries in that it will ignore it. We use a
+\textit{graph} because there are no other abstract data types that are
+approriate for this task.
+
+\paragraph{processNominee} \hspace{0pt}
+
+For a given filename, read and process each entry in the file and create
+nominee objects to be added to a \textit{linked list}. We can pass the
+entire csv line to the constructor of the Nominee class because, unlike
+the house preference class, each line can only represent one single nominee
+class as they do not rely on information from other lines in the nominees
+file.
+
+\paragraph{processPreference \\
+           sortByDivisionId \\
+           getNomineeFromState \\
+           getNomineeFromDivisionId \\
+           getNomineeFromCandidateId \\
+           getPreferenceFromDivisionId
+} \hspace{0pt}
+
+Out of all of the preprocessing and initialisation, the house preference
+is perhaps one of the most involved.
+
+In order to successfully make a house preference object, we need to:
+\begin{enumerate}
+    \item Read the file to a \textit{linked list}
+    \item Get unique values for the division
+    \item Get the vote statistics for each division
+    \item Set the nominees list within the preference object by referencing
+          the nominees list created before this
+    \item Add the created preference object to the preference
+          \textit{linked list} and repeat until file is completely processed
+\end{enumerate}
+
+If for any reason \code{processNominee()} failed, then creating a valid
+house preference \textit{linked list} will most likely fail as well.
+
+For getting unique values for the division ID, we use a \textit{hash table}.
+\textit{Hash tables} are perfect for getting unique values as hash tables
+store the key as a hash, and will not allow inserting identical keys into
+the \textit{hash table}.
+
+In order to increase the speed of making the house preference object, we
+have applied a sort to the input file according to division ID so that the
+relevant ID for each preference object are grouped together. This way, we can
+skip entries that do not contain the the division ID and stop reading
+the file after the division ID does not match.
+
+The sort used to make this possible is the \textit{heap sort}. We used a heap
+sort because we don't require to convert the current \textit{linked list}
+structure to an array as a \textit{heap} already inserts new objects into
+an array, thus only needing to convert back to a linked list after the sort,
+as well as the only sort available that we have that could sort objects
+according to a key. We do not have to worry about \textit{heap sort} being
+unstable because the order does not matter, all the files will get processed
+all the same. The same rationale is used later when listing nominees.
+
+\newpage
+
+\subsubsection{ElectionManager}
+
+The ElectionManager Class is the core of the ElectionManager program. This
+class contains methods that will search and process information from the
+objects created in \code{ElectionManagerInit}.
+
+\paragraph{listNominees \\
+           processFilterOptions \\
+           getFilter \\
+           searchNominee1 \\
+           generateSortLine
+} \hspace{0pt}
+
+When the user selects this option (1), the program will prompt the user
+to apply a filter or sort the nominees in a choice of 4 attributes. If the
+user did not input anything, then it will just display all nominees in
+whatever order they were aranged before.
+
+For the filter, we have \code{getFilter()} to return a regex that will match
+everything if user did not input anything. Otherwise, it would have return what
+the user have entered.
+
+For the order, we used a \textit{heap} to sort our nominee classes. The
+rationale for using \textit{heap sort} is that it can sort objects as well
+as according to a key. In terms of sorting by the order the user inputed, this
+can be solved by generating a sort line. By calling \code{generateSortLine()},
+it would return a string that contains the attribute of the nominee in the
+order the user selected. This string would then become the key when inserting
+to the heap, thus allowing \textit{heap sort} to work.
+
+The reason we put the nominee classes to a linked list is that we have
+to process and iterate through the entire list anyways. Thus defeating the
+advantage of the array of accessing any element instantly. In addition to
+the linked list having no ``size'' limit, a linked list is more appropriate
+for storing nominee classes. However, it is very important to note that
+when saving the file or printing the csv table, it is a string array. This
+is due to how we create the itinerary which will be explained in that relevant
+section.
+
+Because we have regexes that are capable of matching everything if the user
+did not input anything, we can simply use the same variable as the search
+term, passing it into the \code{matches()} method in the string class.
+\code{searchNominee1()} specifically searches the state, party name or
+abbreviation, and the division name or ID.
+
+\pagebreak
+\paragraph{searchNominees \\
+           ProcessFilterOptions \\
+           getFitler \\
+           searchNominee2
+} \hspace{0pt}
+
+When the user selects this option (2), the program will prompt the user
+to apply a filter and the search term, it being the first few characters
+of the nominee's surname. This is essentially a subset of what
+\code{listNominees()} accomplishes. As such, the same methods used in
+\code{listNominees()} are also applied here. \code{searchNominee2()}
+specifically searches the start of the nominee's surname, the state, and the
+party name or abbreviation.
+
+\paragraph{listPartyMargin \\
+           getPartyFilter \\
+           getMarginLimit \\
+           calcVotes
+} \hspace{0pt}
+
+When the user selects this option (3), the program will prompt the user
+for a party name and the margin limit. After that has been entered, it will
+list divisions of which that particular party have a margin that is within
+plus or minus the margin limit.
+
+If the user did not enter any party name, then it will exit out to the menu
+immediately. After both party filter and margin limit are entered, it will
+call \code{calcVotes()} to get the voting statistics for one particular party
+in the form of a list. Then, it will iterate through the list and append
+any divisions to a list whose margin is less than the user set limit. If
+the list is empty, it indicates that there are no results for the given
+margin limit, thus prompting the user that the filters and/or limit is
+invalid. Otherwise, print and save table to file.
+
+We used a linked list when getting search result in the same rationale as
+listing nominees in that we do not know how many matches there are. So instead
+of counting matches and creating an array of that size, then adding it to
+the array, causing the algorithm to iterate through the list of voting
+statistics twice, it would be much more easier to add to the end of a list
+instead.
+
+\paragraph{createItinerary \\
+           getPartyFilter \\
+           getMarginLimit \\
+           calcVotes \\
+           printItinerary
+} \hspace{0pt}
+
+
+
+\subsubsection{FileIO}
+
+
+
+\subsubsection{Input}
+
+
 
 \end{document}

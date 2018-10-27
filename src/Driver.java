@@ -16,16 +16,6 @@ import java.util.*;
 
 public class Driver
 {
-    // Regex String constants
-    // Obtained from:
-    //  https://stackoverflow.com/questions/6542996/how-to-split-csv-whose-columns-may-contain
-    //  https://stackoverflow.com/a/49670696
-    public static final
-        String SPLIT_REGEX = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
-
-    public static final
-        String WHITESPACE_REGEX = "\\s+";
-
     /**
      *  Name:     main
      *  Purpose:  The starting point of the program
@@ -127,7 +117,7 @@ public class Driver
      *  Imports:
      *    - distFiles      : A list for the filenames representing distances
      *    - nomineesFiles  : A list for the filenames representing nominees
-     *    - prefFiels      : A list for the filenames representing preferences
+     *    - prefFiles      : A list for the filenames representing preferences
      *    - locations      : A graph represeting all the locations
      *    - nomineesList   : A list representing all the nominees objects
      *    - preferenceList : A list representing all the preference objects

@@ -5,7 +5,6 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = DSALinkedList.java \
-		  DSAStack.java \
 		  DSAHashTable.java \
 		  DSAMaxHeap.java \
 		  DSAMinHeap.java \
@@ -31,7 +30,6 @@ TEST_CLASSES = testCommons.java \
 			   testDSAMaxHeap.java \
 			   testDSAMergeSort.java \
 			   testDSAMinHeap.java \
-			   testDSAStack.java \
 			   testHarnessCommons.java \
 			   testHousePreference.java \
 			   testLocation.java \

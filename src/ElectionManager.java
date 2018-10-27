@@ -631,7 +631,8 @@ public class ElectionManager
         boolean allLocations, enableOptimise;
 
         DSALinkedList<Location> path;
-        DSALinkedList<Location> tempStack;
+        DSALinkedList<Location> tempList;
+        Iterator<Location> iterLoc;
 
         long timeStart, timeEnd, duration;
 
@@ -824,25 +825,17 @@ public class ElectionManager
             // Could be better optimised as the scope is only
             // two locations at a time, not the entire locations
             // selected
-            tempStack = map.dijkstra(
+            tempList = map.dijkstra(
                 visitDivision[i - 1],
                 visitDivision[i]
             );
 
             // Aggregate stacks
-            while (! tempStack.isEmpty())
+            iterLoc = tempList.iterator();
+            while (iterLoc.hasNext())
             {
-                path.insertLast(tempStack.removeLast());
+                path.insertLast(iterLoc.next());
             }
-        }
-
-        // Reverse the stack
-        tempStack = path;
-        path = new DSALinkedList<Location>();
-
-        while (! tempStack.isEmpty())
-        {
-            path.insertLast(tempStack.removeLast());
         }
 
         System.out.print("\n");
@@ -1061,10 +1054,12 @@ public class ElectionManager
         Location from, to;
         Trip tripInfo;
 
+        Iterator<Location> iter = path.iterator();
+
         fileContents = new String[path.getCount() - 1];
         totalTime = numLocations * (3 * 60 * 60);
 
-        from = path.removeLast();
+        from = path.removeFirst();
         count = 0;
 
         // Get information from the starting point before the loop started
@@ -1077,7 +1072,7 @@ public class ElectionManager
         while (! path.isEmpty() && count < fileContents.length)
         {
             // Get the next location
-            to = path.removeLast();
+            to = path.removeFirst();
             tripInfo = map.getEdgeValue(
                 from.getDivision(),
                 to.getDivision()

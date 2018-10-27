@@ -568,6 +568,11 @@ public class DSAGraph<E,F>
         markAllNew();
 
         iter = vertices.iterator();
+
+        // Ideally we would rather change the priority of
+        // the items in the queue, but since we did not
+        // implement that, we'll just re-add to the queue. Hence
+        // the large size
         queue = new DSAMinHeap((int)Math.pow(vertexCount, 2));
         path = new DSALinkedList<E>();
 
@@ -601,32 +606,36 @@ public class DSAGraph<E,F>
                     reached = true;
                 }
 
-                // Get distance from source
-                alt = tempVertex.getDistanceFromSource() +
-                    this.getEdgeWeight(
-                        tempVertex,
-                        vertexAdjacent
-                    );
-
-                // If distance is shorter than the recorded distance
-                // from source
-                if (alt < vertexAdjacent.getDistanceFromSource())
+                if (tempVertex != vertexAdjacent.getPrevVertex())
                 {
-                    // Set distance and the vertex to access it
-                    vertexAdjacent.setDistanceFromSource(alt);
-                    vertexAdjacent.setPrevVertex(tempVertex);
-                    queue.add(alt, vertexAdjacent);
+                    // Get distance from source
+                    alt = tempVertex.getDistanceFromSource() +
+                        this.getEdgeWeight(
+                            tempVertex,
+                            vertexAdjacent
+                        );
+
+                    // If distance is shorter than the recorded distance
+                    // from source
+                    if (alt < vertexAdjacent.getDistanceFromSource())
+                    {
+                        // Set distance and the vertex to access it
+                        vertexAdjacent.setDistanceFromSource(alt);
+                        vertexAdjacent.setPrevVertex(tempVertex);
+                        queue.add(alt, vertexAdjacent);
+                    }
                 }
             }
         }
 
-        // Starting at the target, insertLast previous vertex
-        // to the stack until we've reached the source
+        // Starting at the target, insert previous vertex
+        // to the end of the linked list until we've reached
+        // the source
         tempVertex = target;
 
         while (tempVertex != source)
         {
-            path.insertLast(tempVertex.getValue());
+            path.insertFirst(tempVertex.getValue());
             tempVertex = tempVertex.getPrevVertex();
         }
 

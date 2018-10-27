@@ -406,7 +406,7 @@ public class testDSAGraph
     public static void testDijkstra()
     {
         DSAGraph<String,Integer> graph;
-        DSAStack<String> path;
+        DSALinkedList<String> path;
 
         System.out.print("Testing dijkstra(): ");
 
@@ -442,9 +442,9 @@ public class testDSAGraph
 
             path = graph.dijkstra("a", "f");
 
-            if (! path.pop().equals("b") ||
-                ! path.pop().equals("d") ||
-                ! path.pop().equals("f"))
+            if (! path.removeFirst().equals("b") ||
+                ! path.removeFirst().equals("d") ||
+                ! path.removeFirst().equals("f"))
             {
                 throw new IllegalArgumentException(
                     "Wrong path"
@@ -453,9 +453,9 @@ public class testDSAGraph
 
             path = graph.dijkstra("f", "a");
 
-            if (! path.pop().equals("d") ||
-                ! path.pop().equals("e") ||
-                ! path.pop().equals("a"))
+            if (! path.removeFirst().equals("d") ||
+                ! path.removeFirst().equals("e") ||
+                ! path.removeFirst().equals("a"))
             {
                 throw new IllegalArgumentException(
                     "Wrong path"

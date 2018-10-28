@@ -155,6 +155,13 @@ public class Driver
                         );
         }
 
+        if (locations.isEmpty())
+        {
+            throw new IllegalArgumentException(
+                "Locations list is empty"
+            );
+        }
+
         timeEndFunc = System.nanoTime();
         durationFunc = timeEndFunc - timeStartFunc;
         Commons.header(
@@ -179,6 +186,13 @@ public class Driver
             }
         }
 
+        if (nomineesList.isEmpty())
+        {
+            throw new IllegalArgumentException(
+                "Nominees list is empty"
+            );
+        }
+
         timeEndFunc = System.nanoTime();
         durationFunc = timeEndFunc - timeStartFunc;
         Commons.header(
@@ -201,6 +215,13 @@ public class Driver
             {
                 preferenceList.insertLast(iterPref.next());
             }
+        }
+
+        if (preferenceList.isEmpty())
+        {
+            throw new IllegalArgumentException(
+                "Preference list is empty"
+            );
         }
 
         timeEndFunc = System.nanoTime();

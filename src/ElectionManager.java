@@ -173,7 +173,7 @@ public class ElectionManager
                 "\n%d/%d matches\nTook %sms\n\n",
                 searchResult.getCount(),
                 nomineeList.getCount(),
-                Commons.toMiliseconds(duration)
+                Commons.toMilliseconds(duration)
         );
 
         Commons.saveCsvToFile(fileContents, "nominees_list.csv");
@@ -289,7 +289,7 @@ public class ElectionManager
             "\n%d/%d matches\nTook %sms\n\n",
             searchResult.getCount(),
             nomineeList.getCount(),
-            Commons.toMiliseconds(duration)
+            Commons.toMilliseconds(duration)
         );
 
         Commons.saveCsvToFile(fileContents, "nominees_search.csv");
@@ -784,7 +784,7 @@ public class ElectionManager
         Commons.printCsvTable(fileContents, headerFile);
 
         System.out.printf("\n%d/%d matches\n", count, total);
-        System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
+        System.out.printf("Took %sms\n\n", Commons.toMilliseconds(duration));
 
         return fileContents;
     }
@@ -1060,7 +1060,7 @@ public class ElectionManager
             (double)totalTime / (60 * 60)
         );
 
-        System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
+        System.out.printf("Took %sms\n\n", Commons.toMilliseconds(duration));
 
         Commons.saveCsvToFile(
             fileContents,

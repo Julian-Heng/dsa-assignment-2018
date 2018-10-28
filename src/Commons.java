@@ -296,15 +296,15 @@ public class Commons
     }
 
     /**
-     *  Name:     toMiliseconds
-     *  Purpose:  Convert nanoseconds to miliseconds
+     *  Name:     toMilliseconds
+     *  Purpose:  Convert nanoseconds to milliseconds
      *  Imports:
      *    - nano : A long for the amount of nanoseconds
      *  Exports:
      *    - The formatted string
      **/
 
-    public static String toMiliseconds(long nano)
+    public static String toMilliseconds(long nano)
     {
         return String.format("%1.3f", (double)nano / 1000000);
     }

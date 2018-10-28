@@ -34,7 +34,7 @@ public class Driver
         DSALinkedList<HousePreference> preferenceList;
 
         // Check if there's enough arguments
-        if (args.length < 3 ||
+        if (args.length < 5 ||
             args[0].equals("--help") ||
             args[0].equals("-h"))
         {
@@ -167,7 +167,7 @@ public class Driver
         Commons.header(
             String.format(
                 "Processing distances took %sms",
-                Commons.toMiliseconds(durationFunc)
+                Commons.toMilliseconds(durationFunc)
             )
         );
 
@@ -198,7 +198,7 @@ public class Driver
         Commons.header(
             String.format(
                 "Processing nominees took %sms",
-                Commons.toMiliseconds(durationFunc)
+                Commons.toMilliseconds(durationFunc)
             )
         );
 
@@ -229,7 +229,7 @@ public class Driver
         Commons.header(
             String.format(
                 "Processing preferences took %sms",
-                Commons.toMiliseconds(durationFunc)
+                Commons.toMilliseconds(durationFunc)
             )
         );
 
@@ -238,7 +238,7 @@ public class Driver
         Commons.header(
             String.format(
                 "Processing all files took %sms",
-                Commons.toMiliseconds(duration)
+                Commons.toMilliseconds(duration)
             )
         );
     }

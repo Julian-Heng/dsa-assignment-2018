@@ -211,32 +211,32 @@ public class testCommons
             testHarnessCommons.failed(e.getMessage());
         }
 
-        System.out.print("Testing toMiliseconds(): ");
+        System.out.print("Testing toMilliseconds(): ");
 
         try
         {
-            if (! Commons.toMiliseconds(1000000).equals("1.000"))
+            if (! Commons.toMilliseconds(1000000).equals("1.000"))
             {
                 throw new IllegalArgumentException(
                     "Incorrect miliseconds"
                 );
             }
 
-            if (! Commons.toMiliseconds(100000).equals("0.100"))
+            if (! Commons.toMilliseconds(100000).equals("0.100"))
             {
                 throw new IllegalArgumentException(
                     "Incorrect miliseconds"
                 );
             }
 
-            if (! Commons.toMiliseconds(10000).equals("0.010"))
+            if (! Commons.toMilliseconds(10000).equals("0.010"))
             {
                 throw new IllegalArgumentException(
                     "Incorrect miliseconds"
                 );
             }
 
-            if (! Commons.toMiliseconds(1000).equals("0.001"))
+            if (! Commons.toMilliseconds(1000).equals("0.001"))
             {
                 throw new IllegalArgumentException(
                     "Incorrect miliseconds"

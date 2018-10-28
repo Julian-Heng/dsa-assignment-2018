@@ -141,11 +141,17 @@ public class ElectionManagerInit
                     "\nInvalid Distance File: " + line + ". Ignoring..."
                 );
             }
+            catch (ArrayIndexOutOfBoundsException e)
+            {
+                System.out.println(
+                    "\nInvalid Distance File: " + line + ". Ignoring..."
+                );
+            }
             catch (Exception e)
             {
                 // Catch any other exception for formatting
                 throw new IllegalArgumentException(
-                    "Error: " + e.getMessage()
+                    "Error processing Distance file: " + e.getMessage()
                 );
             }
         }
@@ -154,7 +160,7 @@ public class ElectionManagerInit
         timeEnd = System.nanoTime();
         funcDuration = timeEnd - timeStart;
 
-        System.out.printf("\u0008%sms\n", Commons.toMiliseconds(funcDuration));
+        System.out.printf("\u0008%sms\n", Commons.toMilliseconds(funcDuration));
 
         return locationGraph;
     }
@@ -230,7 +236,7 @@ public class ElectionManagerInit
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.printf("\u0008%sms\n", Commons.toMiliseconds(duration));
+        System.out.printf("\u0008%sms\n", Commons.toMilliseconds(duration));
 
         // Print invalid entries
         if (! invalidEntries.isEmpty())
@@ -420,7 +426,7 @@ public class ElectionManagerInit
         timeEnd = System.nanoTime();
         duration = timeEnd - timeStart;
 
-        System.out.printf("\u0008%sms\n", Commons.toMiliseconds(duration));
+        System.out.printf("\u0008%sms\n", Commons.toMilliseconds(duration));
 
         return preferenceList;
     }

@@ -516,6 +516,10 @@ public class DSAGraph<E,F>
 
         iter = vertices.iterator();
 
+        // Dijkstra's algorithm
+        // Sourced from:
+        //     https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Using_a_priority_queue
+
         // Ideally we would rather change the priority of
         // the items in the queue, but since we did not
         // implement that, we'll just re-add to the queue. Hence

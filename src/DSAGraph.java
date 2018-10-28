@@ -261,11 +261,14 @@ public class DSAGraph<E,F>
 
     /**
      *  Name:     addEdge
-     *  Purpose:  
+     *  Purpose:  Add an edge in between 2 vertices
      *  Imports:
-     *    - 
+     *    - label1     : Source label
+     *    - label2     : Target label to connect the edge to
+     *    - edgeWeight : The weight of the edge
+     *    - edgeValue  : A generic for the value contained in the edge
      *  Exports:
-     *    - 
+     *    - none
      **/
 
     public void addEdge(
@@ -284,7 +287,7 @@ public class DSAGraph<E,F>
 
     /**
      *  Name:     addEdge
-     *  Purpose:  Add an edge in between 2 vertecies
+     *  Purpose:  Add an edge in between 2 verticies
      *  Imports:
      *    - vertex1    : Source vertex
      *    - vertex2    : Target vertex to connect the edge to
@@ -304,6 +307,10 @@ public class DSAGraph<E,F>
         vertex2.addEdge(vertex1, edgeWeight, edgeValue);
         edgeCount++;
     }
+
+    // Getters
+    public int getVertexCount() { return vertexCount; }
+    public int getEdgeCount() { return edgeCount; }
 
     /**
      *  Name:     getVertexValue
@@ -414,34 +421,6 @@ public class DSAGraph<E,F>
     }
 
     /**
-     *  Name:     getVertexCount
-     *  Purpose:  Get the number of vertices
-     *  Imports:
-     *    - none
-     *  Exports:
-     *    - vertexCount : Integer
-     **/
-
-    public int getVertexCount()
-    {
-        return vertexCount;
-    }
-
-    /**
-     *  Name:     getEdgeCount
-     *  Purpose:  Get the number of edges
-     *  Imports:
-     *    - none
-     *  Exports:
-     *    - edgeCount : Integer
-     **/
-
-    public int getEdgeCount()
-    {
-        return edgeCount;
-    }
-
-    /**
      *  Name:     getVertex
      *  Purpose:  Get the vertex by label
      *  Imports:
@@ -491,36 +470,6 @@ public class DSAGraph<E,F>
     }
 
     /**
-     *  Name:     isAdjacent
-     *  Purpose:  Check if a vertex is adjacent to another vertex
-     *  Imports:
-     *    - vertex1 : A vertex used as source
-     *    - vertex2 : A vertex used as target
-     *  Exports:
-     *    - isAdjacent : boolean
-     **/
-
-    public boolean isAdjacent(
-        DSAGraphVertex<E,F> vertex1,
-        DSAGraphVertex<E,F> vertex2)
-    {
-        boolean isAdjacent = false;
-        DSAGraphVertex<E,F> inVertex = null;
-        Iterator<DSAGraphVertex<E,F>> iter = vertex2.getAdjacent().iterator();
-
-        while ((iter.hasNext()) && ! isAdjacent)
-        {
-            inVertex = iter.next();
-            if (vertex1 == inVertex)
-            {
-                isAdjacent = true;
-            }
-        }
-
-        return isAdjacent;
-    }
-
-    /**
      *  Name:     dijkstra
      *  Purpose:  Get the shortest path from one vertex to another
      *  Imports:
@@ -564,8 +513,6 @@ public class DSAGraph<E,F>
         DSAMinHeap queue;
         boolean reached = false;
         int alt;
-
-        markAllNew();
 
         iter = vertices.iterator();
 
@@ -640,96 +587,6 @@ public class DSAGraph<E,F>
         }
 
         return path;
-    }
-
-    /**
-     *  Name:     markAllNew
-     *  Purpose:  Mark all verticies and edges as new
-     *  Imports:
-     *    - none
-     *  Exports:
-     *    - none
-     **/
-
-    private void markAllNew()
-    {
-        DSAGraphVertex<E,F> inVertex = null;
-        DSAGraphEdge<E,F> inEdge;
-        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
-        Iterator<DSAGraphEdge<E,F>> edgeIter;
-
-        while (iter.hasNext())
-        {
-            inVertex = iter.next();
-            inVertex.clearVisited();
-            edgeIter = inVertex.getEdges().iterator();
-            while (edgeIter.hasNext())
-            {
-                inEdge = edgeIter.next();
-                inEdge.clearVisited();
-            }
-        }
-    }
-
-    /**
-     *  Name:     getSmallestKey
-     *  Purpose:  Get the smallest key in the graph
-     *  Imports:
-     *    - none
-     *  Exports:
-     *    - smallestKey : The label for the smallest key
-     **/
-
-    private String getSmallestKey()
-    {
-        DSAGraphVertex<E,F> inVertex = null;
-        Iterator<DSAGraphVertex<E,F>> iter = vertices.iterator();
-        String currentKey, smallestKey;
-
-        currentKey = "";
-        smallestKey = "";
-
-        while (iter.hasNext())
-        {
-            inVertex = iter.next();
-            currentKey = inVertex.getLabel();
-
-            if (smallestKey.equals("") ||
-                currentKey.compareTo(smallestKey) < 0)
-            {
-                smallestKey = currentKey;
-            }
-        }
-
-        return smallestKey;
-    }
-
-    /**
-     *  Name:     getNextNewAdjacent
-     *  Purpose:  Get the next adjacent vertex that is marked not visited
-     *  Imports:
-     *    - vertex : The vertex whose adjacent list will be checked
-     *  Exports:
-     *    - unvisitedVertex : The next unvisited adjacent vertex
-     **/
-
-    private DSAGraphVertex<E,F> getNextNewAdjacent(
-        DSAGraphVertex<E,F> vertex)
-    {
-        Iterator<DSAGraphVertex<E,F>> iter = vertex.getAdjacent().iterator();
-        DSAGraphVertex<E,F> inVertex = null;
-        DSAGraphVertex<E,F> unvisitedVertex = null;
-
-        while (iter.hasNext() && unvisitedVertex == null)
-        {
-            inVertex = iter.next();
-            if (! inVertex.getVisited())
-            {
-                unvisitedVertex = inVertex;
-            }
-        }
-
-        return unvisitedVertex;
     }
 
     /**

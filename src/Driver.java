@@ -155,7 +155,7 @@ public class Driver
                         );
         }
 
-        if (locations.isEmpty())
+        if (locations.getVertexCount() == 0)
         {
             throw new IllegalArgumentException(
                 "Locations list is empty"

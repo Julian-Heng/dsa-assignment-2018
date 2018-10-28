@@ -233,7 +233,7 @@ public class ElectionManagerInit
         System.out.printf("\u0008%sms\n", Commons.toMiliseconds(duration));
 
         // Print invalid entries
-        if (invalidEntries.getCount() != 0)
+        if (! invalidEntries.isEmpty())
         {
             iter = invalidEntries.iterator();
             while (iter.hasNext())

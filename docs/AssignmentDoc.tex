@@ -79,13 +79,13 @@ The program is expected to be run as follows:
 \code{java Driver -d [distance\_file.csv]
 -c [candidates\_file.csv] [preference\_file.csv]}
 
-It expects no less than 3 arguments.
+It expects no less than 5 arguments.
 
 \subsection{Initialisation}
 Distance and candidates file are to be specifically set, however the
 preference file can be inputted without being specified.
 
-After parsing the command line arguments and seperated the filenames
+After parsing the command line arguments and separate the filenames
 into their respective list, the program will start parsing them, starting
 with locations, then candidates, and finally the preferences.
 
@@ -112,8 +112,8 @@ Please select an option:
 
 \subsection{Timing}
 
-Each function in the program measures in miliseconds how long it takes
-for it to execute. It starts timing after the last user interation and
+Each function in the program measures in milliseconds how long it takes
+for it to execute. It starts timing after the last user integration and
 stops before any printing function occurs. In the initialisation stage,
 each file to be parsed will be timed.
 
@@ -168,7 +168,7 @@ constructor and holds values.
 \subsubsection{Menu}
 
 A menu object used to display menu. Created with a given size, then
-options are given to it. Uses only arrays as we do not expect to add
+options are given to it. Uses only \textit{arrays} as we do not expect to add
 any new options to the menu as they are already predetermined.
 
 \subsubsection{HousePreference}
@@ -183,12 +183,12 @@ as we will be modifying them as we are parsing the preference file.
 
 A linked list is used as the number of nominees is not fixed, thus a linked
 list is used for conveniently adding more nominees that are part of a division.
-In addition, we are not expecting to access a particlar nominee in the list,
+In addition, we are not expecting to access a particular nominee in the list,
 only iterating through them.
 
 \subsubsection{Location}
 
-In it's simpliest form, just a object that records details about a location.
+In it's simplest form, just a object that records details about a location.
 This includes storing state, division, latitude and longitude. Mainly used
 as the value stored in the vertex of a graph. It's division is the identifier
 of the location class, thus the division is used as the label of the vertex.
@@ -211,7 +211,7 @@ Just like the Location class, it stores information involving the means of
 travelling from one Location class to another Location class. It stores
 the type of transport, the distance in meters and the duration in seconds.
 Used in conjunction with the Location class in the graph, as the value
-stored in the edges of the graph. It's label would be the the two locations
+stored in the edges of the graph. It's label would be the two locations
 connected to the edge and the edge weight would be the duration of the trip.
 Does not contain any abstract data types.
 
@@ -248,22 +248,23 @@ and functions for use to the other classes. Hence the name Commons.
 
 \paragraph{convertTimeToString} \hspace{0pt}
 
-Converts from seconds to a more reasonably distinguisable time format.
+Converts from seconds to a more reasonably distinguishable time format.
 Does not use any abstract data types.
 
 \paragraph{printCsvTable} \hspace{0pt}
 
 Converts a csv file stored in an \textit{array} to a neatly formatted table.
 Takes in 2 \textit{arrays} as imports, one for the contents and the other for
-the headers. We use an array instead of a linked list because we expect the
-csv \textit{array} to be stored as a file, which takes in an \textit{array}.
-Hence, this function will accept them as an \textit{array} and does not
-use any abstract data type.
+the headers. We use an \textit{array} instead of a linked list because we
+expect the csv \textit{array} to be stored as a file, which takes in an
+\textit{array}. Hence, this function will accept them as an \textit{array}
+and does not use any abstract data type.
 
 \paragraph{calcMaxStrignArrLength} \hspace{0pt}
 
-Finds the longest string in an array of strings. Only uses \textit{arrays}
-as \code{printCsvTable()} uses arrays. Does not use any abstract data type.
+Finds the longest string in an \textit{array} of strings. Only uses
+\textit{arrays} as \code{printCsvTable()} uses \textit{arrays} . Does not use
+any abstract data type.
 
 \paragraph{saveCsvToFile} \hspace{0pt}
 
@@ -295,9 +296,9 @@ an integer. This is used because when parsing a file, it would be ``simpler''
 to just call this function instead of parsing the string to an integer.
 Does not contain any abstract data type.
 
-\paragraph{toMiliseconds} \hspace{0pt}
+\paragraph{toMilliseconds} \hspace{0pt}
 
-Convert nanoseconds to miliseconds to 3 decimal places. Does not contain
+Convert nanoseconds to milliseconds to 3 decimal places. Does not contain
 any abstract data type.
 
 \newpage
@@ -338,7 +339,7 @@ an example of the menu.
 
 \subsubsection{ElectionManagerInit}
 
-The purpose of the ElectionManagerInit is to both declutter the Driver
+The purpose of the ElectionManagerInit is to both de-clutter the Driver
 class and to initialise objects for the main program to use.
 
 \paragraph{processDistance} \hspace{0pt}
@@ -350,7 +351,11 @@ Location class and create an edge in between them. We can freely add
 an already existing vertex in the \textit{graph} because the \textit{graph}
 will handle duplicate entries in that it will ignore it. We use a
 \textit{graph} because there are no other abstract data types that are
-approriate for this task.
+appropriate for this task.
+
+We also assume that we can travel from one location to another location
+and back to the original location, making this \textit{graph} an undirected
+\textit{graph}.
 
 \paragraph{processNominee} \hspace{0pt}
 
@@ -394,17 +399,18 @@ the \textit{hash table}.
 In order to increase the speed of making the house preference object, we
 have applied a sort to the input file according to division ID so that the
 relevant ID for each preference object are grouped together. This way, we can
-skip entries that do not contain the the division ID and stop reading
-the file after the division ID does not match.
+skip entries that do not contain the division ID and stop reading the file
+after the division ID does not match.
 
 The sort used to make this possible is the \textit{heap sort}. We used a heap
 sort because we don't require to convert the current \textit{linked list}
-structure to an array as a \textit{heap} already inserts new objects into
-an array, thus only needing to convert back to a linked list after the sort,
-as well as the only sort available that we have that could sort objects
-according to a key. We do not have to worry about \textit{heap sort} being
-unstable because the order does not matter, all the files will get processed
-all the same. The same rationale is used later when listing nominees.
+structure to an \textit{array} as a \textit{heap} already inserts new objects
+into an \textit{array}, thus only needing to convert back to a linked list
+after the sort, as well as the only sort available that we have that could
+sort objects according to a key. We do not have to worry about
+\textit{heap sort} being unstable because the order does not matter, all the
+files will get processed all the same. The same rationale is used later when
+listing nominees.
 
 \newpage
 
@@ -424,11 +430,11 @@ objects created in \code{ElectionManagerInit}.
 When the user selects this option (1), the program will prompt the user
 to apply a filter or sort the nominees in a choice of 4 attributes. If the
 user did not input anything, then it will just display all nominees in
-whatever order they were aranged before.
+whatever order they were arranged before.
 
-For the filter, we have \code{getFilter()} to return a regex that will match
-everything if user did not input anything. Otherwise, it would have return what
-the user have entered.
+For the filter, we have \code{getFilter()} to return a regular expression that
+will match everything if user did not input anything. Otherwise, it would have
+return what the user have entered.
 
 For the order, we used a \textit{heap} to sort our nominee classes. The
 rationale for using \textit{heap sort} is that it can sort objects as well
@@ -439,17 +445,17 @@ order the user selected. This string would then become the key when inserting
 to the heap, thus allowing \textit{heap sort} to work.
 
 The reason we put the nominee classes to a linked list is that we have
-to process and iterate through the entire list anyways. Thus defeating the
-advantage of the array of accessing any element instantly. In addition to
-the linked list having no ``size'' limit, a linked list is more appropriate
-for storing nominee classes. However, it is very important to note that
-when saving the file or printing the csv table, it is a string array. This
-is due to how we create the itinerary which will be explained in that relevant
-section.
+to process and iterate through the entire list anyway. Thus defeating the
+advantage of the \textit{array} of accessing any element instantly. In
+addition to the linked list having no ``size'' limit, a linked list is more
+appropriate for storing nominee classes. However, it is very important to note
+that when saving the file or printing the csv table, it is a string
+\textit{array}. This is due to how we create the itinerary which will be
+explained in that relevant section.
 
-Because we have regexes that are capable of matching everything if the user
-did not input anything, we can simply use the same variable as the search
-term, passing it into the \code{matches()} method in the string class.
+Because we have regular expressions that are capable of matching everything
+if the user did not input anything, we can simply use the same variable as the
+search term, passing it into the \code{matches()} method in the string class.
 \code{searchNominee1()} specifically searches the state, party name or
 abbreviation, and the division name or ID.
 
@@ -471,6 +477,7 @@ party name or abbreviation.
 \paragraph{listPartyMargin \\
            getPartyFilter \\
            getMarginLimit \\
+           \_listPartyMargin \\
            calcVotes
 } \hspace{0pt}
 
@@ -490,26 +497,167 @@ invalid. Otherwise, print and save table to file.
 
 We used a linked list when getting search result in the same rationale as
 listing nominees in that we do not know how many matches there are. So instead
-of counting matches and creating an array of that size, then adding it to
-the array, causing the algorithm to iterate through the list of voting
-statistics twice, it would be much more easier to add to the end of a list
-instead.
+of counting matches and creating an \textit{array} of that size, then adding
+it to the \textit{array}, causing the algorithm to iterate through the list
+of voting statistics twice, it would be much more easier to add to the end
+of a list instead.
 
 \paragraph{createItinerary \\
            getPartyFilter \\
            getMarginLimit \\
+           \_listPartyMargin \\
            calcVotes \\
            printItinerary
 } \hspace{0pt}
 
+When the user selects this option (4), the program will prompt the user
+for a party name and the margin limit. After that has been entered, it will
+list divisions of which that particular party have a margin that is within
+plus or minus the margin limit. After this, the user will be prompted to enter
+the index of the locations they would want to visit and a path to visit these
+locations will be made.
 
+Since creating an itinerary contains a super set of functions contained in
+\code{listPartyMargin()}, we would reuse some functions, particularly
+\code{calcVotes()} and \code{\_listPartyMargin()}.
+
+While most of the abstract data types we have used so far are
+\code{linked list}, when selecting locations from a list, it is best suited
+to use an \textit{array} for instant access to specific elements. Hence why
+when saving to a file we always use an \textit{array}.
+
+When optimising the path, we did it in the most simplest way possible. We
+would sort by the index of the appearance of the locations. This depends on
+the output of \code{\_listPartyMargin()} to already be sorted by state so that
+all of the locations are at the very least grouped together by state. The sort
+used is a \textit{merge sort} as it has the time complexity of $O(n\log{}n)$
+across all cases. In terms of memory usage, it would be much more higher due
+to making another \textit{array} of the same size, but given the context of
+the entire program, it would seem that duplicating an \textit{array} of the
+same size as the number of locations (at worst) would seem trivial.
+
+When creating a path, we made the executive decision to use Dijkstra's
+algorithm to visit every locations selected. However, it's a very crude and
+simple implementation in that it would only connect to the next selected
+location. If given more time, we could have performed Dijkstra on each of
+the selected location against each other, then select the shortest route
+after iterating through all the possible paths. However, we're stuck with
+this instead.
 
 \subsubsection{FileIO}
 
-
+The FileIO class is to provide read and write methods to other classes.
+When reading from a file, it stores it to a \textit{linked list}, but
+when writing to a file, it uses an \textit{array}. This is due to how
+we have structured the main program to iterate through all items in a file,
+but require the output of a file to be an \textit{array} for
+\code{createItinerary()}. Hence, all methods that call \code{writeText()} will
+require the output file to be in an \textit{array}.
 
 \subsubsection{Input}
 
+The Input class is to provide inputting methods for certain data type to other
+classes. Does not use any abstract data types.
 
+\newpage
+
+\subsection{Abstract Data Types}
+
+These are classes that are abstract data types that are used within the
+program.
+
+\subsubsection{DSAGraph}
+
+Within the \textit{graph}, there are 2 private classes, vertex and an edge.
+For the adjacent and edge list, we have decided to use a \textit{linked list}.
+Ideally, it would be better to use a \textit{hash table} because we can't
+insert identical labelled vertexes or edges into the \textit{graph}. However,
+due to time constraints, we have decided to stick with a \textit{linked list}.
+
+In the Dijkstra's algorithm implementation, we have added 2 more class fields
+for the vertex:
+
+\begin{itemize}[label={--}]
+    \item \code{distanceFromSource}
+    \item \code{prevVertex}
+\end{itemize}
+
+\code{distanceFromSource} stores an integer that represents the total distance
+it would take to go from a given source vertex to the vertex this variable is
+stored in. \code{prevVertex} represents the vertex needed to be accessed by in
+order to get the shortest path to this vertex.
+
+\subsubsection{DSAHashTable}
+
+Within the \textit{hash table}, there is only 1 private class, the
+\textit{hash entry} class which contains only the key, the object value stored,
+and the state of the entry. A \textit{hash table} utilises an array because
+we need instant access to any element in the table depending on the key.
+The hash algorithm used is the Shift-Add-XOR hash. The step hash algorithm
+uses 5 as the maximum step.
+
+We used \textit{hash tables} whenever we need to get unique values out of a
+linked list or array.
+
+\subsubsection{DSALinkedList}
+
+Within the \textit{linked list}, there are 2 private class, the
+\textit{list node} and the \textit{iterator}. The \textit{linked list} is the
+most used abstract data structure in the main program. The decision as to
+why it is used over arrays is for a number of reasons.
+
+\begin{enumerate}
+    \item
+    It does not require a known size before it can be used.
+
+    We can remedy this with \textit{arrays}, however it would require to
+    iterate through the \textit{array} twice. And even then, we can't
+    freely add new items when the \textit{array} becomes full. Again, we
+    can remedy this, but it would require creating a new \textit{array}
+    and moving the elements from one \textit{array} to the next.
+
+    \item
+    Stored items does not require instant access
+
+    We normally used \textit{linked list} to store items that does not
+    need instant access. In cases where we need to process an entire set
+    of data, each element will be visited anyway, thus a \textit{linked list}
+    would be better suited for this task instead.\\
+
+    \item
+    Adding items are $O(n)$
+
+    With adding new items to the end of an \textit{array}, you would need to
+    keep count of the last used item. When adding to the beginning of the
+    \textit{array}, then \textit{all} the elements will need to be shuffled.
+    \textit{Linked list} does not have any of these problems as we can
+    add a new \textit{list node} to either the beginning or the end of the
+    \textit{linked list}.
+\end{enumerate}
+
+\subsubsection{DSAMaxHeap \& DSAMinHeap}
+
+This program features 2 different variations of the heap because both
+are used for different purpose. The \textit{min} and \textit{max} variants
+refers to the type of priority queues, with the \textit{min} being a minimum
+\textit{priority queue} and the \textit{max} being a maximum
+\textit{priority queue}. The \textit{max} variant is used primarily for the
+heap sort and the \textit{min} variant is used only in the Dijkstra algorithm
+in the \textit{graph}.
+
+The rationale for using \textit{heap sort} is described above. In summary it
+allows sorting of objects easily, as well as having the time complexity of
+$O(n\log{}n)$. Stability of the sort does not matter in this case as the order
+of objects with identical keys does not matter.
+
+For Dijkstra's algorithm, we used a minimum \textit{priority queue} as we
+require dequeuing the smallest distance, or key, from the queue.
+
+\subsubsection{DSAMergeSort}
+
+\textit{Merge sort} is used to sort user inputs for inputting locations to
+visit in \code{createItinerary}. We decided to use merge sort because, like
+\textit{heap sort}, has the time complexity of $O(n\log{}n)$. Since we're only
+sorting integers, we do not need \textit{heap sort} for this task.
 
 \end{document}

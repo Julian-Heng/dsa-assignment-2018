@@ -681,7 +681,7 @@ public class ElectionManager
     }
 
     /**
-     *  Name:     listPartyMargin
+     *  Name:     _listPartyMargin
      *  Purpose:  Third option in the menu. List division's of a
      *            selected party whose margin is below a user
      *            defined threshold

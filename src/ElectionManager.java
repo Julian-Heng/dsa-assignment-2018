@@ -482,110 +482,20 @@ public class ElectionManager
     public static void listPartyMargin(
         DSALinkedList<HousePreference> prefList)
     {
-        // Header for outputing to file
-        String headerFile[] = {
-            "Num", "DivisionID", "DivisionNm", "StateAb", "PartyAb",
-            "PartyNm", "VotesFor", "VotesAgainst", "VotesTotal",
-            "Percent", "Margin"
-        };
+        String partyFilter = getPartyFilter();
+        double marginLimit = getMarginLimit();
+        String[] fileContents;
 
-        DSALinkedList<VoteStats> voteResults;
-        DSALinkedList<String> fileList;
-        Iterator<VoteStats> iter;
-        Iterator<String> iter2;
-        VoteStats inStats;
-        String header, line;
-        String fileContents[];
-        String csvLine;
+        fileContents = _listPartyMargin(partyFilter, marginLimit, prefList);
 
-        int count, total;
-
-        String userInput;
-        String partyFilter;
-        double marginLimit;
-
-        long timeStart, timeEnd, duration;
-
-        count = 0;
-        total = 0;
-
-        csvLine = "";
-        partyFilter = "";
-
-        // If user did not enter a party name
-        if ((partyFilter = getPartyFilter()) == null)
-        {
-            throw new IllegalArgumentException(
-                "No party found: Empty search field"
-            );
-        }
-
-        // Get the margin limit
-        marginLimit = getMarginLimit();
-
-        timeStart = System.nanoTime();
-
-        // Calculate the votes into each a voteStats object
-        // and return as a list, distinguished by division
-        voteResults = calcVotes(prefList, partyFilter);
-        fileList = new DSALinkedList<String>();
-
-        iter = voteResults.iterator();
-
-        // For each division's vote stats
-        while (iter.hasNext())
-        {
-            total++;
-            inStats = iter.next();
-
-            // If margin is below the threshold
-            if (Math.abs(inStats.getMargin()) < marginLimit)
-            {
-                // Append to csv file list
-                count++;
-                csvLine = count + "," + inStats.toString();
-                fileList.insertLast(csvLine);
-            }
-        }
-
-        timeEnd = System.nanoTime();
-        duration = timeEnd - timeStart;
-
-        // If there are no results recorded
-        if (count == 0)
-        {
-            throw new IllegalArgumentException(
-                "No party found: " + partyFilter
-            );
-        }
-        else
-        {
-            // Begin converting csv list to a string array
-            fileContents = new String[count];
-            count = 0;
-
-            iter2 = fileList.iterator();
-            while (iter2.hasNext())
-            {
-                fileContents[count] = iter2.next();
-                count++;
-            }
-
-            // Print the csv table and save to file
-            Commons.printCsvTable(fileContents, headerFile);
-
-            System.out.printf("\n%d/%d matches\n", count, total);
-            System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
-
-            Commons.saveCsvToFile(
-                fileContents,
-                String.format(
-                    "%s_%03.2f_margin.csv",
-                    partyFilter,
-                    marginLimit
-                )
-            );
-        }
+        Commons.saveCsvToFile(
+            fileContents,
+            String.format(
+                "%s_%03.2f_margin.csv",
+                partyFilter,
+                marginLimit
+            )
+        );
     }
 
     /**
@@ -602,29 +512,12 @@ public class ElectionManager
         DSALinkedList<HousePreference> prefList,
         DSAGraph<Location,Trip> map)
     {
-        // Header for output file
-        String headerFile[] = {
-            "Num", "DivisionID", "DivisionNm", "StateAb", "PartyAb",
-            "PartyNm", "VotesFor", "VotesAgainst", "VotesTotal",
-            "Percent", "Margin"
-        };
-
-        // Some recycled code from listPartyMargin
-        DSALinkedList<VoteStats> voteResults;
-        DSALinkedList<String> fileList;
-        Iterator<VoteStats> iter;
-        Iterator<String> iter2;
-        VoteStats inStats;
-        String header, line;
         String fileContents[];
-        String csvLine;
-
-        int count, total;
+        String partyFilter;
+        double marginLimit;
 
         String userInput;
         String[] split;
-        String partyFilter;
-        double marginLimit;
 
         int[] visitDivisionIndex;
         String[] visitDivision;
@@ -634,81 +527,17 @@ public class ElectionManager
         DSALinkedList<Location> tempList;
         Iterator<Location> iterLoc;
 
+        int count;
         long timeStart, timeEnd, duration;
-
-        count = 0;
-        total = 0;
-
-        csvLine = "";
-        partyFilter = "";
 
         allLocations = false;
         enableOptimise = false;
-
-        // If user did not enter a party filter
-        if ((partyFilter = getPartyFilter()) == null)
-        {
-            throw new IllegalArgumentException(
-                "No party found: Empty search field"
-            );
-        }
-
-        // Get margin threshold
-        marginLimit = getMarginLimit();
-
-        timeStart = System.nanoTime();
-
-        // Get the list of calculated votes in the form of
-        // a linked list of voteStats objects
-        voteResults = calcVotes(prefList, partyFilter);
-        fileList = new DSALinkedList<String>();
-
-        iter = voteResults.iterator();
-
-        // For each vote result in each division
-        while (iter.hasNext())
-        {
-            total++;
-            inStats = iter.next();
-
-            // If margin is below the threshold
-            if (Math.abs(inStats.getMargin()) < marginLimit)
-            {
-                count++;
-                // Append to csv linked list
-                csvLine = count + "," + inStats.toString();
-                fileList.insertLast(csvLine);
-            }
-        }
-
-        fileContents = new String[count];
-
-        timeEnd = System.nanoTime();
-        duration = timeEnd - timeStart;
-
-        // If party did not match anything
-        if (count == 0)
-        {
-            throw new IllegalArgumentException(
-                "No party found: " + partyFilter
-            );
-        }
-
-        fileContents = new String[count];
         count = 0;
 
-        // Convert linked list to array
-        iter2 = fileList.iterator();
-        while (iter2.hasNext())
-        {
-            fileContents[count] = iter2.next();
-            count++;
-        }
+        partyFilter = getPartyFilter();
+        marginLimit = getMarginLimit();
 
-        // Print table and time statistics
-        Commons.printCsvTable(fileContents, headerFile);
-        System.out.printf("\n%d/%d matches\n", count, total);
-        System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
+        fileContents = _listPartyMargin(partyFilter, marginLimit, prefList);
 
         // Get the locations the user wants to visit
         userInput = Input.string(
@@ -723,13 +552,13 @@ public class ElectionManager
                 "No locations selected, using all locations"
             );
 
-            visitDivisionIndex = new int[count];
+            visitDivisionIndex = new int[fileContents.length];
 
             // For each id in csv file, set to an array
             // containing all the divisions to visit
             //
             // Offset is 1 because 0 index arrays
-            for (int i = 1; i <= count; i++)
+            for (int i = 1; i <= fileContents.length; i++)
             {
                 visitDivisionIndex[i - 1] = i;
             }
@@ -849,6 +678,115 @@ public class ElectionManager
             visitDivision.length,
             timeStart
         );
+    }
+
+    /**
+     *  Name:     listPartyMargin
+     *  Purpose:  Third option in the menu. List division's of a
+     *            selected party whose margin is below a user
+     *            defined threshold
+     *  Imports:
+     *    - partyFilter : The user inputed party filter
+     *    - marginLimit : The user inputed margin limit
+     *    - prefList    : A list of house preference objects
+     *  Exports:
+     *    - none
+     **/
+
+    public static String[] _listPartyMargin(
+        String partyFilter,
+        double marginLimit,
+        DSALinkedList<HousePreference> prefList)
+    {
+        // Header for outputing to file
+        String headerFile[] = {
+            "Num", "DivisionID", "DivisionNm", "StateAb", "PartyAb",
+            "PartyNm", "VotesFor", "VotesAgainst", "VotesTotal",
+            "Percent", "Margin"
+        };
+
+        DSALinkedList<VoteStats> voteResults;
+        DSALinkedList<String> fileList;
+        Iterator<VoteStats> iter;
+        Iterator<String> iter2;
+        VoteStats inStats;
+        String header, line;
+        String fileContents[];
+        String csvLine;
+
+        int count, total;
+        String userInput;
+
+        long timeStart, timeEnd, duration;
+
+        count = 0;
+        total = 0;
+
+        csvLine = "";
+
+        // If user did not enter a party name
+        if (partyFilter == null)
+        {
+            throw new IllegalArgumentException(
+                "No party found: Empty search field"
+            );
+        }
+
+        // Get the margin limit
+        timeStart = System.nanoTime();
+
+        // Calculate the votes into each a voteStats object
+        // and return as a list, distinguished by division
+        voteResults = calcVotes(prefList, partyFilter);
+        fileList = new DSALinkedList<String>();
+
+        iter = voteResults.iterator();
+
+        // For each division's vote stats
+        while (iter.hasNext())
+        {
+            total++;
+            inStats = iter.next();
+
+            // If margin is below the threshold
+            if (Math.abs(inStats.getMargin()) < marginLimit)
+            {
+                // Append to csv file list
+                count++;
+                csvLine = count + "," + inStats.toString();
+                fileList.insertLast(csvLine);
+            }
+        }
+
+        timeEnd = System.nanoTime();
+        duration = timeEnd - timeStart;
+
+        // If there are no results recorded
+        if (count == 0)
+        {
+            throw new IllegalArgumentException(
+                "No party found: " + partyFilter
+            );
+        }
+
+        // Begin converting csv list to a string array
+        fileContents = new String[count];
+        count = 0;
+
+        iter2 = fileList.iterator();
+        while (iter2.hasNext())
+        {
+            fileContents[count] = iter2.next();
+            count++;
+        }
+
+        // Print the csv table and save to file
+        Commons.printCsvTable(fileContents, headerFile);
+
+        System.out.printf("\n%d/%d matches\n", count, total);
+        System.out.printf("Took %sms\n\n", Commons.toMiliseconds(duration));
+
+        return fileContents;
     }
 
     /**

@@ -1,0 +1,74 @@
+DSA Assignment - Election Manager
+By Julian Heng (19473701)
+
+.
+├── data                                            | The directory containing input files
+│   ├── AirportDist1.0.csv                          | Airport distance file
+│   ├── Dist2.csv                                   | Combined distance file 2
+│   ├── Dist.csv                                    | Combined distance file 1
+│   ├── ElectDist1.0.csv                            | Division distance file 1
+│   ├── ElectDist1.1.csv                            | division distance file 2
+│   ├── HouseCandidates.csv                         | House candidates file
+│   ├── HouseStateFirstPrefsByPollingPlace-ACT.csv  | Preference files
+│   ├── HouseStateFirstPrefsByPollingPlace-NSW.csv  | .
+│   ├── HouseStateFirstPrefsByPollingPlace-NT.csv   | .
+│   ├── HouseStateFirstPrefsByPollingPlace-QLD.csv  | .
+│   ├── HouseStateFirstPrefsByPollingPlace-SA.csv   | .
+│   ├── HouseStateFirstPrefsByPollingPlace-TAS.csv  | .
+│   ├── HouseStateFirstPrefsByPollingPlace-VIC.csv  | .
+│   ├── HouseStateFirstPrefsByPollingPlace-WA.csv   | .
+│   └── HouseStateFirstPrefsCombine.csv             | Combined preference file
+├── docs                                            | The directory containing documentation files
+│   ├── AssignmentDoc.aux                           |
+│   ├── AssignmentDoc.log                           |
+│   ├── AssignmentDoc.pdf                           | Report in pdf
+│   ├── AssignmentDoc.tex                           | Report source
+│   ├── AssignmentDoc.toc                           |
+│   ├── UML.png                                     | The UML Diagram
+│   └── UML.xml                                     | The UML Source [draw.io]
+├── README                                          |
+└── src                                             | The directory containing all of the source files
+    ├── Commons.java                                | Provide common/generic utilities and functions
+    ├── Driver.java                                 | Main class that combines all the ElectionManager classes
+    ├── DSAGraph.java                               | A Graph used in Election Manager
+    ├── DSAHashTable.java                           | A Hash Table used in Election Manager
+    ├── DSALinkedList.java                          | A Linked List used is most classes
+    ├── DSAMaxHeap.java                             | A Max Heap used in Election Manager
+    ├── DSAMergeSort.java                           | A Merge Sort class used in Election Manager
+    ├── DSAMinHeap.java                             | A Min Heap used in the Graph
+    ├── ElectionManagerInit.java                    | Process filed for the Election Manager
+    ├── ElectionManager.java                        | Manage the election
+    ├── FileIO.java                                 | Provide file input and output methods
+    ├── HousePreference.java                        | Contains information for preference
+    ├── Input.java                                  | Provide inputing methods
+    ├── Location.java                               | Contains information for locations
+    ├── Makefile                                    | A Make file
+    ├── Menu.java                                   | Provide a Menu object to use
+    ├── Nominee.java                                | Contains information for nominees/candidates
+    ├── testCommons.java                            | Test files
+    ├── testDSAGraph.java                           | .
+    ├── testDSAHashTable.java                       | .
+    ├── testDSALinkedList.java                      | .
+    ├── testDSAMaxHeap.java                         | .
+    ├── testDSAMergeSort.java                       | .
+    ├── testDSAMinHeap.java                         | .
+    ├── testHarnessCommons.java                     | .
+    ├── testHousePreference.java                    | .
+    ├── testLocation.java                           | .
+    ├── testNominee.java                            | .
+    ├── testTrip.java                               | .
+    ├── testVoteStats.java                          | .
+    ├── Trip.java                                   | Contains information in between locations
+    └── VoteStats.java                              | Contains information for votes in divisions
+
+TO MAKE THE PROGRAM:
+  $ cd src
+  $ javac *.java
+
+TO RUN TESTS:
+  $ cd src
+  $ make run_test
+  $ # You can also run them individually
+
+TO USE THE PROGRAM
+  $ java Driver -d [Distance file] -c [House candidates file] [House preference file]

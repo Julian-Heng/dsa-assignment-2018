@@ -170,7 +170,6 @@ public class DSAGraph<E,F>
         int weight;
         F edgeValue;
         DSAGraphVertex<E,F> fromVertex, toVertex;
-        boolean visited;
 
         // Alternate Constructor
         public DSAGraphEdge(String inLabel, int inWeight, F inValue)
@@ -178,13 +177,9 @@ public class DSAGraph<E,F>
             label = inLabel;
             weight = inWeight;
             edgeValue = inValue;
-            visited = false;
         }
 
         // Setters
-        public void setVisited() { visited = true; }
-        public void clearVisited() { visited = false; }
-
         public void setFrom(DSAGraphVertex<E,F> inFrom)
         {
             fromVertex = inFrom;
@@ -199,7 +194,6 @@ public class DSAGraph<E,F>
         public String getLabel() { return label; }
         public int getEdgeWeight() { return weight; }
         public F getEdgeValue() { return edgeValue; }
-        public boolean getVisited() { return visited; }
 
         public DSAGraphVertex<E,F> getFrom() { return fromVertex; }
         public DSAGraphVertex<E,F> getTo() { return toVertex; }

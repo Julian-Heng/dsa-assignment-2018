@@ -27,7 +27,6 @@ public class DSAGraph<E,F>
         private DSALinkedList<DSAGraphEdge<E,F>> edgeList;
         private DSAGraphVertex<E,F> prevVertex;
         private int distanceFromSource;
-        private boolean visited;
 
         // Alternate Constructor
         public DSAGraphVertex(String newLabel, E newValue)
@@ -38,7 +37,6 @@ public class DSAGraph<E,F>
             edgeList = new DSALinkedList<DSAGraphEdge<E,F>>();
             prevVertex = null;
             distanceFromSource = Integer.MAX_VALUE;
-            visited = false;
         }
 
         // Getters
@@ -140,10 +138,6 @@ public class DSAGraph<E,F>
 
         public DSAGraphVertex<E,F> getPrevVertex() { return prevVertex; }
         public int getDistanceFromSource() { return distanceFromSource; }
-
-        public void setVisited() { visited = true; }
-        public void clearVisited() { visited = false; }
-        public boolean getVisited() { return visited; }
 
         private boolean validateVertex(
             DSAGraphVertex<E,F> newVertex)

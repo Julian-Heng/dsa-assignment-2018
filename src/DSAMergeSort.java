@@ -15,7 +15,7 @@ public class DSAMergeSort
         recurseMergeSort(A, 0, A.length - 1);
     }
 
-    public static void recurseMergeSort(
+    private static void recurseMergeSort(
         int[] A,
         int leftIndex,
         int rightIndex)
@@ -30,7 +30,7 @@ public class DSAMergeSort
         }
     }
 
-    public static void merge(
+    private static void merge(
         int[] A,
         int leftIndex,
         int midIndex,
